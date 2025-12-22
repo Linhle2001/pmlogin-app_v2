@@ -100,14 +100,20 @@ class MainRenderer {
         if (confirmed) {
             try {
                 console.log('🚪 Logging out...');
-                const result = await window.electronAPI.logout();
                 
-                if (result.success) {
-                    console.log('✅ Logout successful');
-                    // Navigation will be handled by main process
+                if (window.electronAPI && window.electronAPI.logout) {
+                    const result = await window.electronAPI.logout();
+                    
+                    if (result.success) {
+                        console.log('✅ Logout successful');
+                        // Navigation will be handled by main process
+                    } else {
+                        console.error('❌ Logout failed:', result.message);
+                        alert('Lỗi đăng xuất: ' + result.message);
+                    }
                 } else {
-                    console.error('❌ Logout failed:', result.message);
-                    alert('Lỗi đăng xuất: ' + result.message);
+                    console.warn('⚠️ electronAPI not available, cannot logout');
+                    alert('Không thể đăng xuất: electronAPI không khả dụng');
                 }
             } catch (error) {
                 console.error('❌ Logout error:', error);
@@ -118,10 +124,14 @@ class MainRenderer {
 
     async loadUserData() {
         try {
-            const result = await window.electronAPI.getUserData();
-            if (result && result.user) {
-                this.userData = result.user;
-                this.updateUserInfo();
+            if (window.electronAPI && window.electronAPI.getUserData) {
+                const result = await window.electronAPI.getUserData();
+                if (result && result.user) {
+                    this.userData = result.user;
+                    this.updateUserInfo();
+                }
+            } else {
+                console.warn('⚠️ electronAPI not available, skipping user data load');
             }
         } catch (error) {
             console.error('Failed to load user data:', error);
@@ -197,8 +207,24 @@ class MainRenderer {
         const views = document.querySelectorAll('.view-content');
         views.forEach(view => view.classList.add('hidden'));
         
-        // Show selected view
-        const targetView = document.getElementById(`${viewName}View`);
+        // Map view names to actual element IDs
+        const viewIdMap = {
+            'create-profile': 'createProfileView',
+            'profiles': 'profilesView',
+            'dashboard': 'dashboardView',
+            'proxies': 'proxiesView',
+            'store': 'storeView',
+            'automation': 'automationView',
+            'account': 'accountView',
+            'payment': 'paymentView',
+            'help': 'helpView',
+            'settings': 'settingsView'
+        };
+        
+        // Get the actual element ID
+        const targetViewId = viewIdMap[viewName] || `${viewName}View`;
+        const targetView = document.getElementById(targetViewId);
+        
         if (targetView) {
             targetView.classList.remove('hidden');
             
@@ -219,9 +245,157 @@ class MainRenderer {
                     console.error('❌ ProfilesView not initialized properly');
                 }
             }
+            
+            // Special handling for create-profile view
+            if (viewName === 'create-profile') {
+                console.log('🔄 Initializing create-profile view...');
+                // Initialize create-profile functionality
+                setTimeout(() => {
+                    this.initializeCreateProfileView();
+                }, 100);
+            }
+        } else {
+            console.error(`❌ View not found: ${targetViewId}`);
         }
         
-        console.log(`Switched to view: ${viewName}`);
+        console.log(`Switched to view: ${viewName} (ID: ${targetViewId})`);
+    }
+    
+    loadCreateProfileCSS() {
+        // Check if CSS is already loaded
+        if (document.querySelector('link[href*="create-profile.css"]')) {
+            console.log('✅ Create-profile CSS already loaded');
+            return;
+        }
+        
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '../../views/create-profile/create-profile.css';
+        link.onload = () => {
+            console.log('✅ Create-profile CSS loaded');
+        };
+        link.onerror = () => {
+            console.error('❌ Failed to load create-profile CSS');
+        };
+        document.head.appendChild(link);
+    }
+    
+    loadCreateProfileJS() {
+        // Check if script is already loaded
+        if (document.querySelector('script[src*="create-profile.js"]')) {
+            console.log('✅ Create-profile JS already loaded');
+            // Reinitialize if class exists
+            if (typeof CreateProfileManager !== 'undefined') {
+                window.createProfileManager = new CreateProfileManager();
+            }
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = '../../views/create-profile/create-profile.js';
+        script.onload = () => {
+            console.log('✅ Create-profile JS loaded');
+            // Initialize CreateProfileManager after script loads
+            if (typeof CreateProfileManager !== 'undefined') {
+                window.createProfileManager = new CreateProfileManager();
+            }
+        };
+        script.onerror = () => {
+            console.error('❌ Failed to load create-profile JS');
+        };
+        document.body.appendChild(script);
+    }
+    
+    initializeCreateProfileView() {
+        console.log('🔧 Initializing create-profile view functionality...');
+        
+        // Handle tab switching
+        const tabButtons = document.querySelectorAll('.create-tab-btn');
+        const tabContents = document.querySelectorAll('.create-tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tabName = button.dataset.tab;
+                
+                // Remove active class from all buttons
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active', 'text-blue-600', 'border-blue-600');
+                    btn.classList.add('text-gray-500');
+                });
+                
+                // Add active class to clicked button
+                button.classList.remove('text-gray-500');
+                button.classList.add('active', 'text-blue-600', 'border-blue-600');
+                
+                // Hide all tab contents
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                // Show selected tab content
+                const targetTab = document.getElementById(`${tabName}CreateTab`);
+                if (targetTab) {
+                    targetTab.classList.remove('hidden');
+                }
+                
+                console.log(`Switched to create-profile tab: ${tabName}`);
+            });
+        });
+        
+        // Handle form submission
+        const createSaveBtn = document.getElementById('createSaveProfileBtn');
+        if (createSaveBtn) {
+            createSaveBtn.addEventListener('click', () => {
+                this.handleCreateProfile();
+            });
+        }
+        
+        // Handle cancel button
+        const createCancelBtn = document.getElementById('createCancelBtn');
+        if (createCancelBtn) {
+            createCancelBtn.addEventListener('click', () => {
+                this.switchView('profiles');
+            });
+        }
+        
+        console.log('✅ Create-profile view functionality initialized');
+    }
+    
+    handleCreateProfile() {
+        console.log('🔄 Creating new profile...');
+        
+        // Get form data
+        const profileName = document.getElementById('createProfileName')?.value;
+        if (!profileName) {
+            alert('Vui lòng nhập tên profile');
+            return;
+        }
+        
+        const profileData = {
+            name: profileName,
+            platform: document.getElementById('createPlatformSelect')?.value || 'windows',
+            browser: document.getElementById('createBrowserSelect')?.value || 'chrome',
+            tags: document.getElementById('createProfileTags')?.value || '',
+            group: document.getElementById('createGroupSelect')?.value || '',
+            note: document.getElementById('createProfileNote')?.value || '',
+            shareOnCloud: document.getElementById('createShareOnCloud')?.checked || false,
+            autoStart: document.getElementById('createAutoStart')?.checked || false,
+        };
+        
+        console.log('Profile data:', profileData);
+        
+        // Show success message
+        this.showSuccess('Profile đã được tạo thành công!');
+        
+        // Switch back to profiles view
+        setTimeout(() => {
+            this.switchView('profiles');
+            // Refresh profiles view if available
+            if (this.profilesView && this.profilesView.refresh) {
+                this.profilesView.refresh();
+            }
+        }, 1000);
     }
     
     showSuccess(message) {

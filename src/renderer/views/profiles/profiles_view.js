@@ -23,6 +23,21 @@ class ProfilesView {
         this.init();
     }
 
+    // Helper method to safely call electronAPI
+    async safeElectronCall(method, ...args) {
+        if (!window.electronAPI || !window.electronAPI.invoke) {
+            console.warn('⚠️ electronAPI not available');
+            return { success: false, error: 'electronAPI not available' };
+        }
+        
+        try {
+            return await window.electronAPI.invoke(method, ...args);
+        } catch (error) {
+            console.error(`❌ Error calling ${method}:`, error);
+            return { success: false, error: error.message };
+        }
+    }
+
     async init() {
         if (this.isInitialized) return;
         
@@ -277,7 +292,7 @@ class ProfilesView {
             console.log('🔄 Loading profiles from database...');
             
             // Load profiles from database via IPC
-            const response = await window.electronAPI.invoke('db:profile:get-all');
+            const response = await this.safeElectronCall('db:profile:get-all');
             
             if (response.success) {
                 this.profilesData = response.data.map(profile => {
@@ -346,7 +361,7 @@ class ProfilesView {
                     apiEndpoint = 'db:profile:get-all';
             }
             
-            const response = await window.electronAPI.invoke(apiEndpoint);
+            const response = await this.safeElectronCall(apiEndpoint);
             
             if (response.success) {
                 return response.data.map(profile => {
@@ -695,7 +710,7 @@ class ProfilesView {
 
     async loadGroups() {
         try {
-            const response = await window.electronAPI.invoke('db:group:get-all');
+            const response = await this.safeElectronCall('db:group:get-all');
             if (response.success) {
                 return response.data;
             } else {
@@ -710,7 +725,7 @@ class ProfilesView {
 
     async getProfileCountForGroup(groupName) {
         try {
-            const response = await window.electronAPI.invoke('db:group:get-profiles', groupName);
+            const response = await this.safeElectronCall('db:group:get-profiles', groupName);
             if (response.success) {
                 return response.data.length;
             } else {
@@ -770,7 +785,7 @@ class ProfilesView {
         }
         
         try {
-            const response = await window.electronAPI.invoke('db:group:create', groupName);
+            const response = await this.safeElectronCall('db:group:create', groupName);
             if (response.success) {
                 console.log(`✅ Group '${groupName}' created successfully`);
                 
@@ -814,7 +829,7 @@ class ProfilesView {
             try {
                 expandedContent.innerHTML = '<div class="loading">Loading profiles...</div>';
                 
-                const response = await window.electronAPI.invoke('db:group:get-profiles', groupName);
+                const response = await this.safeElectronCall('db:group:get-profiles', groupName);
                 
                 if (response.success && response.data.length > 0) {
                     // Create a mini profiles table for this group with pagination
@@ -915,7 +930,7 @@ class ProfilesView {
         try {
             expandedContent.innerHTML = '<div class="loading">Loading profiles...</div>';
             
-            const response = await window.electronAPI.invoke('db:group:get-profiles', groupName);
+            const response = await this.safeElectronCall('db:group:get-profiles', groupName);
             
             if (response.success && response.data.length > 0) {
                 const profiles = response.data;
@@ -1046,7 +1061,7 @@ class ProfilesView {
         }
         
         try {
-            const response = await window.electronAPI.invoke('db:group:remove-profile', profileId, groupName);
+            const response = await this.safeElectronCall('db:group:remove-profile', profileId, groupName);
             if (response.success) {
                 this.showToast(`Profile removed from group '${groupName}'`, 'success');
                 
