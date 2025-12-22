@@ -1680,6 +1680,25 @@
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOM loaded, setting up event listeners...');
             
+            // Wait for MainRenderer to initialize first
+            setTimeout(() => {
+                // Only initialize if MainRenderer is not available or failed to initialize
+                if (!window.mainRenderer) {
+                    console.log('MainRenderer not available, using fallback initialization...');
+                    initializeFallbackEvents();
+                }
+            }, 1000);
+        });
+
+        // Global error handler
+        window.addEventListener('error', (e) => {
+            console.error(`Global Error: ${e.message} at ${e.filename}:${e.lineno}`);
+        });
+
+        // Fallback event initialization when MainRenderer is not available
+        function initializeFallbackEvents() {
+            console.log('Initializing fallback events...');
+            
             // Sidebar navigation
             const sidebarItems = document.querySelectorAll('.sidebar-item');
             sidebarItems.forEach(item => {
@@ -1726,7 +1745,7 @@
             
             if (createCancelBtn) {
                 createCancelBtn.addEventListener('click', () => {
-                    switchView('profiles'); // Go back to profiles view
+                    switchView('profiles');
                 });
             }
             
@@ -1745,23 +1764,20 @@
                 });
             }
 
-            // Initialize profiles view (default) - Keep original design
+            // Initialize profiles view
             setTimeout(() => {
                 console.log('🔄 Starting profile initialization...');
                 
-                // Check if scripts loaded successfully
                 if (typeof ProfilesStructure !== 'undefined' && typeof ProfilesView !== 'undefined') {
                     console.log('✅ Profile classes available, using original ProfilesView');
                     initializeProfiles();
                 } else {
                     console.warn('⚠️ Profile classes not loaded, trying direct initialization...');
-                    // Try to initialize anyway in case scripts loaded but variables not set
                     setTimeout(() => {
                         if (typeof ProfilesStructure !== 'undefined' && typeof ProfilesView !== 'undefined') {
                             initializeProfiles();
                         } else {
                             console.error('❌ Profile classes still not available after delay');
-                            // Show error message
                             const profilesContainer = document.getElementById('profilesView');
                             if (profilesContainer) {
                                 profilesContainer.innerHTML = `
@@ -1781,18 +1797,15 @@
                     }, 1000);
                 }
                 
-                // Initialize create profile view
                 initializeCreateProfile();
             }, 500);
-        });
-
-        // Global error handler
-        window.addEventListener('error', (e) => {
-            console.error(`Global Error: ${e.message} at ${e.filename}:${e.lineno}`);
-        });
+        }
 
         console.log('PMLogin Dashboard loaded');
     </script>
+
+    <!-- Load MainRenderer for settings dropdown and other functionality -->
+    <script src="./renderer.js"></script>
 
     <script>
         // Initialize Profiles function - Keep original ProfilesView

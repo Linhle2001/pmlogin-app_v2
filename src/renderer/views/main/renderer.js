@@ -29,25 +29,9 @@ class MainRenderer {
     
     async initializeMainWindow() {
         try {
-            // Dynamic import to handle potential module loading issues
-            const { MainWindow } = await import('./main-window.js');
-            
-            const appContainer = document.getElementById('app') || document.body;
-            this.mainWindow = new MainWindow(appContainer);
-            
-            // Wait for initialization to complete
-            await this.mainWindow.init();
-            
-            // Set callbacks
-            this.mainWindow.setOnLogout(() => {
-                this.handleLogout();
-            });
-            
-            this.mainWindow.setOnPasswordChanged(() => {
-                this.showSuccess('Mật khẩu đã được thay đổi thành công!');
-            });
-            
-            console.log('✅ MainWindow initialized');
+            console.log('✅ MainWindow initialization skipped - using inline HTML');
+            // Skip MainWindow initialization since we're using inline HTML
+            // The settings dropdown will be handled directly
         } catch (error) {
             console.error('❌ Error initializing MainWindow:', error);
             throw error;
@@ -151,6 +135,8 @@ class MainRenderer {
     }
 
     bindEvents() {
+        console.log('🔗 Binding events...');
+        
         // Handle user data updates from main process
         if (window.electronAPI && window.electronAPI.onUserDataUpdate) {
             window.electronAPI.onUserDataUpdate((event, userData) => {
@@ -187,6 +173,8 @@ class MainRenderer {
         
         // Handle view switching
         this.bindViewSwitching();
+        
+        console.log('✅ Events bound successfully');
     }
     
     bindViewSwitching() {
@@ -250,15 +238,26 @@ class MainRenderer {
     }
     
     bindSettingsDropdown() {
+        console.log('🔧 Binding settings dropdown...');
         const settingsIcon = document.getElementById('settingsIcon');
         const settingsDropdown = document.getElementById('settingsDropdown');
         const logoutBtn = document.getElementById('logoutBtn');
         
+        console.log('Settings elements found:', {
+            settingsIcon: !!settingsIcon,
+            settingsDropdown: !!settingsDropdown,
+            logoutBtn: !!logoutBtn
+        });
+        
         if (settingsIcon && settingsDropdown) {
+            console.log('✅ Settings elements found, binding events...');
+            
             // Toggle dropdown on icon click
             settingsIcon.addEventListener('click', (e) => {
+                console.log('🖱️ Settings icon clicked');
                 e.stopPropagation();
                 settingsDropdown.classList.toggle('hidden');
+                console.log('Dropdown hidden class:', settingsDropdown.classList.contains('hidden'));
             });
             
             // Close dropdown when clicking outside
@@ -270,10 +269,13 @@ class MainRenderer {
             
             // Handle dropdown menu items
             const dropdownItems = settingsDropdown.querySelectorAll('[data-view]');
+            console.log('Found dropdown items:', dropdownItems.length);
+            
             dropdownItems.forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     const viewName = item.dataset.view;
+                    console.log('Dropdown item clicked:', viewName);
                     this.switchView(viewName);
                     settingsDropdown.classList.add('hidden');
                     
@@ -286,15 +288,23 @@ class MainRenderer {
                     }
                 });
             });
+            
+            console.log('✅ Settings dropdown events bound successfully');
+        } else {
+            console.error('❌ Settings elements not found!');
         }
         
         // Handle logout button
         if (logoutBtn) {
             logoutBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
+                console.log('🚪 Logout button clicked');
                 settingsDropdown.classList.add('hidden');
                 await this.handleLogout();
             });
+            console.log('✅ Logout button event bound');
+        } else {
+            console.error('❌ Logout button not found!');
         }
     }
 }
@@ -302,5 +312,10 @@ class MainRenderer {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🔄 DOM loaded, initializing MainRenderer...');
-    window.mainRenderer = new MainRenderer();
+    try {
+        window.mainRenderer = new MainRenderer();
+        console.log('✅ MainRenderer instance created');
+    } catch (error) {
+        console.error('❌ Error creating MainRenderer:', error);
+    }
 });
