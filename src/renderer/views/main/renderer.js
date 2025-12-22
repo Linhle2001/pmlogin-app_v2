@@ -4,6 +4,7 @@ class MainRenderer {
         this.mainWindow = null;
         this.userData = null;
         this.profilesView = null;
+        this.proxyPagination = null;
         this.init();
     }
 
@@ -246,6 +247,11 @@ class MainRenderer {
                 }
             }
             
+            // Special handling for proxies view
+            if (viewName === 'proxies') {
+                this.initializeProxiesView();
+            }
+            
             // Special handling for create-profile view
             if (viewName === 'create-profile') {
                 console.log('🔄 Initializing create-profile view...');
@@ -398,6 +404,213 @@ class MainRenderer {
         }, 1000);
     }
     
+    initializeProxiesView() {
+        try {
+            console.log('🔧 Initializing ProxiesView...');
+            
+            // Initialize ProxyPagination if not already done
+            if (!this.proxyPagination) {
+                if (typeof ProxyPagination !== 'undefined') {
+                    this.proxyPagination = new ProxyPagination();
+                    
+                    // Override onPageChange to handle proxy data loading
+                    this.proxyPagination.onPageChange = () => {
+                        this.loadProxyPage();
+                    };
+                    
+                    console.log('✅ ProxyPagination initialized');
+                } else {
+                    console.error('❌ ProxyPagination class not found');
+                    return;
+                }
+            }
+            
+            // Load initial proxy data
+            this.loadProxies();
+            
+        } catch (error) {
+            console.error('❌ Error initializing ProxiesView:', error);
+        }
+    }
+    
+    async loadProxies() {
+        try {
+            console.log('📡 Loading proxies...');
+            
+            // Show loading state
+            const loadingState = document.getElementById('proxyLoadingState');
+            const emptyState = document.getElementById('proxyEmptyState');
+            const tableBody = document.getElementById('proxyTableBody');
+            
+            if (loadingState) loadingState.classList.remove('hidden');
+            if (emptyState) emptyState.classList.add('hidden');
+            
+            // Simulate loading proxies (replace with actual API call)
+            const mockProxies = this.generateMockProxies();
+            
+            // Set data to pagination
+            if (this.proxyPagination) {
+                this.proxyPagination.setData(mockProxies);
+            }
+            
+            // Load first page
+            this.loadProxyPage();
+            
+            // Hide loading state
+            if (loadingState) loadingState.classList.add('hidden');
+            
+            console.log('✅ Proxies loaded successfully');
+            
+        } catch (error) {
+            console.error('❌ Error loading proxies:', error);
+            
+            // Show empty state on error
+            const loadingState = document.getElementById('proxyLoadingState');
+            const emptyState = document.getElementById('proxyEmptyState');
+            
+            if (loadingState) loadingState.classList.add('hidden');
+            if (emptyState) emptyState.classList.remove('hidden');
+        }
+    }
+    
+    loadProxyPage() {
+        try {
+            if (!this.proxyPagination) return;
+            
+            const currentPageData = this.proxyPagination.getCurrentPageData();
+            const tableBody = document.getElementById('proxyTableBody');
+            const emptyState = document.getElementById('proxyEmptyState');
+            
+            if (!tableBody) return;
+            
+            if (currentPageData.length === 0) {
+                tableBody.innerHTML = '';
+                if (emptyState) emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            if (emptyState) emptyState.classList.add('hidden');
+            
+            // Render proxy rows
+            tableBody.innerHTML = currentPageData.map(proxy => this.renderProxyRow(proxy)).join('');
+            
+            // Update stats
+            this.updateProxyStats();
+            
+            console.log(`✅ Loaded page ${this.proxyPagination.currentPage} with ${currentPageData.length} proxies`);
+            
+        } catch (error) {
+            console.error('❌ Error loading proxy page:', error);
+        }
+    }
+    
+    renderProxyRow(proxy) {
+        const statusClass = {
+            'live': 'status-working',
+            'dead': 'status-failed',
+            'unchecked': 'status-untested'
+        }[proxy.status] || 'status-untested';
+        
+        return `
+            <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3">
+                    <input type="checkbox" class="proxy-checkbox rounded" data-proxy-id="${proxy.id}">
+                </td>
+                <td class="px-4 py-3">
+                    <div class="font-medium text-gray-900">${proxy.name}</div>
+                </td>
+                <td class="px-4 py-3">
+                    <div class="text-gray-900">${proxy.host}:${proxy.port}</div>
+                </td>
+                <td class="px-4 py-3">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        ${proxy.type.toUpperCase()}
+                    </span>
+                </td>
+                <td class="px-4 py-3">
+                    <span class="text-sm text-gray-500">
+                        ${proxy.username ? '✓' : '✗'}
+                    </span>
+                </td>
+                <td class="px-4 py-3">
+                    <span class="status-badge ${statusClass}">
+                        ${proxy.status.charAt(0).toUpperCase() + proxy.status.slice(1)}
+                    </span>
+                </td>
+                <td class="px-4 py-3">
+                    <div class="flex flex-wrap gap-1">
+                        ${proxy.tags.map(tag => `
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                ${tag}
+                            </span>
+                        `).join('')}
+                    </div>
+                </td>
+                <td class="px-4 py-3">
+                    <span class="text-sm text-gray-500">${proxy.lastUsed || 'Never'}</span>
+                </td>
+                <td class="px-4 py-3">
+                    <div class="flex space-x-2">
+                        <button class="text-blue-600 hover:text-blue-800" onclick="testProxy('${proxy.id}')" title="Test Proxy">
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+                        <button class="text-green-600 hover:text-green-800" onclick="editProxy('${proxy.id}')" title="Edit Proxy">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-800" onclick="deleteProxy('${proxy.id}')" title="Delete Proxy">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+    
+    generateMockProxies() {
+        const mockProxies = [];
+        const types = ['http', 'https', 'socks4', 'socks5'];
+        const statuses = ['live', 'dead', 'unchecked'];
+        const tags = ['US', 'EU', 'Asia', 'Premium', 'Free', 'Residential', 'Datacenter'];
+        
+        for (let i = 1; i <= 47; i++) {
+            mockProxies.push({
+                id: `proxy_${i}`,
+                name: `Proxy ${i}`,
+                host: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+                port: 8000 + Math.floor(Math.random() * 1000),
+                type: types[Math.floor(Math.random() * types.length)],
+                username: Math.random() > 0.5 ? `user${i}` : null,
+                password: Math.random() > 0.5 ? `pass${i}` : null,
+                status: statuses[Math.floor(Math.random() * statuses.length)],
+                tags: [tags[Math.floor(Math.random() * tags.length)], tags[Math.floor(Math.random() * tags.length)]].filter((v, i, a) => a.indexOf(v) === i),
+                lastUsed: Math.random() > 0.3 ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString() : null
+            });
+        }
+        
+        return mockProxies;
+    }
+    
+    updateProxyStats() {
+        if (!this.proxyPagination) return;
+        
+        const allProxies = this.proxyPagination.allProxies;
+        const totalCount = allProxies.length;
+        const liveCount = allProxies.filter(p => p.status === 'live').length;
+        const deadCount = allProxies.filter(p => p.status === 'dead').length;
+        const uncheckedCount = allProxies.filter(p => p.status === 'unchecked').length;
+        
+        // Update stats cards
+        const totalElement = document.getElementById('totalProxiesCount');
+        const liveElement = document.getElementById('liveProxiesCount');
+        const deadElement = document.getElementById('deadProxiesCount');
+        const uncheckedElement = document.getElementById('uncheckedProxiesCount');
+        
+        if (totalElement) totalElement.textContent = totalCount;
+        if (liveElement) liveElement.textContent = liveCount;
+        if (deadElement) deadElement.textContent = deadCount;
+        if (uncheckedElement) uncheckedElement.textContent = uncheckedCount;
+    }
+    
     showSuccess(message) {
         console.log('✅ Success:', message);
         // Simple notification fallback
@@ -493,3 +706,29 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('❌ Error creating MainRenderer:', error);
     }
 });
+
+// Global functions for proxy actions
+window.testProxy = function(proxyId) {
+    console.log('Testing proxy:', proxyId);
+    // Implement proxy testing logic here
+    alert(`Testing proxy ${proxyId}...`);
+};
+
+window.editProxy = function(proxyId) {
+    console.log('Editing proxy:', proxyId);
+    // Implement proxy editing logic here
+    alert(`Editing proxy ${proxyId}...`);
+};
+
+window.deleteProxy = function(proxyId) {
+    console.log('Deleting proxy:', proxyId);
+    const confirmed = confirm(`Are you sure you want to delete proxy ${proxyId}?`);
+    if (confirmed) {
+        // Implement proxy deletion logic here
+        alert(`Proxy ${proxyId} deleted!`);
+        // Refresh the proxy list
+        if (window.mainRenderer && window.mainRenderer.loadProxies) {
+            window.mainRenderer.loadProxies();
+        }
+    }
+};

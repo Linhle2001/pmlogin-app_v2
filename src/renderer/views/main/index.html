@@ -259,6 +259,152 @@
         .create-tab-btn.active {
             border-bottom: 2px solid #3b82f6;
         }
+
+        /* Proxy Pagination Styles */
+        .pagination-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .items-per-page-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .items-per-page-select {
+            padding: 6px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+            color: #374151;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .items-per-page-select:hover {
+            border-color: #9ca3af;
+        }
+
+        .items-per-page-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .pagination-stats {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f9fafb;
+        }
+
+        .pagination-pages {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pagination-page {
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination-page:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+
+        .pagination-page.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .pagination-ellipsis {
+            padding: 0 8px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .pagination-wrapper {
+                padding: 16px;
+            }
+            
+            .pagination-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .pagination-controls {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .pagination-pages {
+                order: -1;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -277,6 +423,12 @@
         console.log('🔍 Global classes check:');
         console.log('  - ProfilesStructure:', typeof ProfilesStructure);
         console.log('  - ProfilesView:', typeof ProfilesView);
+    </script>
+    
+    <!-- Load Proxy Pagination -->
+    <script src="proxy_pagination.js"></script>
+    <script>
+        console.log('✅ ProxyPagination script loaded. Available:', typeof ProxyPagination !== 'undefined');
     </script>
     
     <!-- Notification -->
@@ -342,7 +494,7 @@
             </nav>
 
             <!-- Footer -->
-            <div class="absolute bottom-0 left-0 right-0 border-t border-gray-600">
+            <div class="absolute bottom-0 left-0 right-0">
                 <!-- User Info -->
                 <div class="p-4">
                     <div class="flex items-center space-x-3">
@@ -588,17 +740,39 @@
                     </div>
                 </div>
 
-                <!-- Pagination -->
-                <div class="flex items-center justify-between mt-6">
-                    <div class="text-sm text-gray-700">
-                        Showing <span id="proxyShowingStart">0</span> to <span id="proxyShowingEnd">0</span> of <span id="proxyTotalCount">0</span> proxies
+                <!-- Enhanced Pagination -->
+                <div id="proxyPaginationContainer" class="pagination-wrapper mt-6">
+                    <div class="pagination-info">
+                        <div class="items-per-page-selector">
+                            <label for="proxyItemsPerPage">Hiển thị:</label>
+                            <select id="proxyItemsPerPage" class="items-per-page-select">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <span>proxies/trang</span>
+                        </div>
+                        
+                        <div class="pagination-stats">
+                            <span>Hiển thị <span id="proxyShowingStart">0</span> - <span id="proxyShowingEnd">0</span> của <span id="proxyTotalCount">0</span> proxies</span>
+                        </div>
                     </div>
-                    <div class="flex space-x-2">
-                        <button id="proxyPrevPage" class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50" disabled>
-                            Previous
+                    
+                    <div class="pagination-controls">
+                        <button id="proxyPrevPage" class="pagination-btn pagination-btn-prev" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                            <span>Trước</span>
                         </button>
-                        <button id="proxyNextPage" class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50" disabled>
-                            Next
+                        
+                        <div id="proxyPaginationPages" class="pagination-pages">
+                            <!-- Page numbers will be generated here -->
+                        </div>
+                        
+                        <button id="proxyNextPage" class="pagination-btn pagination-btn-next" disabled>
+                            <span>Sau</span>
+                            <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
@@ -1898,4 +2072,3 @@
     </script>
 </body>
 </html>
-  
