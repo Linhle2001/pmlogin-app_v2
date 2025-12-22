@@ -20,29 +20,6 @@ class LoginRenderer {
         if (emailInput && passwordInput) {
             emailInput.value = 'demo@pmlogin.com';
             passwordInput.value = 'demo123';
-            
-            // Add demo mode indicator
-            this.showDemoModeIndicator();
-        }
-    }
-    
-    showDemoModeIndicator() {
-        // Create demo mode banner if it doesn't exist
-        let demoBanner = document.getElementById('demoBanner');
-        if (!demoBanner) {
-            demoBanner = document.createElement('div');
-            demoBanner.id = 'demoBanner';
-            demoBanner.className = 'demo-banner bg-blue-100 border border-blue-300 text-blue-800 px-4 py-3 rounded-lg mb-6 text-center';
-            demoBanner.innerHTML = `
-                <div class="flex items-center justify-center space-x-2">
-                    <i class="fas fa-info-circle"></i>
-                    <span><strong>Demo Mode:</strong> Sử dụng email demo@pmlogin.com để test giao diện</span>
-                </div>
-            `;
-            
-            // Insert before the form
-            const form = document.getElementById('loginForm');
-            form.parentNode.insertBefore(demoBanner, form);
         }
     }
 

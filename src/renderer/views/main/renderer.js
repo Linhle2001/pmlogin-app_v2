@@ -115,10 +115,18 @@ class MainRenderer {
         
         if (confirmed) {
             try {
-                await window.electronAPI.logout();
-                // Navigation will be handled by main process
+                console.log('🚪 Logging out...');
+                const result = await window.electronAPI.logout();
+                
+                if (result.success) {
+                    console.log('✅ Logout successful');
+                    // Navigation will be handled by main process
+                } else {
+                    console.error('❌ Logout failed:', result.message);
+                    alert('Lỗi đăng xuất: ' + result.message);
+                }
             } catch (error) {
-                console.error('Logout error:', error);
+                console.error('❌ Logout error:', error);
                 alert('Lỗi đăng xuất: ' + error.message);
             }
         }
@@ -151,6 +159,9 @@ class MainRenderer {
                 this.updateUserInfo();
             });
         }
+        
+        // Handle settings dropdown
+        this.bindSettingsDropdown();
         
         // Handle window close
         window.addEventListener('beforeunload', () => {
@@ -236,6 +247,55 @@ class MainRenderer {
         setTimeout(() => {
             notification.remove();
         }, 3000);
+    }
+    
+    bindSettingsDropdown() {
+        const settingsIcon = document.getElementById('settingsIcon');
+        const settingsDropdown = document.getElementById('settingsDropdown');
+        const logoutBtn = document.getElementById('logoutBtn');
+        
+        if (settingsIcon && settingsDropdown) {
+            // Toggle dropdown on icon click
+            settingsIcon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                settingsDropdown.classList.toggle('hidden');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!settingsDropdown.contains(e.target) && !settingsIcon.contains(e.target)) {
+                    settingsDropdown.classList.add('hidden');
+                }
+            });
+            
+            // Handle dropdown menu items
+            const dropdownItems = settingsDropdown.querySelectorAll('[data-view]');
+            dropdownItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewName = item.dataset.view;
+                    this.switchView(viewName);
+                    settingsDropdown.classList.add('hidden');
+                    
+                    // Update active sidebar item
+                    const sidebarItems = document.querySelectorAll('.sidebar-item');
+                    sidebarItems.forEach(si => si.classList.remove('active'));
+                    const targetSidebarItem = document.querySelector(`[data-view="${viewName}"]`);
+                    if (targetSidebarItem) {
+                        targetSidebarItem.classList.add('active');
+                    }
+                });
+            });
+        }
+        
+        // Handle logout button
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                settingsDropdown.classList.add('hidden');
+                await this.handleLogout();
+            });
+        }
     }
 }
 

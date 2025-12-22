@@ -185,17 +185,17 @@
         }
     </style>
 </head>
-<body class="pmlogin-login-container flex items-center justify-center p-4">
+<body class="login-container flex items-center justify-center p-4">
     <!-- Notification -->
-    <div id="notification" class="pmlogin-notification fixed top-0 left-0 w-full z-50 p-4 text-white text-center font-medium">
+    <div id="notification" class="notification fixed top-0 left-0 w-full z-50 p-4 text-white text-center font-medium">
         <div id="notificationContent" class="max-w-md mx-auto"></div>
     </div>
 
     <!-- Login Card -->
-    <div class="pmlogin-card w-full max-w-md p-8">
+    <div class="login-card w-full max-w-md p-8">
         <!-- Logo and Title -->
         <div class="text-center mb-8">
-            <div class="pmlogin-logo-container">
+            <div class="logo-container">
                 <img src="../../assets/logo_full.png" alt="PMLogin Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <i class="fas fa-shield-alt text-white text-2xl" style="display: none;"></i>
             </div>
@@ -206,37 +206,37 @@
         <!-- Login Form -->
         <form id="loginForm" class="space-y-4">
             <!-- Demo Notice -->
-            <div class="pmlogin-demo-banner text-center">
+            <div class="demo-banner text-center">
                 <p class="text-blue-700 text-sm">
                     <i class="fas fa-info-circle"></i>
-                    <strong>Demo Mode:</strong> Server đang offline. Sử dụng <code>demo@pmlogin.com</code> để test giao diện
+                    <strong>Demo Mode:</strong> Sử dụng email <code>demo@pmlogin.com</code> để test giao diện
                 </p>
             </div>
 
             <!-- Email Input -->
             <div>
-                <label class="pmlogin-label">
+                <label class="input-label">
                     <i class="fas fa-envelope mr-2"></i>Email / Tên đăng nhập
                 </label>
                 <input 
                     type="text" 
                     id="email" 
-                    class="pmlogin-input w-full"
-                    placeholder="lelinh21102001@gmail.com hoặc demo@pmlogin.com"
+                    class="input-field w-full"
+                    placeholder="lelinh21102001@gmail.com"
                     required
                 >
             </div>
 
             <!-- Password Input -->
             <div class="relative">
-                <label class="pmlogin-label">
+                <label class="input-label">
                     <i class="fas fa-lock mr-2"></i>Mật khẩu
                 </label>
                 <input 
                     type="password" 
                     id="password" 
-                    class="pmlogin-input w-full pr-12"
-                    placeholder="••••••••••••••••••"
+                    class="input-field w-full pr-12"
+                    placeholder="lelinh21102001@gmail.com"
                     required
                 >
                 <button 
@@ -251,7 +251,7 @@
             <!-- Remember Me & Forgot Password -->
             <div class="flex items-center justify-between text-sm">
                 <label class="flex items-center cursor-pointer">
-                    <input type="checkbox" id="rememberMe" class="pmlogin-checkbox mr-2" checked>
+                    <input type="checkbox" id="rememberMe" class="checkbox-custom mr-2" checked>
                     <span class="text-gray-700">Ghi nhớ đăng nhập</span>
                 </label>
                 <a href="#" class="text-green-600 hover:text-green-700 hover:underline">
@@ -263,10 +263,10 @@
             <button 
                 type="submit" 
                 id="loginBtn" 
-                class="pmlogin-btn-primary w-full"
+                class="btn-login w-full"
             >
                 <span id="loginBtnText">Đăng nhập</span>
-                <div id="loginSpinner" class="pmlogin-loading-spinner mx-auto hidden"></div>
+                <div id="loginSpinner" class="loading-spinner mx-auto hidden"></div>
             </button>
 
             <!-- Register Link -->
@@ -279,9 +279,9 @@
         </form>
 
         <!-- System Info -->
-        <div class="pmlogin-system-info">
+        <div class="system-info">
             <div>Version: <span id="appVersion">1.0.0</span></div>
-            <div>HWID: <span id="hardwareId">bd93cc28...</span></div>
+            <div>HWID: <span id="hardwareId">b71e2880...</span></div>
         </div>
     </div>
 

@@ -55,7 +55,7 @@ npm start
 
 ### 2. Đăng nhập thật
 - Sử dụng email/password thật của bạn
-- Ứng dụng sẽ kết nối với server: `https://pm-login.nhatcms.net`
+- Ứng dụng sẽ kết nối với server: `https://pmbackend.site`
 
 ### 3. Quản lý Proxy
 - Vào tab "Quản lý Proxy"
@@ -177,7 +177,7 @@ Copyright © 2024 PMLogin Team. All rights reserved.
 
 ## 📞 Liên hệ
 
-- Website: https://pm-login.nhatcms.net
+- Website: https://pmbackend.site
 - Email: support@pmlogin.com
 - GitHub: https://github.com/pmlogin
 

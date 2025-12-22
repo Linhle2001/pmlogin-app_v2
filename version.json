@@ -4,7 +4,7 @@
   "name": "PMLogin Electron",
   "description": "Proxy Manager & Automation Platform",
   "author": "PMLogin Team",
-  "homepage": "https://pm-login.nhatcms.net",
+  "homepage": "https://pmbackend.site",
   "repository": {
     "type": "git",
     "url": "https://github.com/pmlogin/electron-app"

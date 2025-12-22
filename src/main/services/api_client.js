@@ -4,7 +4,7 @@ const path = require('path');
 require('dotenv').config();
 
 // Configuration from environment
-const BASE_URL = process.env.BASE_URL || 'https://pm-login.nhatcms.net';
+const BASE_URL = process.env.BASE_URL || 'https://pmbackend.site';
 const MAX_RETRIES = parseInt(process.env.MAX_RETRIES) || 3;
 const RETRY_DELAY = parseFloat(process.env.RETRY_DELAY) * 1000 || 1000; // Convert to milliseconds
 const DEFAULT_TIMEOUT = parseInt(process.env.REQUEST_TIMEOUT) * 1000 || 10000; // Convert to milliseconds
@@ -127,7 +127,7 @@ class ApiClient {
             
             switch (status) {
                 case 401:
-                    message = 'Phiên đăng nhập hết hạn hoặc HWID không match';
+                    message = data?.message || 'Phiên đăng nhập hết hạn hoặc HWID không match';
                     break;
                 case 404:
                     message = 'Không tìm thấy API endpoint';
@@ -137,7 +137,7 @@ class ApiClient {
                         const firstError = Object.values(data.errors)[0];
                         message = Array.isArray(firstError) ? firstError[0] : firstError;
                     } else {
-                        message = 'Dữ liệu không hợp lệ';
+                        message = data?.message || 'Dữ liệu không hợp lệ';
                     }
                     break;
                 case 500:

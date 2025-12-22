@@ -42,6 +42,9 @@ class ProxyManager {
         document.getElementById('btn-check-proxy')?.addEventListener('click', () => this.checkSelectedProxies());
         document.getElementById('btn-refresh')?.addEventListener('click', () => this.refresh());
 
+        // Logout button
+        document.getElementById('btn-logout')?.addEventListener('click', () => this.handleLogout());
+
         // Search and filters
         document.getElementById('search-input')?.addEventListener('input', (e) => this.applyFilter('search', e.target.value));
         document.getElementById('tag-filter')?.addEventListener('change', (e) => this.applyFilter('tag', e.target.value));
@@ -570,6 +573,133 @@ class ProxyManager {
         }
     }
 
+    showImportModal() {
+        const modal = document.getElementById('import-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            
+            // Focus on textarea
+            const textarea = document.getElementById('import-textarea');
+            if (textarea) textarea.focus();
+        }
+    }
+
+    hideImportModal() {
+        const modal = document.getElementById('import-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            
+            // Reset form
+            const textarea = document.getElementById('import-textarea');
+            const tagsInput = document.getElementById('import-tags');
+            
+            if (textarea) textarea.value = '';
+            if (tagsInput) tagsInput.value = 'Default';
+        }
+    }
+
+    async saveImportProxies() {
+        try {
+            const textarea = document.getElementById('import-textarea');
+            const tagsInput = document.getElementById('import-tags');
+            
+            if (!textarea || !textarea.value.trim()) {
+                this.showError('Please enter proxy list');
+                return;
+            }
+
+            const proxyLines = textarea.value.trim().split('\n');
+            const tags = tagsInput?.value || 'Default';
+            
+            this.showLoadingState();
+            
+            let successCount = 0;
+            let failCount = 0;
+            
+            for (const line of proxyLines) {
+                const proxyData = this.parseProxyLine(line.trim());
+                if (proxyData) {
+                    proxyData.tags = tags;
+                    proxyData.status = 'unchecked';
+                    
+                    const result = await window.electronAPI.invoke('db:proxy:add', proxyData);
+                    if (result.success) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                } else {
+                    failCount++;
+                }
+            }
+
+            this.showSuccess(`Imported ${successCount} proxies successfully${failCount > 0 ? `, ${failCount} failed` : ''}`);
+            this.hideImportModal();
+            await this.loadProxies();
+        } catch (error) {
+            console.error('❌ Error importing proxies:', error);
+            this.showError('Error importing proxies: ' + error.message);
+        } finally {
+            this.hideLoadingState();
+        }
+    }
+
+    parseProxyLine(line) {
+        if (!line) return null;
+
+        // Format: type://host:port:username:password:name
+        // or host:port:username:password
+        // or username:password@host:port
+        
+        try {
+            let type = 'http';
+            let host, port, username, password, name;
+
+            // Check for type://
+            if (line.includes('://')) {
+                const parts = line.split('://');
+                type = parts[0].toLowerCase();
+                line = parts[1];
+            }
+
+            // Check for username:password@host:port format
+            if (line.includes('@')) {
+                const parts = line.split('@');
+                const authParts = parts[0].split(':');
+                username = authParts[0];
+                password = authParts[1];
+                
+                const hostParts = parts[1].split(':');
+                host = hostParts[0];
+                port = parseInt(hostParts[1]);
+            } else {
+                // Format: host:port:username:password:name
+                const parts = line.split(':');
+                host = parts[0];
+                port = parseInt(parts[1]);
+                username = parts[2] || '';
+                password = parts[3] || '';
+                name = parts[4] || '';
+            }
+
+            if (!host || !port || isNaN(port)) {
+                return null;
+            }
+
+            return {
+                name: name || `${host}:${port}`,
+                host,
+                port,
+                type,
+                username: username || '',
+                password: password || ''
+            };
+        } catch (error) {
+            console.error('Error parsing proxy line:', line, error);
+            return null;
+        }
+    }
+
     async saveNewProxy() {
         try {
             const proxyData = this.getProxyFormData();
@@ -851,6 +981,137 @@ class ProxyManager {
         toast.className = `toast ${type}`;
         toast.textContent = message;
         
+        document.body.appendChild(toast);
+        
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 3000);
+    }
+
+    // ======================================================================
+    // LOGOUT HANDLER
+    // ======================================================================
+
+    async handleLogout() {
+        const confirmed = confirm('Bạn có chắc chắn muốn đăng xuất?');
+        
+        if (confirmed) {
+            try {
+                console.log('🚪 Logging out from proxy manager...');
+                const result = await window.electronAPI.logout();
+                
+                if (result.success) {
+                    console.log('✅ Logout successful');
+                    // Navigation will be handled by main process
+                } else {
+                    console.error('❌ Logout failed:', result.message);
+                    this.showError('Lỗi đăng xuất: ' + result.message);
+                }
+            } catch (error) {
+                console.error('❌ Logout error:', error);
+                this.showError('Lỗi đăng xuất: ' + error.message);
+            }
+        }
+    }
+
+    // ======================================================================
+    // FORM HELPERS
+    // ======================================================================
+
+    getProxyFormData() {
+        return {
+            name: document.getElementById('input-name')?.value || '',
+            host: document.getElementById('input-host')?.value || '',
+            port: parseInt(document.getElementById('input-port')?.value) || 8080,
+            type: document.getElementById('input-type')?.value || 'http',
+            username: document.getElementById('input-username')?.value || '',
+            password: document.getElementById('input-password')?.value || '',
+            tags: document.getElementById('input-tags')?.value || 'Default',
+            status: 'unchecked'
+        };
+    }
+
+    validateProxyData(proxyData) {
+        if (!proxyData.host) {
+            this.showError('Host is required');
+            return false;
+        }
+
+        if (!proxyData.port || proxyData.port < 1 || proxyData.port > 65535) {
+            this.showError('Port must be between 1 and 65535');
+            return false;
+        }
+
+        return true;
+    }
+
+    // ======================================================================
+    // UI STATE HELPERS
+    // ======================================================================
+
+    showLoadingState() {
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'flex';
+        }
+    }
+
+    hideLoadingState() {
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.style.display = 'none';
+        }
+    }
+
+    showSuccess(message) {
+        this.showToast(message, 'success');
+    }
+
+    showError(message) {
+        this.showToast(message, 'error');
+    }
+
+    showInfo(message) {
+        this.showToast(message, 'info');
+    }
+
+    showToast(message, type = 'info') {
+        console.log(`[${type.toUpperCase()}] ${message}`);
+        
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            max-width: 400px;
+            word-wrap: break-word;
+        `;
+        
+        // Set background color based on type
+        switch (type) {
+            case 'success':
+                toast.style.backgroundColor = '#10b981';
+                break;
+            case 'error':
+                toast.style.backgroundColor = '#ef4444';
+                break;
+            case 'info':
+            default:
+                toast.style.backgroundColor = '#3b82f6';
+                break;
+        }
+        
+        toast.textContent = message;
         document.body.appendChild(toast);
         
         // Auto remove after 3 seconds
