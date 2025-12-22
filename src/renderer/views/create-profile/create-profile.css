@@ -1,0 +1,1698 @@
+/* Create Profile CSS - Using PMLogin Theme System */
+
+.create-profile-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: var(--pmlogin-bg-primary);
+    overflow: hidden;
+}
+
+/* ==================== HEADER STYLES ==================== */
+.create-profile-header {
+    padding: 20px 30px;
+    background-color: var(--pmlogin-bg-card);
+    border-bottom: 1px solid var(--pmlogin-border-light);
+    flex-shrink: 0;
+}
+
+.page-title {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+}
+
+.page-subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--pmlogin-text-secondary);
+}
+
+/* ==================== CONTENT STYLES ==================== */
+.create-profile-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 30px 30px 30px;
+}
+
+/* ==================== TASKBAR STYLES ==================== */
+.profiles-taskbar {
+    background-color: var(--pmlogin-bg-card);
+    border-radius: 8px;
+    box-shadow: var(--pmlogin-shadow-default);
+    margin-bottom: 20px;
+    padding: 15px 20px;
+}
+
+.taskbar-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.taskbar-row:last-child {
+    margin-bottom: 0;
+}
+
+.search-container {
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--pmlogin-input-border);
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: var(--pmlogin-input-bg);
+    color: var(--pmlogin-input-text);
+    transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--pmlogin-input-border-focus);
+}
+
+.primary-buttons,
+.secondary-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.taskbar-row .btn {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.taskbar-row .btn.btn-primary {
+    background-color: var(--pmlogin-primary);
+    color: white;
+}
+
+.taskbar-row .btn.btn-primary:hover {
+    background-color: var(--pmlogin-primary-dark);
+}
+
+.taskbar-row .btn.btn-danger {
+    background-color: var(--pmlogin-danger);
+    color: white;
+}
+
+.taskbar-row .btn.btn-danger:hover {
+    background-color: var(--pmlogin-danger-dark);
+}
+
+.taskbar-row .btn.btn-outline {
+    background-color: transparent;
+    color: var(--pmlogin-primary);
+    border: 1px solid var(--pmlogin-primary);
+}
+
+.taskbar-row .btn.btn-outline:hover {
+    background-color: var(--pmlogin-primary);
+    color: white;
+}
+
+.taskbar-row .btn.btn-more {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+    border: 1px solid var(--pmlogin-border-default);
+}
+
+.taskbar-row .btn.btn-more:hover {
+    background-color: var(--pmlogin-gray-200);
+}
+
+/* ==================== PROFILES TABLE STYLES ==================== */
+.profiles-table-container {
+    background-color: var(--pmlogin-bg-card);
+    border-radius: 8px;
+    box-shadow: var(--pmlogin-shadow-default);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.profiles-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.profiles-table thead {
+    background-color: var(--pmlogin-gray-50);
+    border-bottom: 1px solid var(--pmlogin-border-light);
+}
+
+.profiles-table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profiles-table th.checkbox-column {
+    width: 50px;
+    text-align: center;
+}
+
+.profiles-table th.actions-column {
+    width: 120px;
+    text-align: center;
+}
+
+.profiles-table tbody tr {
+    border-bottom: 1px solid var(--pmlogin-border-light);
+    transition: background-color 0.2s ease;
+}
+
+.profiles-table tbody tr:hover {
+    background-color: var(--pmlogin-gray-50);
+}
+
+.profiles-table td {
+    padding: 12px 15px;
+    color: var(--pmlogin-text-primary);
+    vertical-align: middle;
+}
+
+.profiles-table td.checkbox-column {
+    text-align: center;
+}
+
+.name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-icon {
+    font-size: 12px;
+}
+
+.profile-name {
+    cursor: pointer;
+    color: var(--pmlogin-primary);
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.profile-name:hover {
+    color: var(--pmlogin-primary-dark);
+    text-decoration: underline;
+}
+
+.note-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-size: 13px;
+    background-color: transparent;
+    color: var(--pmlogin-text-primary);
+    transition: all 0.2s ease;
+}
+
+.note-input:focus {
+    outline: none;
+    border-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-bg-card);
+}
+
+.proxy-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.proxy-status.no-proxy {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-secondary);
+}
+
+.proxy-status.ready {
+    background-color: var(--pmlogin-success-100);
+    color: var(--pmlogin-success-dark);
+}
+
+.proxy-status.error {
+    background-color: var(--pmlogin-danger-100);
+    color: var(--pmlogin-danger-dark);
+}
+
+.proxy-status.checking {
+    background-color: var(--pmlogin-warning-100);
+    color: var(--pmlogin-warning-dark);
+}
+
+.proxy-status.proxy-text {
+    background-color: var(--pmlogin-primary-100);
+    color: var(--pmlogin-primary-dark);
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status.status-live {
+    background-color: var(--pmlogin-success-100);
+    color: var(--pmlogin-success-dark);
+}
+
+.status.status-dead {
+    background-color: var(--pmlogin-danger-100);
+    color: var(--pmlogin-danger-dark);
+}
+
+.actions-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+.actions-container .btn {
+    height: 28px;
+    padding: 0 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.actions-container .btn.btn-small.btn-primary {
+    background-color: var(--pmlogin-primary);
+    color: white;
+}
+
+.actions-container .btn.btn-small.btn-primary:hover {
+    background-color: var(--pmlogin-primary-dark);
+}
+
+.actions-container .btn.btn-more-actions {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+    border: 1px solid var(--pmlogin-border-default);
+    width: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actions-container .btn.btn-more-actions:hover {
+    background-color: var(--pmlogin-gray-200);
+}
+
+.no-data-row {
+    background-color: var(--pmlogin-gray-50);
+}
+
+.no-data-cell {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.no-data-icon {
+    font-size: 32px;
+    opacity: 0.5;
+}
+
+.no-data-text {
+    font-size: 16px;
+    color: var(--pmlogin-text-secondary);
+    font-weight: 500;
+}
+
+/* Checkbox styles */
+.select-all-checkbox,
+.profile-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* ==================== FORM SECTION ==================== */
+.form-section {
+    margin-bottom: 30px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-primary);
+}
+
+.checkbox-field {
+    margin-bottom: 20px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--pmlogin-text-primary);
+}
+
+.checkbox-text {
+    user-select: none;
+}
+
+.create-btn {
+    width: 180px;
+    margin-bottom: 20px;
+}
+
+/* ==================== CUSTOM SELECTOR STYLES ==================== */
+.custom-selector {
+    position: relative;
+    width: 100%;
+}
+
+.selector-button {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    background-color: var(--pmlogin-input-bg);
+    border: 1px solid var(--pmlogin-input-border);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--pmlogin-input-text);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.selector-button:hover {
+    border-color: var(--pmlogin-input-border-focus);
+}
+
+.selector-button.active {
+    border-color: var(--pmlogin-input-border-focus);
+}
+
+.selector-text {
+    flex: 1;
+    text-align: left;
+}
+
+.selector-arrow {
+    font-size: 12px;
+    color: var(--pmlogin-text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.selector-button.active .selector-arrow {
+    transform: rotate(180deg);
+}
+
+.selector-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--pmlogin-bg-card);
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 6px;
+    box-shadow: var(--pmlogin-shadow-lg);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.selector-dropdown.show {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--pmlogin-text-primary);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--pmlogin-gray-100);
+}
+
+.dropdown-item.selected {
+    background-color: var(--pmlogin-primary-100);
+    color: var(--pmlogin-primary);
+}
+
+/* Proxy dropdown specific styles */
+.proxy-dropdown {
+    max-height: 280px; /* Show up to 7 items */
+}
+
+/* ==================== TABS SECTION ==================== */
+.tabs-section {
+    background-color: var(--pmlogin-bg-card);
+    border-radius: 8px;
+    box-shadow: var(--pmlogin-shadow-default);
+    overflow: hidden;
+}
+
+.tab-header {
+    display: flex;
+    background-color: var(--pmlogin-gray-50);
+    border-bottom: 1px solid var(--pmlogin-border-light);
+}
+
+.tab-button {
+    flex: 1;
+    padding: 12px 20px;
+    background-color: transparent;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+    color: var(--pmlogin-primary-dark);
+    background-color: var(--pmlogin-gray-100);
+}
+
+.tab-button.active {
+    color: var(--pmlogin-primary);
+    border-bottom-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-bg-card);
+}
+
+.tab-content {
+    padding: 20px;
+    min-height: 400px;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.tab-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--pmlogin-text-secondary);
+    font-size: 16px;
+}
+
+/* ==================== SECTION STYLES ==================== */
+.section {
+    margin-bottom: 25px;
+}
+
+.section:last-child {
+    margin-bottom: 0;
+}
+
+.section-title {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+}
+
+.section-description {
+    margin: 0 0 15px 0;
+    font-size: 13px;
+    color: var(--pmlogin-text-secondary);
+    line-height: 1.4;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.help-icon {
+    font-size: 14px;
+    color: var(--pmlogin-text-secondary);
+    cursor: help;
+}
+
+/* ==================== PROXY TYPE BUTTONS ==================== */
+.proxy-type-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.proxy-type-option {
+    cursor: pointer;
+}
+
+.proxy-type-option input[type="radio"] {
+    display: none;
+}
+
+.proxy-type-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    min-width: 150px;
+    min-height: 50px;
+    background-color: var(--pmlogin-bg-card);
+    border: 2px solid var(--pmlogin-border-default);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-primary);
+    transition: all 0.2s ease;
+}
+
+.proxy-type-card:hover {
+    background-color: var(--pmlogin-primary-50);
+    border-color: var(--pmlogin-primary);
+    color: var(--pmlogin-primary);
+}
+
+.proxy-type-option input[type="radio"]:checked + .proxy-type-card {
+    background-color: var(--pmlogin-primary-100);
+    border-color: var(--pmlogin-primary);
+    color: var(--pmlogin-primary);
+}
+
+.proxy-type-icon {
+    font-size: 16px;
+}
+
+/* ==================== PROXY SECTIONS ==================== */
+.proxy-section {
+    padding: 20px;
+    background-color: var(--pmlogin-gray-50);
+    border-radius: 8px;
+    border: 1px solid var(--pmlogin-border-light);
+}
+
+.proxy-manager-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.proxy-selector {
+    flex: 1;
+}
+
+.buy-proxy-btn {
+    width: 120px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+/* ==================== PROXY CONFIG FORM ==================== */
+.proxy-config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.proxy-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* ==================== COOKIES TEXTAREA ==================== */
+.cookies-textarea {
+    width: 100%;
+    height: 200px;
+    padding: 15px;
+    border: 2px dashed var(--pmlogin-border-default);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    background-color: var(--pmlogin-gray-50);
+    color: var(--pmlogin-text-primary);
+    resize: vertical;
+    transition: all 0.2s ease;
+}
+
+.cookies-textarea:focus {
+    outline: none;
+    border-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-bg-card);
+}
+
+.cookies-textarea:hover {
+    border-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-bg-card);
+}
+
+.import-cookies-btn {
+    width: 100px;
+    margin-top: 10px;
+    align-self: flex-start;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    .create-profile-header {
+        padding: 16px 20px;
+    }
+    
+    .create-profile-content {
+        padding: 16px 20px 20px 20px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .taskbar-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .search-container {
+        max-width: none;
+    }
+    
+    .primary-buttons,
+    .secondary-buttons {
+        justify-content: center;
+    }
+    
+    .profiles-table-container {
+        overflow-x: auto;
+    }
+    
+    .profiles-table {
+        min-width: 800px;
+    }
+    
+    .proxy-type-buttons {
+        flex-direction: column;
+    }
+    
+    .proxy-type-card {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .proxy-manager-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .buy-proxy-btn {
+        width: 100%;
+    }
+    
+    .tab-header {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .tab-header::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .tab-button {
+        flex-shrink: 0;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 20px;
+    }
+    
+    .create-btn {
+        width: 100%;
+    }
+    
+    .proxy-actions {
+        flex-direction: column;
+    }
+    
+    .tab-content {
+        padding: 15px;
+    }
+    
+    .taskbar-row .btn {
+        font-size: 12px;
+        padding: 0 8px;
+    }
+}
+
+/* ==================== SCROLLBAR STYLING ==================== */
+.create-profile-content::-webkit-scrollbar,
+.selector-dropdown::-webkit-scrollbar,
+.profiles-table-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.create-profile-content::-webkit-scrollbar-track,
+.selector-dropdown::-webkit-scrollbar-track,
+.profiles-table-container::-webkit-scrollbar-track {
+    background: var(--pmlogin-gray-100);
+    border-radius: 3px;
+}
+
+.create-profile-content::-webkit-scrollbar-thumb,
+.selector-dropdown::-webkit-scrollbar-thumb,
+.profiles-table-container::-webkit-scrollbar-thumb {
+    background: var(--pmlogin-gray-300);
+    border-radius: 3px;
+}
+
+.create-profile-content::-webkit-scrollbar-thumb:hover,
+.selector-dropdown::-webkit-scrollbar-thumb:hover,
+.profiles-table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--pmlogin-gray-400);
+}
+
+/* ==================== ANIMATIONS ==================== */
+.create-profile-container {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.selector-dropdown {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== FOCUS STYLES ==================== */
+.tab-button:focus,
+.selector-button:focus,
+.proxy-type-card:focus {
+    outline: 2px solid var(--pmlogin-primary);
+    outline-offset: 2px;
+}
+
+.tab-button:focus:not(:focus-visible),
+.selector-button:focus:not(:focus-visible),
+.proxy-type-card:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ==================== HIGH CONTRAST MODE ==================== */
+@media (prefers-contrast: high) {
+    .proxy-type-card {
+        border-width: 3px;
+    }
+    
+    .selector-button {
+        border-width: 2px;
+    }
+}
+
+/* ==================== REDUCED MOTION ==================== */
+@media (prefers-reduced-motion: reduce) {
+    .create-profile-container,
+    .selector-dropdown,
+    .tab-button,
+    .proxy-type-card,
+    .selector-button {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* ==================== FORM SECTION ==================== */
+.form-section {
+    margin-bottom: 30px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-primary);
+}
+
+.checkbox-field {
+    margin-bottom: 20px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--pmlogin-text-primary);
+}
+
+.checkbox-text {
+    user-select: none;
+}
+
+.create-btn {
+    width: 180px;
+    margin-bottom: 20px;
+}
+
+/* ==================== CUSTOM SELECTOR STYLES ==================== */
+.custom-selector {
+    position: relative;
+    width: 100%;
+}
+
+.selector-button {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    background-color: var(--pmlogin-input-bg);
+    border: 1px solid var(--pmlogin-input-border);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--pmlogin-input-text);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.selector-button:hover {
+    border-color: var(--pmlogin-input-border-focus);
+}
+
+.selector-button.active {
+    border-color: var(--pmlogin-input-border-focus);
+}
+
+.selector-text {
+    flex: 1;
+    text-align: left;
+}
+
+.selector-arrow {
+    font-size: 12px;
+    color: var(--pmlogin-text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.selector-button.active .selector-arrow {
+    transform: rotate(180deg);
+}
+
+.selector-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--pmlogin-bg-card);
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 6px;
+    box-shadow: var(--pmlogin-shadow-lg);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.selector-dropdown.show {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--pmlogin-text-primary);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--pmlogin-gray-100);
+}
+
+.dropdown-item.selected {
+    background-color: var(--pmlogin-primary-100);
+    color: var(--pmlogin-primary);
+}
+
+/* Proxy dropdown specific styles */
+.proxy-dropdown {
+    max-height: 280px; /* Show up to 7 items */
+}
+
+/* ==================== TABS SECTION ==================== */
+.tabs-section {
+    background-color: var(--pmlogin-bg-card);
+    border-radius: 8px;
+    box-shadow: var(--pmlogin-shadow-default);
+    overflow: hidden;
+}
+
+.tab-header {
+    display: flex;
+    background-color: var(--pmlogin-gray-50);
+    border-bottom: 1px solid var(--pmlogin-border-light);
+}
+
+.tab-button {
+    flex: 1;
+    padding: 12px 20px;
+    background-color: transparent;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+    color: var(--pmlogin-primary-dark);
+    background-color: var(--pmlogin-gray-100);
+}
+
+.tab-button.active {
+    color: var(--pmlogin-primary);
+    border-bottom-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-bg-card);
+}
+
+.tab-content {
+    padding: 20px;
+    min-height: 400px;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.tab-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--pmlogin-text-secondary);
+    font-size: 16px;
+}
+
+/* ==================== SECTION STYLES ==================== */
+.section {
+    margin-bottom: 25px;
+}
+
+.section:last-child {
+    margin-bottom: 0;
+}
+
+.section-title {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+}
+
+.section-description {
+    margin: 0 0 15px 0;
+    font-size: 13px;
+    color: var(--pmlogin-text-secondary);
+    line-height: 1.4;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.help-icon {
+    font-size: 14px;
+    color: var(--pmlogin-text-secondary);
+    cursor: help;
+}
+
+/* ==================== PROXY TYPE BUTTONS ==================== */
+.proxy-type-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.proxy-type-option {
+    cursor: pointer;
+}
+
+.proxy-type-option input[type="radio"] {
+    display: none;
+}
+
+.proxy-type-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    min-width: 150px;
+    min-height: 50px;
+    background-color: var(--pmlogin-bg-card);
+    border: 2px solid var(--pmlogin-border-default);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-primary);
+    transition: all 0.2s ease;
+}
+
+.proxy-type-card:hover {
+    background-color: var(--pmlogin-primary-50);
+    border-color: var(--pmlogin-primary);
+    color: var(--pmlogin-primary);
+}
+
+.proxy-type-option input[type="radio"]:checked + .proxy-type-card {
+    background-color: var(--pmlogin-primary-100);
+    border-color: var(--pmlogin-primary);
+    color: var(--pmlogin-primary);
+}
+
+.proxy-type-icon {
+    font-size: 16px;
+}
+
+/* ==================== PROXY SECTIONS ==================== */
+.proxy-section {
+    padding: 20px;
+    background-color: var(--pmlogin-gray-50);
+    border-radius: 8px;
+    border: 1px solid var(--pmlogin-border-light);
+}
+
+.proxy-manager-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.proxy-selector {
+    flex: 1;
+}
+
+.buy-proxy-btn {
+    width: 120px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+/* ==================== PROXY CONFIG FORM ==================== */
+.proxy-config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.proxy-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* ==================== COOKIES TEXTAREA ==================== */
+.cookies-textarea {
+    width: 100%;
+    height: 200px;
+    padding: 15px;
+    border: 2px dashed var(--pmlogin-border-default);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    background-color: var(--pmlogin-gray-50);
+    color: var(--pmlogin-text-primary);
+    resize: vertical;
+    transition: all 0.2s ease;
+}
+
+.cookies-textarea:focus {
+    outline: none;
+    border-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-bg-card);
+}
+
+.cookies-textarea:hover {
+    border-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-bg-card);
+}
+
+.import-cookies-btn {
+    width: 100px;
+    margin-top: 10px;
+    align-self: flex-start;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    .create-profile-header {
+        padding: 16px 20px;
+    }
+    
+    .create-profile-content {
+        padding: 16px 20px 20px 20px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .proxy-type-buttons {
+        flex-direction: column;
+    }
+    
+    .proxy-type-card {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .proxy-manager-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .buy-proxy-btn {
+        width: 100%;
+    }
+    
+    .tab-header {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .tab-header::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .tab-button {
+        flex-shrink: 0;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 20px;
+    }
+    
+    .create-btn {
+        width: 100%;
+    }
+    
+    .proxy-actions {
+        flex-direction: column;
+    }
+    
+    .tab-content {
+        padding: 15px;
+    }
+}
+
+/* ==================== SCROLLBAR STYLING ==================== */
+.create-profile-content::-webkit-scrollbar,
+.selector-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.create-profile-content::-webkit-scrollbar-track,
+.selector-dropdown::-webkit-scrollbar-track {
+    background: var(--pmlogin-gray-100);
+    border-radius: 3px;
+}
+
+.create-profile-content::-webkit-scrollbar-thumb,
+.selector-dropdown::-webkit-scrollbar-thumb {
+    background: var(--pmlogin-gray-300);
+    border-radius: 3px;
+}
+
+.create-profile-content::-webkit-scrollbar-thumb:hover,
+.selector-dropdown::-webkit-scrollbar-thumb:hover {
+    background: var(--pmlogin-gray-400);
+}
+
+/* ==================== ANIMATIONS ==================== */
+.create-profile-container {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.selector-dropdown {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== FOCUS STYLES ==================== */
+.tab-button:focus,
+.selector-button:focus,
+.proxy-type-card:focus {
+    outline: 2px solid var(--pmlogin-primary);
+    outline-offset: 2px;
+}
+
+.tab-button:focus:not(:focus-visible),
+.selector-button:focus:not(:focus-visible),
+.proxy-type-card:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ==================== HIGH CONTRAST MODE ==================== */
+@media (prefers-contrast: high) {
+    .proxy-type-card {
+        border-width: 3px;
+    }
+    
+    .selector-button {
+        border-width: 2px;
+    }
+}
+
+/* ==================== REDUCED MOTION ==================== */
+@media (prefers-reduced-motion: reduce) {
+    .create-profile-container,
+    .selector-dropdown,
+    .tab-button,
+    .proxy-type-card,
+    .selector-button {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* ==================== CONTEXT MENU STYLES ==================== */
+.context-menu {
+    position: fixed;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.context-menu.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.context-menu-content {
+    background-color: white;
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 8px;
+    box-shadow: var(--pmlogin-shadow-lg);
+    padding: 8px;
+    min-width: 220px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+    color: var(--pmlogin-text-primary);
+}
+
+.menu-item:hover {
+    background-color: var(--pmlogin-gray-100);
+}
+
+.menu-item.danger {
+    color: var(--pmlogin-danger);
+}
+
+.menu-item.danger:hover {
+    background-color: var(--pmlogin-danger-100);
+}
+
+.menu-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.menu-text {
+    flex: 1;
+}
+
+.menu-separator {
+    height: 1px;
+    background-color: var(--pmlogin-border-light);
+    margin: 4px 0;
+}
+
+/* ==================== DIALOG STYLES ==================== */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.clone-dialog {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--pmlogin-shadow-xl);
+    width: 100%;
+    max-width: 500px;
+    margin: 20px;
+    animation: slideUp 0.3s ease;
+}
+
+.dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--pmlogin-border-light);
+}
+
+.dialog-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+}
+
+.dialog-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--pmlogin-text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.dialog-close:hover {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+}
+
+.dialog-body {
+    padding: 24px;
+}
+
+.dialog-section {
+    margin-bottom: 20px;
+}
+
+.dialog-section label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-primary);
+    margin-bottom: 8px;
+}
+
+.clone-count-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.clone-count-input {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--pmlogin-border-default);
+    border-radius: 6px;
+    font-size: 16px;
+    text-align: center;
+    background-color: var(--pmlogin-input-bg);
+    color: var(--pmlogin-input-text);
+}
+
+.clone-count-input:focus {
+    outline: none;
+    border-color: var(--pmlogin-primary);
+}
+
+.count-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.count-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--pmlogin-border-default);
+    background-color: var(--pmlogin-bg-card);
+    color: var(--pmlogin-text-primary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.count-btn:hover {
+    background-color: var(--pmlogin-gray-100);
+    border-color: var(--pmlogin-primary);
+}
+
+.count-btn:active {
+    transform: scale(0.95);
+}
+
+.dialog-info {
+    background-color: var(--pmlogin-gray-50);
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 3px solid var(--pmlogin-primary);
+}
+
+.dialog-info p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--pmlogin-text-secondary);
+}
+
+.dialog-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid var(--pmlogin-border-light);
+}
+
+.dialog-footer .btn {
+    height: 40px;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+}
+
+.dialog-footer .btn.btn-secondary {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+}
+
+.dialog-footer .btn.btn-secondary:hover {
+    background-color: var(--pmlogin-gray-200);
+}
+
+.dialog-footer .btn.btn-primary {
+    background-color: var(--pmlogin-primary);
+    color: white;
+}
+
+.dialog-footer .btn.btn-primary:hover {
+    background-color: var(--pmlogin-primary-dark);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== HEADER TOP STYLES ==================== */
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-secondary);
+    background-color: transparent;
+    border: 1px solid var(--pmlogin-border-default);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    color: var(--pmlogin-primary);
+    border-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-primary-50);
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .header-top {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .header-actions {
+        justify-content: center;
+    }
+}

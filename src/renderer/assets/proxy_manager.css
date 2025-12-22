@@ -1,0 +1,444 @@
+/* Proxy Manager CSS - Pagination and UI styles */
+
+/* Import pagination styles from profiles_view.css */
+@import url('./profiles_view.css');
+
+/* Proxy Manager specific styles */
+.proxy-manager-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--pmlogin-bg-secondary, #f8fafc);
+}
+
+/* Proxy table styles */
+.proxy-table-container {
+    flex: 1;
+    overflow: auto;
+    min-height: 200px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.proxy-row {
+    transition: background-color 0.2s ease;
+}
+
+.proxy-row:hover {
+    background-color: #f8fafc;
+}
+
+.proxy-checkbox {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+}
+
+.proxy-checkbox:checked {
+    background-color: #22c55e;
+    border-color: #22c55e;
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-live {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-dead {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+.status-checking {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.status-unchecked {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+/* Action buttons */
+.proxy-action-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.proxy-action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.proxy-action-btn.test {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.proxy-action-btn.test:hover {
+    background-color: #2563eb;
+}
+
+.proxy-action-btn.edit {
+    background-color: #6b7280;
+    color: white;
+}
+
+.proxy-action-btn.edit:hover {
+    background-color: #4b5563;
+}
+
+.proxy-action-btn.delete {
+    background-color: #ef4444;
+    color: white;
+}
+
+.proxy-action-btn.delete:hover {
+    background-color: #dc2626;
+}
+
+/* Empty state */
+.proxy-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.proxy-empty-state i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.proxy-empty-state h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.proxy-empty-state p {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* Loading state */
+.proxy-loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.proxy-loading-state i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Filters section */
+.proxy-filters {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.proxy-filters .flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: end;
+}
+
+.proxy-filters label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.proxy-filters select,
+.proxy-filters input {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    color: #374151;
+}
+
+.proxy-filters select:focus,
+.proxy-filters input:focus {
+    outline: none;
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+/* Stats cards */
+.proxy-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.proxy-stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.proxy-stat-card .stat-info {
+    flex: 1;
+}
+
+.proxy-stat-card .stat-label {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 4px;
+}
+
+.proxy-stat-card .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #374151;
+}
+
+.proxy-stat-card .stat-icon {
+    font-size: 24px;
+    opacity: 0.7;
+}
+
+.proxy-stat-card.total .stat-value {
+    color: #3b82f6;
+}
+
+.proxy-stat-card.live .stat-value {
+    color: #22c55e;
+}
+
+.proxy-stat-card.dead .stat-value {
+    color: #ef4444;
+}
+
+.proxy-stat-card.unchecked .stat-value {
+    color: #6b7280;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .proxy-filters .flex {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .proxy-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .proxy-stat-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .proxy-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideInRight 0.3s ease-out;
+}
+
+.toast.toast-success {
+    background-color: #22c55e;
+}
+
+.toast.toast-error {
+    background-color: #ef4444;
+}
+
+.toast.toast-info {
+    background-color: #3b82f6;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Ensure pagination styles are available */
+.pagination-container {
+    margin-top: 20px;
+    padding: 16px 0;
+    border-top: 1px solid #e5e7eb;
+}
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.items-per-page-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.items-per-page-select {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    color: #374151;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.pagination-stats {
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: #f3f4f6;
+    border-color: #22c55e;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f9fafb;
+    color: #9ca3af;
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pagination-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-page:hover {
+    background-color: #f3f4f6;
+    border-color: #22c55e;
+}
+
+.pagination-page.active {
+    background-color: #22c55e;
+    border-color: #22c55e;
+    color: white;
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: #9ca3af;
+    font-size: 14px;
+    font-weight: 500;
+}

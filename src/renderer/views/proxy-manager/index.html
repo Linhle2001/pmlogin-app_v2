@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy Manager</title>
+    <link rel="stylesheet" href="../../assets/profiles_view.css">
+    <link rel="stylesheet" href="./proxy-manager.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div id="sidebar-container"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <h1 class="page-title">Proxy Manager</h1>
+                    <p class="page-subtitle">Quản lý và kiểm tra proxy của bạn</p>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span class="user-name" id="user-name">Loading...</span>
+                        <button class="btn-logout" id="btn-logout">Đăng xuất</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Bar -->
+            <div class="controls-bar" id="controls-bar">
+                <button class="btn-primary" id="btn-add-proxy">
+                    <span>+</span> Add proxy
+                </button>
+                
+                <select class="tag-filter" id="tag-filter">
+                    <option value="All Tags">All Tags</option>
+                </select>
+                
+                <button class="btn-refresh" id="btn-refresh" title="Refresh">
+                    ↻
+                </button>
+                
+                <input type="text" class="search-input" id="search-input" placeholder="Search proxy...">
+                
+                <button class="btn-secondary" id="btn-check-proxy">Check proxy</button>
+            </div>
+
+            <!-- Action Bar (Hidden by default) -->
+            <div class="action-bar" id="action-bar" style="display: none;">
+                <button class="btn-close" id="btn-close-action">✕</button>
+                <button class="btn-action btn-check" id="btn-check-selected">Check</button>
+                <button class="btn-action btn-copy" id="btn-copy-selected">Copy</button>
+                <button class="btn-action btn-delete" id="btn-delete-selected">Delete</button>
+            </div>
+
+            <!-- Proxy Table -->
+            <div class="table-container">
+                <table class="proxy-table" id="proxy-table">
+                    <thead>
+                        <tr>
+                            <th width="40">
+                                <input type="checkbox" id="select-all-checkbox">
+                            </th>
+                            <th width="50">#</th>
+                            <th>Name</th>
+                            <th>Host</th>
+                            <th>Port</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Type</th>
+                            <th>Tag</th>
+                            <th>Status</th>
+                            <th width="60"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="proxy-table-body">
+                        <!-- Proxy rows will be inserted here -->
+                    </tbody>
+                </table>
+                
+                <!-- No Data Placeholder -->
+                <div class="no-data-placeholder" id="no-data-placeholder" style="display: none;">
+                    <div class="no-data-icon">📦</div>
+                    <div class="no-data-text">Chưa có proxy nào</div>
+                    <button class="btn-primary" id="btn-add-first-proxy">
+                        <span>+</span> Thêm proxy đầu tiên
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pagination Footer -->
+            <div class="pagination-footer" id="pagination-footer">
+                <div class="pagination-info">
+                    <span id="pagination-text">Showing 0-0 of 0 Proxies</span>
+                </div>
+                <div class="pagination-controls">
+                    <button class="btn-page" id="btn-first-page" disabled>«</button>
+                    <button class="btn-page" id="btn-prev-page" disabled>‹</button>
+                    <span class="page-info">
+                        Page <input type="number" id="page-input" value="1" min="1"> of <span id="total-pages">1</span>
+                    </span>
+                    <button class="btn-page" id="btn-next-page" disabled>›</button>
+                    <button class="btn-page" id="btn-last-page" disabled>»</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Proxy Modal -->
+    <div class="modal" id="proxy-modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Proxy</h2>
+                <button class="modal-close" id="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="input-name" placeholder="Proxy name (optional)">
+                </div>
+                
+                <div class="form-group">
+                    <label>Host *</label>
+                    <input type="text" id="input-host" placeholder="proxy.example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Port *</label>
+                    <div class="port-input-group">
+                        <input type="number" id="input-port" placeholder="8080" min="1" max="65535" required>
+                        <button class="btn-port-adjust" id="btn-port-minus">−</button>
+                        <button class="btn-port-adjust" id="btn-port-plus">+</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Protocol support</label>
+                    <select id="input-type">
+                        <option value="http">HTTP</option>
+                        <option value="https">HTTPS</option>
+                        <option value="socks5">SOCKS5</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="input-username" placeholder="Username (optional)">
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="password-input-group">
+                        <input type="password" id="input-password" placeholder="Password (optional)">
+                        <button class="btn-toggle-password" id="btn-toggle-password">👁</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tags</label>
+                    <input type="text" id="input-tags" placeholder="Default, Work, Personal..." value="Default">
+                    <small>Phân cách bằng dấu phẩy</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-cancel-modal">Cancel</button>
+                <button class="btn-primary" id="btn-save-proxy">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Proxy Modal -->
+    <div class="modal" id="import-modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Import Proxies</h2>
+                <button class="modal-close" id="import-modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="import-instructions">
+                    <p><strong>Format hỗ trợ:</strong></p>
+                    <ul>
+                        <li>type://host:port:username:password:name</li>
+                        <li>host:port:username:password</li>
+                        <li>username:password@host:port</li>
+                    </ul>
+                    <p><small>Mỗi proxy một dòng. Type có thể là: http, https, socks5</small></p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Proxy List</label>
+                    <textarea id="import-textarea" rows="10" placeholder="Nhập danh sách proxy...&#10;Ví dụ:&#10;http://proxy1.com:8080:user:pass&#10;192.168.1.1:3128:user:pass"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tags</label>
+                    <input type="text" id="import-tags" placeholder="Default, Imported..." value="Default">
+                    <small>Phân cách bằng dấu phẩy</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-cancel-import">Cancel</button>
+                <button class="btn-primary" id="btn-import-proxies">Import</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast" style="display: none;">
+        <span id="toast-message"></span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text">Loading...</div>
+    </div>
+
+    <script src="../sidebar.js"></script>
+    <script src="./proxy-manager.js"></script>
+</body>
+</html>

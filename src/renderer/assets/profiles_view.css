@@ -1,0 +1,1358 @@
+/* ProfilesView CSS - Main profiles management view styles using PMLogin Theme */
+
+.profiles-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: var(--pmlogin-bg-secondary);
+}
+
+/* ==================== HEADER STYLES ==================== */
+.profiles-header {
+    background-color: var(--pmlogin-bg-card);
+    border-bottom: 1px solid var(--pmlogin-border-light);
+    padding: 16px 20px;
+    flex-shrink: 0;
+}
+
+.tabs-container {
+    display: flex;
+    gap: 4px;
+}
+
+.tab-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: transparent;
+    color: var(--pmlogin-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.tab-button:hover {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+}
+
+.tab-button.active {
+    background-color: var(--pmlogin-primary);
+    color: var(--pmlogin-text-on-primary);
+}
+
+.tab-button.active:hover {
+    background-color: var(--pmlogin-primary-dark);
+}
+
+.tab-icon {
+    font-size: 16px;
+}
+
+.tab-text {
+    font-size: 14px;
+}
+
+/* ==================== CONTENT STYLES ==================== */
+.profiles-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 16px;
+    overflow: hidden;
+}
+
+.taskbar-container {
+    flex-shrink: 0;
+}
+
+.table-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Important for flex child to shrink */
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    .profiles-content {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .profiles-header {
+        padding: 12px 16px;
+    }
+    
+    .tabs-container {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .tabs-container::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .tab-button {
+        flex-shrink: 0;
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    .tab-icon {
+        font-size: 14px;
+    }
+    
+    .tab-text {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-button .tab-text {
+        display: none;
+    }
+    
+    .tab-button {
+        padding: 8px;
+        min-width: 40px;
+        justify-content: center;
+    }
+}
+
+/* ==================== LOADING STATES ==================== */
+.profiles-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--pmlogin-text-secondary);
+    font-size: 14px;
+}
+
+.profiles-loading::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--pmlogin-border-light);
+    border-top: 2px solid var(--pmlogin-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ==================== ERROR STATES ==================== */
+.profiles-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--pmlogin-error);
+    text-align: center;
+    padding: 20px;
+}
+
+.profiles-error-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.profiles-error-message {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.profiles-error-details {
+    font-size: 14px;
+    color: var(--pmlogin-text-secondary);
+    margin-bottom: 16px;
+}
+
+.profiles-error-retry {
+    padding: 8px 16px;
+    background-color: var(--pmlogin-primary);
+    color: var(--pmlogin-text-on-primary);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.profiles-error-retry:hover {
+    background-color: var(--pmlogin-primary-dark);
+}
+
+/* ==================== INTEGRATION STYLES ==================== */
+/* These styles ensure proper integration with the main app layout */
+
+.main-content .profiles-view {
+    height: calc(100vh - 60px); /* Adjust based on your app's header height */
+}
+
+.sidebar-open .profiles-view {
+    height: calc(100vh - 60px); /* Adjust based on your app's layout */
+}
+
+/* ==================== ANIMATION STYLES ==================== */
+.profiles-view {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-button {
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.tab-button:hover::before {
+    left: 100%;
+}
+
+/* ==================== FOCUS STYLES ==================== */
+.tab-button:focus {
+    outline: 2px solid var(--pmlogin-primary);
+    outline-offset: 2px;
+}
+
+.tab-button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ==================== HIGH CONTRAST MODE ==================== */
+@media (prefers-contrast: high) {
+    .tab-button {
+        border: 1px solid transparent;
+    }
+    
+    .tab-button:hover {
+        border-color: var(--pmlogin-text-primary);
+    }
+    
+    .tab-button.active {
+        border-color: var(--pmlogin-primary);
+    }
+}
+
+/* ==================== REDUCED MOTION ==================== */
+@media (prefers-reduced-motion: reduce) {
+    .profiles-view,
+    .tab-button,
+    .tab-button::before {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* ==================== ENHANCED TAB SWITCHING STYLES ==================== */
+
+/* Header Styles */
+.profiles-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--pmlogin-border-light);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.header-left .view-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--pmlogin-text-primary);
+    margin: 0 0 4px 0;
+}
+
+.header-left .view-subtitle {
+    font-size: 14px;
+    color: var(--pmlogin-text-secondary);
+    margin: 0;
+}
+
+.header-right .refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.header-right .refresh-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Enhanced Tab Styles */
+.tab-count {
+    background-color: var(--pmlogin-gray-200);
+    color: var(--pmlogin-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.tab-button.active .tab-count {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--pmlogin-text-on-primary);
+}
+
+/* Tab Content Styles */
+.tab-content {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+/* Group Management Styles */
+.group-management-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px 24px;
+}
+
+.group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 16px;
+}
+
+.group-search {
+    flex: 1;
+    max-width: 400px;
+}
+
+.group-search .search-input {
+    width: 100%;
+    padding: 10px 16px;
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+    background-color: var(--pmlogin-bg-card);
+    color: var(--pmlogin-text-primary);
+}
+
+.group-search .search-input:focus {
+    outline: none;
+    border-color: var(--pmlogin-primary);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.group-list-container {
+    flex: 1;
+    overflow: auto;
+}
+
+/* Groups Grid */
+.groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.group-card {
+    background: var(--pmlogin-bg-card);
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.group-card:hover {
+    border-color: var(--pmlogin-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.group-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.group-icon {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--pmlogin-primary), var(--pmlogin-primary-dark));
+    border-radius: 12px;
+    color: var(--pmlogin-text-on-primary);
+}
+
+.group-info .group-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+    margin: 0 0 4px 0;
+}
+
+.group-info .group-count {
+    font-size: 14px;
+    color: var(--pmlogin-text-secondary);
+    margin: 0;
+}
+
+.group-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.group-expanded-content {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--pmlogin-border-light);
+}
+
+.group-profiles-placeholder {
+    text-align: center;
+    padding: 20px;
+    color: var(--pmlogin-text-secondary);
+    font-style: italic;
+}
+
+/* Placeholder Styles */
+.no-groups-placeholder,
+.team-placeholder,
+.error-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--pmlogin-text-secondary);
+}
+
+.placeholder-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.no-groups-placeholder h3,
+.team-placeholder h3,
+.error-placeholder h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+    margin: 0 0 8px 0;
+}
+
+.no-groups-placeholder p,
+.team-placeholder p,
+.error-placeholder p {
+    font-size: 16px;
+    margin: 0 0 20px 0;
+    max-width: 400px;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal-dialog {
+    background: var(--pmlogin-bg-card);
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--pmlogin-border-light);
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--pmlogin-text-secondary);
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid var(--pmlogin-border-light);
+    background-color: var(--pmlogin-bg-secondary);
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-primary);
+    margin-bottom: 6px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+    background-color: var(--pmlogin-bg-card);
+    color: var(--pmlogin-text-primary);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--pmlogin-primary);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+/* Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background-color: var(--pmlogin-primary);
+    color: var(--pmlogin-text-on-primary);
+    border-color: var(--pmlogin-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--pmlogin-primary-dark);
+    border-color: var(--pmlogin-primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+    border-color: var(--pmlogin-border-light);
+}
+
+.btn-secondary:hover {
+    background-color: var(--pmlogin-gray-200);
+    border-color: var(--pmlogin-gray-300);
+}
+
+.btn-danger {
+    background-color: var(--pmlogin-error);
+    color: var(--pmlogin-text-on-primary);
+    border-color: var(--pmlogin-error);
+}
+
+.btn-danger:hover {
+    background-color: var(--pmlogin-error-dark);
+    border-color: var(--pmlogin-error-dark);
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* Loading and Error States */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: var(--pmlogin-text-secondary);
+    font-style: italic;
+}
+
+.error {
+    text-align: center;
+    padding: 20px;
+    color: var(--pmlogin-error);
+    font-weight: 500;
+}
+
+/* Toast Styles */
+.toast {
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design for Enhanced Features */
+@media (max-width: 768px) {
+    .profiles-view-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .group-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .groups-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tabs-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .tab-button {
+        flex-shrink: 0;
+    }
+}
+/* ==================== GROUP PROFILES DISPLAY STYLES ==================== */
+
+.group-profiles-header {
+    margin-bottom: 12px;
+}
+
+.group-profiles-header h5 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+    margin: 0;
+}
+
+.group-profiles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.group-profile-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--pmlogin-bg-secondary);
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.group-profile-item:hover {
+    background: var(--pmlogin-bg-card);
+    border-color: var(--pmlogin-primary);
+}
+
+.group-profile-item .profile-icon {
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--pmlogin-primary);
+    border-radius: 6px;
+    color: var(--pmlogin-text-on-primary);
+    flex-shrink: 0;
+}
+
+.group-profile-item .profile-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.group-profile-item .profile-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.group-profile-item .profile-details {
+    font-size: 12px;
+    color: var(--pmlogin-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.group-profile-item .profile-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+/* Scrollbar styling for group profiles list */
+.group-profiles-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.group-profiles-list::-webkit-scrollbar-track {
+    background: var(--pmlogin-bg-secondary);
+    border-radius: 3px;
+}
+
+.group-profiles-list::-webkit-scrollbar-thumb {
+    background: var(--pmlogin-gray-300);
+    border-radius: 3px;
+}
+
+.group-profiles-list::-webkit-scrollbar-thumb:hover {
+    background: var(--pmlogin-gray-400);
+}
+
+/* Responsive adjustments for group profiles */
+@media (max-width: 768px) {
+    .group-profile-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .group-profile-item .profile-info {
+        width: 100%;
+    }
+    
+    .group-profile-item .profile-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+/* ==================== PAGINATION STYLES ==================== */
+
+.pagination-container {
+    margin-top: 20px;
+    padding: 16px 0;
+    border-top: 1px solid var(--pmlogin-border-light);
+}
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.items-per-page-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--pmlogin-text-secondary);
+}
+
+.items-per-page-selector label {
+    font-weight: 500;
+}
+
+.items-per-page-select {
+    padding: 6px 12px;
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 6px;
+    background-color: var(--pmlogin-bg-card);
+    color: var(--pmlogin-text-primary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.items-per-page-select:focus {
+    outline: none;
+    border-color: var(--pmlogin-primary);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.pagination-stats {
+    font-size: 14px;
+    color: var(--pmlogin-text-secondary);
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 6px;
+    background-color: var(--pmlogin-bg-card);
+    color: var(--pmlogin-text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: var(--pmlogin-gray-100);
+    border-color: var(--pmlogin-primary);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-secondary);
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pagination-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 6px;
+    background-color: var(--pmlogin-bg-card);
+    color: var(--pmlogin-text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-page:hover {
+    background-color: var(--pmlogin-gray-100);
+    border-color: var(--pmlogin-primary);
+}
+
+.pagination-page.active {
+    background-color: var(--pmlogin-primary);
+    border-color: var(--pmlogin-primary);
+    color: var(--pmlogin-text-on-primary);
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: var(--pmlogin-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Responsive Pagination */
+@media (max-width: 768px) {
+    .pagination-wrapper {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+    
+    .pagination-info {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+    }
+    
+    .pagination-controls {
+        justify-content: center;
+    }
+    
+    .pagination-pages {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .pagination-btn {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+    
+    .pagination-page {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination-pages {
+        gap: 2px;
+    }
+    
+    .pagination-page {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+    
+    .pagination-btn span {
+        display: none;
+    }
+    
+    .pagination-btn {
+        padding: 6px 8px;
+    }
+}
+
+/* Enhanced Table Container for Pagination */
+.table-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.profiles-table-container {
+    flex: 1;
+    overflow: auto;
+    min-height: 200px;
+}
+
+/* Pagination Loading State */
+.pagination-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.pagination-loading .pagination-btn,
+.pagination-loading .pagination-page,
+.pagination-loading .items-per-page-select {
+    cursor: wait;
+}
+
+/* Pagination Animation */
+.pagination-wrapper {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .pagination-btn,
+    .pagination-page {
+        border-width: 2px;
+    }
+    
+    .pagination-page.active {
+        border-width: 3px;
+    }
+}
+
+/* Focus Styles for Accessibility */
+.pagination-btn:focus,
+.pagination-page:focus,
+.items-per-page-select:focus {
+    outline: 2px solid var(--pmlogin-primary);
+    outline-offset: 2px;
+}
+
+.pagination-btn:focus:not(:focus-visible),
+.pagination-page:focus:not(:focus-visible),
+.items-per-page-select:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .pagination-wrapper,
+    .pagination-btn,
+    .pagination-page {
+        animation: none;
+        transition: none;
+    }
+}
+/* ==================== GROUP PAGINATION STYLES ==================== */
+
+.group-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--pmlogin-border-light);
+}
+
+.group-pagination-info {
+    font-size: 12px;
+    color: var(--pmlogin-text-secondary);
+}
+
+.group-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.group-page-info {
+    font-size: 12px;
+    color: var(--pmlogin-text-secondary);
+    font-weight: 500;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Responsive Group Pagination */
+@media (max-width: 768px) {
+    .group-pagination {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    .group-pagination-controls {
+        justify-content: center;
+    }
+}
+
+/* ==================== PROFILES VIEW HEADER ==================== */
+.profiles-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--pmlogin-bg-card);
+    border-bottom: 1px solid var(--pmlogin-border-light);
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.view-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--pmlogin-text-primary);
+    margin: 0;
+}
+
+.view-subtitle {
+    font-size: 14px;
+    color: var(--pmlogin-text-secondary);
+    margin: 0;
+}
+
+.header-right {
+    display: flex;
+    gap: 12px;
+}
+
+/* ==================== PROFILES TABS ==================== */
+.profiles-tabs {
+    background-color: var(--pmlogin-bg-card);
+    border-bottom: 1px solid var(--pmlogin-border-light);
+    padding: 0 20px;
+    flex-shrink: 0;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    background-color: transparent;
+    color: var(--pmlogin-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+}
+
+.tab-btn:hover {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+}
+
+.tab-btn.active {
+    background-color: var(--pmlogin-primary);
+    color: var(--pmlogin-text-on-primary);
+}
+
+.tab-btn.active:hover {
+    background-color: var(--pmlogin-primary-dark);
+}
+
+.tab-btn i {
+    font-size: 16px;
+}
+
+.tab-count {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
+.tab-btn.active .tab-count {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ==================== MAIN CONTENT ==================== */
+.profiles-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 16px;
+    overflow: hidden;
+    background-color: var(--pmlogin-bg-secondary);
+}
+
+.taskbar-container {
+    flex-shrink: 0;
+}
+
+.table-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.pagination-container {
+    flex-shrink: 0;
+    margin-top: 16px;
+}
+
+/* ==================== BUTTON STYLES ==================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background-color: var(--pmlogin-button-primary-bg);
+    color: var(--pmlogin-button-primary-text);
+}
+
+.btn-primary:hover {
+    background-color: var(--pmlogin-button-primary-hover);
+}
+
+.btn-secondary {
+    background-color: var(--pmlogin-button-secondary-bg);
+    color: var(--pmlogin-button-secondary-text);
+}
+
+.btn-secondary:hover {
+    background-color: var(--pmlogin-button-secondary-hover);
+}
+
+.btn-danger {
+    background-color: var(--pmlogin-button-danger-bg);
+    color: var(--pmlogin-button-danger-text);
+}
+
+.btn-danger:hover {
+    background-color: var(--pmlogin-button-danger-hover);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--pmlogin-primary);
+    border: 1px solid var(--pmlogin-primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--pmlogin-primary);
+    color: var(--pmlogin-text-on-primary);
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.refresh-btn {
+    height: 36px;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    .profiles-view-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .profiles-main-content {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .tab-buttons {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .tab-buttons::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .tab-btn {
+        flex-shrink: 0;
+        padding: 10px 14px;
+    }
+}

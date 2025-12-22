@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0",
+  "build": "20241221",
+  "name": "PMLogin Electron",
+  "description": "Proxy Manager & Automation Platform",
+  "author": "PMLogin Team",
+  "homepage": "https://pm-login.nhatcms.net",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pmlogin/electron-app"
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2024-12-21",
+      "changes": [
+        "Initial release of Electron version",
+        "Complete migration from PyQt6 to Electron.js",
+        "Modern web-based UI with Tailwind CSS",
+        "Full proxy management functionality",
+        "Hardware ID based authentication",
+        "Auto-update system",
+        "Session management with remember me",
+        "Cross-platform support (Windows, macOS, Linux)"
+      ]
+    }
+  ]
+}

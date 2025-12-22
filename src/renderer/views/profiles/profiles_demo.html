@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profiles Structure Demo</title>
+    <link rel="stylesheet" href="../../assets/profiles_structure.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .demo-section {
+            margin-bottom: 30px;
+        }
+        
+        .demo-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 16px;
+        }
+        
+        .demo-subtitle {
+            font-size: 18px;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+        
+        .tabs-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background-color: #f3f4f6;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-button.active {
+            background-color: #10b981;
+            color: #ffffff;
+        }
+        
+        .tab-button:hover:not(.active) {
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="demo-section">
+            <h1 class="demo-title">Profiles Structure Demo</h1>
+            <p>This demo shows the converted ProfilesStructure from Python (PyQt6) to JavaScript (Electron)</p>
+        </div>
+
+        <div class="demo-section">
+            <div class="tabs-container">
+                <button class="tab-button active" data-context="local">[CLOUD] Local</button>
+                <button class="tab-button" data-context="group" data-group="Test Group">📁 Group</button>
+            </div>
+            
+            <div id="taskbar-container">
+                <!-- Taskbar will be inserted here -->
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <div id="table-container">
+                <!-- Table will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../../components/profiles_structure.js"></script>
+    <script>
+        // Initialize ProfilesStructure
+        const profilesStructure = new ProfilesStructure();
+        
+        // Mock data for demo
+        const mockProfiles = [
+            {
+                id: '1',
+                name: 'Profile 1',
+                platform: 'Chrome',
+                tags: ['work', 'social'],
+                note: 'Main work profile',
+                proxy: 'proxy1.example.com:8080:user1:pass1',
+                proxy_status: 'Ready',
+                updated_at: '2024-12-21T10:30:00Z',
+                last_started_at: '2024-12-21T09:15:00Z',
+                status: 'Ready'
+            },
+            {
+                id: '2',
+                name: 'Profile 2',
+                platform: 'Firefox',
+                tags: ['personal'],
+                note: 'Personal browsing',
+                proxy: 'proxy2.example.com:8080:user2:pass2',
+                proxy_status: 'Proxy Error',
+                updated_at: '2024-12-21T08:45:00Z',
+                last_started_at: '2024-12-20T16:30:00Z',
+                status: 'Dead'
+            },
+            {
+                id: '3',
+                name: 'Profile 3',
+                platform: 'Chrome',
+                tags: ['testing'],
+                note: 'Testing profile',
+                proxy: 'No proxy',
+                proxy_status: '',
+                updated_at: '2024-12-21T07:20:00Z',
+                last_started_at: '',
+                status: 'Ready'
+            },
+            {
+                id: '4',
+                name: 'Profile 4',
+                platform: 'Edge',
+                tags: ['development', 'testing'],
+                note: 'Development environment',
+                proxy: 'proxy4.example.com:8080:user4:pass4',
+                proxy_status: 'Checking',
+                updated_at: '2024-12-21T11:00:00Z',
+                last_started_at: '2024-12-21T10:45:00Z',
+                status: 'Live'
+            }
+        ];
+        
+        // Initialize with local context
+        let currentContext = 'local';
+        let currentGroupName = null;
+        
+        function initializeDemo(context = 'local', groupName = null) {
+            currentContext = context;
+            currentGroupName = groupName;
+            
+            // Create taskbar
+            const taskbarContainer = document.getElementById('taskbar-container');
+            taskbarContainer.innerHTML = '';
+            const taskbar = profilesStructure.createTaskbar(context, groupName);
+            taskbarContainer.appendChild(taskbar);
+            
+            // Create table
+            const tableContainer = document.getElementById('table-container');
+            tableContainer.innerHTML = '';
+            const table = profilesStructure.createProfilesTable(context);
+            tableContainer.appendChild(table);
+            
+            // Populate table with mock data
+            profilesStructure.populateTable(mockProfiles, table);
+        }
+        
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                // Update active tab
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Get context and group name
+                const context = e.target.dataset.context;
+                const groupName = e.target.dataset.group || null;
+                
+                // Reinitialize demo
+                initializeDemo(context, groupName);
+            });
+        });
+        
+        // Initialize demo on page load
+        initializeDemo();
+        
+        // Add some demo functionality
+        console.log('Profiles Structure Demo loaded successfully!');
+        console.log('Available methods:', Object.getOwnPropertyNames(ProfilesStructure.prototype));
+    </script>
+</body>
+</html>

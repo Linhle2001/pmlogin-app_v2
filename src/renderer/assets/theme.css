@@ -1,0 +1,263 @@
+/* PMLogin Theme CSS Variables */
+:root {
+    /* Primary Colors */
+    --pmlogin-primary: #22c55e;
+    --pmlogin-primary-dark: #16a34a;
+    --pmlogin-primary-light: #4ade80;
+    --pmlogin-primary-50: #f0fdf4;
+    --pmlogin-primary-100: #dcfce7;
+    --pmlogin-primary-600: #16a34a;
+    --pmlogin-primary-700: #15803d;
+    --pmlogin-primary-800: #166534;
+    
+    /* Secondary Colors */
+    --pmlogin-secondary: #3b82f6;
+    --pmlogin-secondary-dark: #2563eb;
+    --pmlogin-secondary-light: #60a5fa;
+    
+    /* Status Colors */
+    --pmlogin-success: #22c55e;
+    --pmlogin-success-bg: #dcfce7;
+    --pmlogin-success-text: #166534;
+    --pmlogin-error: #ef4444;
+    --pmlogin-error-bg: #fef2f2;
+    --pmlogin-error-text: #991b1b;
+    --pmlogin-warning: #f59e0b;
+    --pmlogin-warning-bg: #fef3c7;
+    --pmlogin-warning-text: #92400e;
+    --pmlogin-info: #3b82f6;
+    --pmlogin-info-bg: #dbeafe;
+    --pmlogin-info-text: #1e40af;
+    
+    /* Neutral Colors */
+    --pmlogin-white: #ffffff;
+    --pmlogin-black: #000000;
+    --pmlogin-gray-50: #f9fafb;
+    --pmlogin-gray-100: #f3f4f6;
+    --pmlogin-gray-200: #e5e7eb;
+    --pmlogin-gray-300: #d1d5db;
+    --pmlogin-gray-400: #9ca3af;
+    --pmlogin-gray-500: #6b7280;
+    --pmlogin-gray-600: #4b5563;
+    --pmlogin-gray-700: #374151;
+    --pmlogin-gray-800: #1f2937;
+    --pmlogin-gray-900: #111827;
+    
+    /* Background Colors */
+    --pmlogin-bg-primary: #ffffff;
+    --pmlogin-bg-secondary: #f9fafb;
+    --pmlogin-bg-sidebar: #1f2937;
+    --pmlogin-bg-header: #22c55e;
+    
+    /* Text Colors */
+    --pmlogin-text-primary: #111827;
+    --pmlogin-text-secondary: #6b7280;
+    --pmlogin-text-muted: #9ca3af;
+    --pmlogin-text-white: #ffffff;
+    
+    /* Border Colors */
+    --pmlogin-border-light: #e5e7eb;
+    --pmlogin-border-default: #d1d5db;
+    --pmlogin-border-primary: #22c55e;
+    
+    /* Gradients */
+    --pmlogin-gradient-primary: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    --pmlogin-gradient-secondary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    --pmlogin-gradient-demo: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    --pmlogin-gradient-login: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    
+    /* Shadows */
+    --pmlogin-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --pmlogin-shadow-default: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --pmlogin-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --pmlogin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Component Styles using theme variables */
+.pmlogin-btn-primary {
+    background-color: var(--pmlogin-primary);
+    color: var(--pmlogin-text-white);
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.pmlogin-btn-primary:hover {
+    background-color: var(--pmlogin-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+}
+
+.pmlogin-btn-primary:disabled {
+    background-color: var(--pmlogin-gray-400);
+    transform: none;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.pmlogin-input {
+    background: var(--pmlogin-white);
+    border: 2px solid var(--pmlogin-border-primary);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    color: var(--pmlogin-text-primary);
+}
+
+.pmlogin-input:focus {
+    outline: none;
+    border-color: var(--pmlogin-primary-dark);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.pmlogin-input::placeholder {
+    color: var(--pmlogin-text-muted);
+}
+
+.pmlogin-label {
+    color: var(--pmlogin-primary);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.pmlogin-card {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: var(--pmlogin-shadow-lg);
+}
+
+.pmlogin-logo-container {
+    width: 80px;
+    height: 80px;
+    background: var(--pmlogin-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+}
+
+.pmlogin-demo-banner {
+    background: var(--pmlogin-info-bg);
+    border: 1px solid var(--pmlogin-secondary-light);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    animation: pulse-demo 2s ease-in-out infinite;
+}
+
+.pmlogin-demo-banner .fas {
+    color: var(--pmlogin-secondary);
+    margin-right: 8px;
+}
+
+.pmlogin-demo-banner strong {
+    color: var(--pmlogin-info-text);
+}
+
+.pmlogin-demo-banner code {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--pmlogin-info-text);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+}
+
+@keyframes pulse-demo {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    50% { 
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+    }
+}
+
+.pmlogin-notification {
+    transform: translateY(-100%);
+    transition: all 0.3s ease;
+}
+
+.pmlogin-notification.show {
+    transform: translateY(0);
+}
+
+.pmlogin-notification.success {
+    background-color: var(--pmlogin-success);
+}
+
+.pmlogin-notification.error {
+    background-color: var(--pmlogin-error);
+}
+
+.pmlogin-notification.warning {
+    background-color: var(--pmlogin-warning);
+}
+
+.pmlogin-notification.info {
+    background-color: var(--pmlogin-info);
+}
+
+.pmlogin-checkbox {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--pmlogin-primary);
+    border-radius: 3px;
+    background: var(--pmlogin-white);
+    cursor: pointer;
+    position: relative;
+}
+
+.pmlogin-checkbox:checked {
+    background: var(--pmlogin-primary);
+}
+
+.pmlogin-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 1px;
+    color: var(--pmlogin-white);
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Login page specific styles */
+.pmlogin-login-container {
+    background: var(--pmlogin-gradient-login);
+    min-height: 100vh;
+}
+
+.pmlogin-loading-spinner {
+    border: 2px solid var(--pmlogin-gray-100);
+    border-top: 2px solid var(--pmlogin-primary);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* System info styles */
+.pmlogin-system-info {
+    font-size: 11px;
+    color: var(--pmlogin-text-secondary);
+    text-align: center;
+    margin-top: 20px;
+}

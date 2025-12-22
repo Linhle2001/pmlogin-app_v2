@@ -1,0 +1,449 @@
+/* Button Components - Modern Style */
+
+/* Base Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:focus {
+    outline: 2px solid rgba(59, 130, 246, 0.5);
+    outline-offset: 2px;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Button Sizes */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 8px;
+}
+
+.btn-md {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 10px;
+}
+
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 14px;
+}
+
+/* Primary Button - Green (Chạy/Start) */
+.btn-primary {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+}
+
+/* Danger Button - Red (Dừng/Stop) */
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-danger:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+/* Secondary Button - Blue */
+.btn-secondary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+/* Outline Button */
+.btn-outline {
+    background: white;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+    color: #374151;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-outline:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Ghost Button */
+.btn-ghost {
+    background: transparent;
+    color: #6b7280;
+    border: none;
+    box-shadow: none;
+}
+
+.btn-ghost:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-ghost:active {
+    background: #e5e7eb;
+}
+
+/* Warning Button - Orange */
+.btn-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-warning:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+}
+
+/* Success Button - Green (alternative) */
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-success:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+/* Icon Buttons */
+.btn-icon {
+    padding: 8px;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: 8px;
+}
+
+.btn-icon.btn-sm {
+    padding: 6px;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 6px;
+}
+
+.btn-icon.btn-lg {
+    padding: 12px;
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 12px;
+}
+
+/* Icon Styles */
+.btn-icon i {
+    font-size: 16px;
+}
+
+.btn-icon.btn-sm i {
+    font-size: 14px;
+}
+
+.btn-icon.btn-lg i {
+    font-size: 18px;
+}
+
+/* Button Groups */
+.btn-group {
+    display: inline-flex;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-group .btn {
+    border-radius: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 0;
+}
+
+.btn-group .btn:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.btn-group .btn:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-right: none;
+}
+
+.btn-group .btn:only-child {
+    border-radius: 12px;
+    border-right: none;
+}
+
+/* Floating Action Button */
+.btn-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    padding: 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.btn-fab:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Loading State */
+.btn-loading {
+    position: relative;
+    color: transparent !important;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: btn-spin 1s linear infinite;
+}
+
+@keyframes btn-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .btn-lg {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    .btn-fab {
+        width: 48px;
+        height: 48px;
+        bottom: 16px;
+        right: 16px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .btn-outline {
+        background: #374151;
+        color: #d1d5db;
+        border-color: #4b5563;
+    }
+    
+    .btn-outline:hover {
+        background: #4b5563;
+        border-color: #6b7280;
+        color: #f3f4f6;
+    }
+    
+    .btn-ghost {
+        color: #d1d5db;
+    }
+    
+    .btn-ghost:hover {
+        background: #374151;
+        color: #f3f4f6;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .btn {
+        transition: none;
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+    
+    .btn-loading::after {
+        animation: none;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .btn {
+        border: 2px solid;
+    }
+    
+    .btn-primary {
+        border-color: #16a34a;
+    }
+    
+    .btn-danger {
+        border-color: #dc2626;
+    }
+    
+    .btn-secondary {
+        border-color: #2563eb;
+    }
+}
+
+/* Context Menu Icon Styles */
+.menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    margin-right: 8px;
+}
+
+.menu-icon i {
+    font-size: 14px;
+    color: inherit;
+}
+
+.menu-item.danger .menu-icon i {
+    color: #ef4444;
+}
+
+/* Taskbar Button Icon Spacing */
+.taskbar-row .btn i {
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+.taskbar-row .btn:has(i:only-child) i {
+    margin-right: 0;
+}
+
+/* Profile Table Action Button Icons */
+.btn-more-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    min-width: 32px;
+}
+
+.btn-more-actions i {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.btn-more-actions:hover i {
+    color: #374151;
+}
+
+/* Ensure consistent icon sizes in buttons */
+.btn i {
+    flex-shrink: 0;
+}
+
+/* Tab button icons */
+.tab-btn i {
+    font-size: 14px;
+    margin-right: 6px;
+}
+
+.create-tab-btn i {
+    font-size: 14px;
+    margin-right: 6px;
+}
+
+/* Logo Styles */
+.sidebar img[alt*="Logo"] {
+    border-radius: 8px;
+    background: transparent;
+    transition: transform 0.2s ease;
+}
+
+.sidebar img[alt*="Logo"]:hover {
+    transform: scale(1.05);
+}
+
+/* Page Title Logo */
+.page-title img {
+    vertical-align: middle;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Ensure logo maintains aspect ratio */
+img[alt*="Logo"] {
+    object-fit: contain;
+    max-width: 100%;
+    height: auto;
+}

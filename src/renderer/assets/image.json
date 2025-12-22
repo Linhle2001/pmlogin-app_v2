@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "url": "https://images.unsplash.com/photo-1557683316-973673baf926?w=1280&q=80"
+  },
+  {
+    "id": 2,
+    "url": "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1280&q=80"
+  },
+  {
+    "id": 3,
+    "url": "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=1280&q=80"
+  },
+  {
+    "id": 4,
+    "url": "src/ui/assets/images.png"
+  },
+  {
+    "id": 5,
+    "url": "https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?w=1280&q=80"
+  }
+]

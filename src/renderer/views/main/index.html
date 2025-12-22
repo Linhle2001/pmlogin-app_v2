@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMLogin - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../../assets/components.css">
+    <link rel="stylesheet" href="../../assets/profiles_structure.css">
+    <link rel="stylesheet" href="../../assets/profiles_view.css">
+    <link rel="stylesheet" href="../../assets/button-components.css">
+    <style id="componentStyles"></style>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .text-center h1 {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+        
+        .sidebar-item.active {
+            background: rgba(34, 197, 94, 0.2);
+            border-right: 3px solid #22c55e;
+        }
+        
+        .content-area {
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .stat-card.green {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        
+        .stat-card.blue {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        
+        .stat-card.orange {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .notification {
+            transform: translateY(-100%);
+            transition: all 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+        }
+        
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-working {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-failed {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+        
+        .status-untested {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        /* Enhanced Profiles View Styles */
+        .profiles-main-view {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+
+        .profiles-header-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .profiles-content-section {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .profiles-taskbar-container {
+            margin-bottom: 20px;
+        }
+
+        .profiles-table-wrapper {
+            flex: 1;
+            min-height: 0;
+        }
+
+        .debug-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            background: white;
+            border: 2px solid #22c55e;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            font-family: monospace;
+            font-size: 11px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .debug-header {
+            background: #22c55e;
+            color: white;
+            padding: 6px 10px;
+            margin: -12px -12px 12px -12px;
+            border-radius: 6px 6px 0 0;
+            font-weight: bold;
+        }
+        
+        .debug-item {
+            margin: 6px 0;
+            padding: 4px 6px;
+            background: #f3f4f6;
+            border-radius: 4px;
+        }
+        
+        .debug-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .debug-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .debug-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .debug-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 2px 1px;
+            font-size: 10px;
+        }
+        
+        .debug-button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Load ProfilesStructure and ProfilesView FIRST -->
+    <script>
+        console.log('🔄 About to load ProfilesStructure...');
+    </script>
+    <script src="../../components/profiles_structure.js"></script>
+    <script>
+        console.log('✅ ProfilesStructure script loaded. Available:', typeof ProfilesStructure !== 'undefined');
+        console.log('🔄 About to load ProfilesView...');
+    </script>
+    <script src="../profiles/profiles_view.js"></script>
+    <script>
+        console.log('✅ ProfilesView script loaded. Available:', typeof ProfilesView !== 'undefined');
+        console.log('🔍 Global classes check:');
+        console.log('  - ProfilesStructure:', typeof ProfilesStructure);
+        console.log('  - ProfilesView:', typeof ProfilesView);
+    </script>
+    
+    <!-- Notification -->
+    <div id="notification" class="notification fixed top-0 left-0 w-full z-50 p-4 text-white text-center font-medium">
+        <div id="notificationContent" class="max-w-md mx-auto"></div>
+    </div>
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 text-white">
+            <!-- Header -->
+            <div class="p-6 border-b border-gray-600">
+                <div class="text-center">
+                    <h1 class="text-2xl font-bold text-white mb-1">PMLogin</h1>
+                    <p class="text-sm text-gray-300 font-medium">Dashboard</p>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="p-4 space-y-2">
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="dashboard">
+                    <i class="fas fa-chart-pie w-5"></i>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="create-profile">
+                    <i class="fas fa-user-plus w-5"></i>
+                    <span>Tạo Hồ Sơ</span>
+                </a>
+                <a href="#" class="sidebar-item active flex items-center space-x-3 p-3 rounded-lg" data-view="profiles">
+                    <i class="fas fa-address-book w-5"></i>
+                    <span>Hồ Sơ</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="proxies">
+                    <i class="fas fa-server w-5"></i>
+                    <span>Quản lý Proxy</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="store">
+                    <i class="fas fa-shopping-bag w-5"></i>
+                    <span>Cửa Hàng</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="automation">
+                    <i class="fas fa-magic w-5"></i>
+                    <span>Tự Động Hóa</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="account">
+                    <i class="fas fa-user-cog w-5"></i>
+                    <span>Quản lý Tài Khoản</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="payment">
+                    <i class="fas fa-credit-card w-5"></i>
+                    <span>Thanh Toán</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="settings">
+                    <i class="fas fa-sliders-h w-5"></i>
+                    <span>Cài Đặt</span>
+                </a>
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="help">
+                    <i class="fas fa-life-ring w-5"></i>
+                    <span>Trợ Giúp & Tài Liệu</span>
+                </a>
+            </nav>
+
+            <!-- Footer -->
+            <div class="absolute bottom-0 left-0 right-0 border-t border-gray-600">
+                <!-- User Info -->
+                <div class="p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center font-bold text-white">
+                            DU
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-white">Demo User</p>
+                            <p class="text-xs text-gray-400">PRO PLAN</p>
+                        </div>
+                        <div class="ml-auto">
+                            <i class="fas fa-cog text-gray-400 hover:text-white cursor-pointer transition-colors"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-area flex-1 overflow-y-auto">
+            <!-- Dashboard View -->
+            <div id="dashboardView" class="view-content p-6 hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Tổng quan hệ thống</h2>
+                    <p class="text-gray-600">Chào mừng bạn quay trở lại với PMLogin Dashboard</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card green card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-100 text-sm">Tổng Proxy</p>
+                                <p class="text-2xl font-bold" id="totalProxies">3</p>
+                            </div>
+                            <i class="fas fa-globe text-2xl text-green-200"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card blue card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-100 text-sm">Proxy hoạt động</p>
+                                <p class="text-2xl font-bold" id="workingProxies">2</p>
+                            </div>
+                            <i class="fas fa-check-circle text-2xl text-blue-200"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card orange card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-orange-100 text-sm">Profiles</p>
+                                <p class="text-2xl font-bold" id="totalProfiles">5</p>
+                            </div>
+                            <i class="fas fa-users text-2xl text-orange-200"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card card p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-100 text-sm">Phiên bản</p>
+                                <p class="text-lg font-bold" id="appVersionDashboard">1.0.0</p>
+                            </div>
+                            <i class="fas fa-code-branch text-2xl text-purple-200"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Hoạt động gần đây</h3>
+                    <div id="recentActivity" class="space-y-3">
+                        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                            <span class="text-gray-700">Chào mừng bạn đến với PMLogin Dashboard!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proxies View -->
+            <div id="proxiesView" class="view-content p-6 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Quản lý Proxy</h2>
+                        <p class="text-gray-600">Thêm, sửa, xóa và test proxy</p>
+                    </div>
+                    <div class="space-x-2">
+                        <button id="addProxyBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Thêm Proxy
+                        </button>
+                        <button id="importProxyBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                            <i class="fas fa-upload mr-2"></i>Import
+                        </button>
+                        <button id="testSelectedProxiesBtn" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors" disabled>
+                            <i class="fas fa-check-circle mr-2"></i>Test Selected
+                        </button>
+                        <button id="deleteSelectedProxiesBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors" disabled>
+                            <i class="fas fa-trash mr-2"></i>Delete Selected
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-lg shadow-sm p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Total Proxies</p>
+                                <p class="text-2xl font-bold text-gray-800" id="totalProxiesCount">0</p>
+                            </div>
+                            <i class="fas fa-server text-2xl text-blue-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Live Proxies</p>
+                                <p class="text-2xl font-bold text-green-600" id="liveProxiesCount">0</p>
+                            </div>
+                            <i class="fas fa-check-circle text-2xl text-green-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Dead Proxies</p>
+                                <p class="text-2xl font-bold text-red-600" id="deadProxiesCount">0</p>
+                            </div>
+                            <i class="fas fa-times-circle text-2xl text-red-500"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Unchecked</p>
+                                <p class="text-2xl font-bold text-gray-600" id="uncheckedProxiesCount">0</p>
+                            </div>
+                            <i class="fas fa-question-circle text-2xl text-gray-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Status</label>
+                            <select id="proxyStatusFilter" class="border border-gray-300 rounded-lg px-3 py-2">
+                                <option value="">All Status</option>
+                                <option value="live">Live</option>
+                                <option value="dead">Dead</option>
+                                <option value="unchecked">Unchecked</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Type</label>
+                            <select id="proxyTypeFilter" class="border border-gray-300 rounded-lg px-3 py-2">
+                                <option value="">All Types</option>
+                                <option value="http">HTTP</option>
+                                <option value="https">HTTPS</option>
+                                <option value="socks4">SOCKS4</option>
+                                <option value="socks5">SOCKS5</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Tag</label>
+                            <select id="proxyTagFilter" class="border border-gray-300 rounded-lg px-3 py-2">
+                                <option value="">All Tags</option>
+                            </select>
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                            <input type="text" id="proxySearchInput" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Search by host, port, or name...">
+                        </div>
+                        <div class="flex items-end">
+                            <button id="clearFiltersBtn" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                                <i class="fas fa-times mr-2"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proxy Table -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">
+                                        <input type="checkbox" id="selectAllProxies" class="rounded">
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Name</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Host:Port</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Type</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Auth</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tags</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Last Used</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="proxyTableBody" class="divide-y divide-gray-200">
+                                <!-- Proxy rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div id="proxyEmptyState" class="text-center py-12 hidden">
+                        <i class="fas fa-server text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No proxies found</h3>
+                        <p class="text-gray-500 mb-4">Get started by adding your first proxy</p>
+                        <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors" onclick="document.getElementById('addProxyBtn').click()">
+                            <i class="fas fa-plus mr-2"></i>Add Proxy
+                        </button>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="proxyLoadingState" class="text-center py-12 hidden">
+                        <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Loading proxies...</h3>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-6">
+                    <div class="text-sm text-gray-700">
+                        Showing <span id="proxyShowingStart">0</span> to <span id="proxyShowingEnd">0</span> of <span id="proxyTotalCount">0</span> proxies
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="proxyPrevPage" class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50" disabled>
+                            Previous
+                        </button>
+                        <button id="proxyNextPage" class="px-3 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50" disabled>
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profiles View - Using ProfilesView -->
+            <div id="profilesView" class="view-content">
+                <!-- ProfilesView will replace this content -->
+                <div class="flex items-center justify-center h-64">
+                    <div class="text-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+                        <p class="text-gray-600">Loading profiles...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Profile View -->
+            <div id="createProfileView" class="view-content p-6 hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Tạo Hồ Sơ</h2>
+                    <p class="text-gray-600">Tạo hồ sơ browser mới với cấu hình tùy chỉnh</p>
+                </div>
+
+                <!-- Create Profile Form -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <!-- Tab Navigation -->
+                    <div class="flex border-b border-gray-200 mb-6">
+                        <button class="create-tab-btn active px-6 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600" data-tab="general">
+                            <i class="fas fa-info-circle mr-2"></i>Thông tin chung
+                        </button>
+                        <button class="create-tab-btn px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700" data-tab="proxy">
+                            <i class="fas fa-server mr-2"></i>Proxy
+                        </button>
+                        <button class="create-tab-btn px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700" data-tab="browser">
+                            <i class="fas fa-globe mr-2"></i>Browser
+                        </button>
+                        <button class="create-tab-btn px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700" data-tab="advanced">
+                            <i class="fas fa-sliders-h mr-2"></i>Nâng cao
+                        </button>
+                    </div>
+
+                    <!-- Tab Contents -->
+                    <div>
+                        <!-- General Tab -->
+                        <div id="generalCreateTab" class="create-tab-content">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Basic Info -->
+                                <div class="space-y-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Thông tin cơ bản</h3>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Tên Profile *</label>
+                                        <input type="text" id="createProfileName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Nhập tên profile">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Platform</label>
+                                        <select id="createPlatformSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="windows">Windows</option>
+                                            <option value="macos">macOS</option>
+                                            <option value="linux">Linux</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Browser</label>
+                                        <select id="createBrowserSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="chrome">Google Chrome</option>
+                                            <option value="firefox">Mozilla Firefox</option>
+                                            <option value="edge">Microsoft Edge</option>
+                                            <option value="safari">Safari</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                                        <input type="text" id="createProfileTags" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="work, social, test (phân cách bằng dấu phẩy)">
+                                    </div>
+                                </div>
+
+                                <!-- Group & Settings -->
+                                <div class="space-y-4">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Nhóm & Cài đặt</h3>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Nhóm</label>
+                                        <select id="createGroupSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Không có nhóm</option>
+                                            <option value="work">Work</option>
+                                            <option value="personal">Personal</option>
+                                            <option value="test">Test</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Ghi chú</label>
+                                        <textarea id="createProfileNote" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ghi chú về profile này..."></textarea>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="createShareOnCloud" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                            <label for="createShareOnCloud" class="ml-2 text-sm text-gray-700">Chia sẻ trên Cloud</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="createAutoStart" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                            <label for="createAutoStart" class="ml-2 text-sm text-gray-700">Tự động khởi động</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Proxy Tab -->
+                        <div id="proxyCreateTab" class="create-tab-content hidden">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Cấu hình Proxy</h3>
+                            
+                            <!-- Proxy Type Selection -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-3">Loại Proxy</label>
+                                <div class="space-y-2">
+                                    <div class="flex items-center">
+                                        <input type="radio" id="createNoProxy" name="createProxyType" value="none" class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                        <label for="createNoProxy" class="ml-2 text-sm text-gray-700">Không sử dụng proxy</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="createPmProxy" name="createProxyType" value="pm_proxy" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        <label for="createPmProxy" class="ml-2 text-sm text-gray-700">PM Proxy (từ hệ thống)</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="radio" id="createCustomProxy" name="createProxyType" value="custom" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                        <label for="createCustomProxy" class="ml-2 text-sm text-gray-700">Proxy tùy chỉnh</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PM Proxy Section -->
+                            <div id="createPmProxySection" class="hidden mb-6">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Chọn PM Proxy</label>
+                                    <select id="createPmProxySelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Chọn proxy...</option>
+                                        <option value="proxy1">Proxy 1 (US) - 192.168.1.1:8080</option>
+                                        <option value="proxy2">Proxy 2 (UK) - 192.168.1.2:8080</option>
+                                        <option value="proxy3">Proxy 3 (JP) - 192.168.1.3:8080</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Custom Proxy Section -->
+                            <div id="createCustomProxySection" class="hidden">
+                                <div class="bg-gray-50 p-4 rounded-lg space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Loại Proxy</label>
+                                            <select id="createProxyProtocol" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                <option value="http">HTTP</option>
+                                                <option value="https">HTTPS</option>
+                                                <option value="socks4">SOCKS4</option>
+                                                <option value="socks5">SOCKS5</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Host *</label>
+                                            <input type="text" id="createProxyHost" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="192.168.1.1">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Port *</label>
+                                            <input type="number" id="createProxyPort" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="8080">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                                            <input type="text" id="createProxyUsername" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="username">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                            <input type="password" id="createProxyPassword" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="password">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex space-x-2">
+                                        <button id="createTestProxyBtn" class="btn btn-secondary btn-md">
+                                            <i class="fas fa-check-circle"></i>
+                                            <span>Test Proxy</span>
+                                        </button>
+                                        <button id="createClearProxyBtn" class="btn btn-outline btn-md">
+                                            <i class="fas fa-eraser"></i>
+                                            <span>Clear</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Browser Tab -->
+                        <div id="browserCreateTab" class="create-tab-content hidden">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Cài đặt Browser</h3>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- User Agent -->
+                                <div class="space-y-4">
+                                    <h4 class="font-medium text-gray-800">User Agent</h4>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">User Agent String</label>
+                                        <textarea id="createUserAgent" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36..."></textarea>
+                                    </div>
+                                    <button id="createGenerateUserAgent" class="btn btn-secondary btn-md">
+                                        <i class="fas fa-dice"></i>
+                                        <span>Generate Random</span>
+                                    </button>
+                                </div>
+
+                                <!-- Screen Resolution -->
+                                <div class="space-y-4">
+                                    <h4 class="font-medium text-gray-800">Screen Resolution</h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Width</label>
+                                            <input type="number" id="createScreenWidth" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="1920">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Height</label>
+                                            <input type="number" id="createScreenHeight" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="1080">
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="createRandomResolution" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <label for="createRandomResolution" class="ml-2 text-sm text-gray-700">Random resolution</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- WebRTC -->
+                            <div class="mt-6">
+                                <h4 class="font-medium text-gray-800 mb-4">WebRTC</h4>
+                                <select id="createWebrtcSelect" class="w-full max-w-md p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="disabled">Disabled</option>
+                                    <option value="fake">Fake</option>
+                                    <option value="real">Real</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Tab -->
+                        <div id="advancedCreateTab" class="create-tab-content hidden">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Cài đặt nâng cao</h3>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Location -->
+                                <div class="space-y-4">
+                                    <h4 class="font-medium text-gray-800">Location & Timezone</h4>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+                                        <select id="createTimezoneSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="auto">Auto detect</option>
+                                            <option value="Asia/Ho_Chi_Minh">Asia/Ho_Chi_Minh</option>
+                                            <option value="America/New_York">America/New_York</option>
+                                            <option value="Europe/London">Europe/London</option>
+                                            <option value="Asia/Tokyo">Asia/Tokyo</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Geolocation</label>
+                                        <select id="createGeolocationSelect" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="auto">Auto (from proxy)</option>
+                                            <option value="disabled">Disabled</option>
+                                            <option value="custom">Custom</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Cookies -->
+                                <div class="space-y-4">
+                                    <h4 class="font-medium text-gray-800">Cookies</h4>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Import Cookies</label>
+                                        <textarea id="createCookiesTextarea" rows="6" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Paste cookies here (JSON format)..."></textarea>
+                                    </div>
+                                    
+                                    <div class="flex space-x-2">
+                                        <button id="createImportCookiesBtn" class="btn btn-secondary btn-md">
+                                            <i class="fas fa-file-import"></i>
+                                            <span>Import from File</span>
+                                        </button>
+                                        <button id="createClearCookiesBtn" class="btn btn-outline btn-md">
+                                            <i class="fas fa-broom"></i>
+                                            <span>Clear</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
+                        <button id="createCancelBtn" class="btn btn-outline btn-lg">
+                            <i class="fas fa-times-circle"></i>
+                            <span>Hủy</span>
+                        </button>
+                        <button id="createSaveProfileBtn" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Tạo Profile</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Store View -->
+            <div id="storeView" class="view-content p-6 hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Cửa Hàng</h2>
+                    <p class="text-gray-600">Mua proxy, extension và các dịch vụ khác</p>
+                </div>
+
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Store (Coming Soon)</h3>
+                    <p class="text-gray-600">Store functionality will be implemented here.</p>
+                </div>
+            </div>
+
+            <!-- Automation View -->
+            <div id="automationView" class="view-content p-6 hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Tự Động Hóa</h2>
+                    <p class="text-gray-600">Tạo và quản lý các script tự động</p>
+                </div>
+
+                <div class="card p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Automation (Coming Soon)</h3>
+                    <p class="text-gray-600">Automation functionality will be implemented here.</p>
+                </div>
+            </div>
+
+            <!-- Account Management View -->
+            <div id="accountView" class="view-content p-6 hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Quản lý Tài Khoản</h2>
+                    <p class="text-gray-600">Quản lý thông tin tài khoản và team</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Account Info -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Thông tin tài khoản</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <input type="email" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50" value="demo@pmlogin.com" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Gói dịch vụ</label>
+                                <input type="text" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50" value="PRO PLAN" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Ngày hết hạn</label>
+                                <input type="text" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50" value="31/12/2024" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Management -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Quản lý Team</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Thành viên:</span>
+                                <span class="font-medium">1/5</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Profiles:</span>
+                                <span class="font-medium">5/100</span>
+                            </div>
+                            <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                                Mời thành viên
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment View -->
+            <div id="paymentView" class="view-content p-6 hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Thanh Toán</h2>
+                    <p class="text-gray-600">Lịch sử thanh toán và gia hạn dịch vụ</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Current Plan -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Gói hiện tại</h3>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-2">PRO PLAN</div>
+                            <div class="text-gray-600 mb-4">100 Profiles • Team 5 người</div>
+                            <div class="text-sm text-gray-500 mb-4">Hết hạn: 31/12/2024</div>
+                            <button class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
+                                Gia hạn
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Payment History -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Lịch sử thanh toán</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                    <div class="font-medium">PRO PLAN - 1 tháng</div>
+                                    <div class="text-sm text-gray-500">01/12/2024</div>
+                                </div>
+                                <div class="text-green-600 font-medium">$29.99</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help View -->
+            <div id="helpView" class="view-content p-6 hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Trợ Giúp & Tài Liệu</h2>
+                    <p class="text-gray-600">Hướng dẫn sử dụng và hỗ trợ kỹ thuật</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Quick Links -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Liên kết nhanh</h3>
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                <i class="fas fa-book text-blue-500"></i>
+                                <span>Hướng dẫn sử dụng</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                <i class="fas fa-video text-red-500"></i>
+                                <span>Video tutorials</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                <i class="fas fa-comments text-green-500"></i>
+                                <span>Community Forum</span>
+                            </a>
+                            <a href="#" class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                                <i class="fas fa-headset text-purple-500"></i>
+                                <span>Hỗ trợ trực tuyến</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Contact Support -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Liên hệ hỗ trợ</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Chủ đề</label>
+                                <select class="w-full p-3 border border-gray-300 rounded-lg">
+                                    <option>Vấn đề kỹ thuật</option>
+                                    <option>Thanh toán</option>
+                                    <option>Tài khoản</option>
+                                    <option>Khác</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tin nhắn</label>
+                                <textarea class="w-full p-3 border border-gray-300 rounded-lg h-24" placeholder="Mô tả vấn đề của bạn..."></textarea>
+                            </div>
+                            <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                                Gửi yêu cầu hỗ trợ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="settingsView" class="view-content p-6 hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Cài Đặt</h2>
+                    <p class="text-gray-600">Cấu hình ứng dụng và tùy chỉnh</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- General Settings -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Cài đặt chung</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Khởi động cùng Windows</label>
+                                    <p class="text-xs text-gray-500">Tự động mở ứng dụng khi khởi động máy</p>
+                                </div>
+                                <input type="checkbox" class="toggle-switch">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Minimize to tray</label>
+                                    <p class="text-xs text-gray-500">Thu nhỏ xuống system tray</p>
+                                </div>
+                                <input type="checkbox" class="toggle-switch" checked>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Thông báo</label>
+                                    <p class="text-xs text-gray-500">Hiển thị thông báo hệ thống</p>
+                                </div>
+                                <input type="checkbox" class="toggle-switch" checked>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Info -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Thông tin hệ thống</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Phiên bản:</span>
+                                <span id="systemVersion" class="font-medium">1.0.0</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Platform:</span>
+                                <span id="systemPlatform" class="font-medium">Windows</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Hardware ID:</span>
+                                <span id="systemHwid" class="font-medium font-mono text-sm">DEMO-HWID-123</span>
+                            </div>
+                            <button id="checkUpdatesBtn" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
+                                Kiểm tra cập nhật
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Browser Settings -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Cài đặt Browser</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Chrome Path</label>
+                                <div class="flex space-x-2">
+                                    <input type="text" class="flex-1 p-3 border border-gray-300 rounded-lg bg-gray-50" value="C:\Program Files\Google\Chrome\Application\chrome.exe" readonly>
+                                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                                        Browse
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">User Data Folder</label>
+                                <div class="flex space-x-2">
+                                    <input type="text" class="flex-1 p-3 border border-gray-300 rounded-lg bg-gray-50" value="C:\PMLogin\UserData" readonly>
+                                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                                        Browse
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Settings -->
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Cài đặt nâng cao</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Proxy Timeout (seconds)</label>
+                                <input type="number" class="w-full p-3 border border-gray-300 rounded-lg" value="30">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Max Concurrent Profiles</label>
+                                <input type="number" class="w-full p-3 border border-gray-300 rounded-lg" value="10">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Debug Mode</label>
+                                    <p class="text-xs text-gray-500">Hiển thị thông tin debug</p>
+                                </div>
+                                <input type="checkbox" class="toggle-switch">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Proxy Modal -->
+    <div id="addProxyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="flex items-center justify-between p-6 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Add New Proxy</h3>
+                    <button id="closeAddProxyModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <form id="addProxyForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Name (Optional)</label>
+                            <input type="text" id="proxyName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="My Proxy">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Host *</label>
+                                <input type="text" id="proxyHost" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="192.168.1.1" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Port *</label>
+                                <input type="number" id="proxyPort" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="8080" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                            <select id="proxyType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="http">HTTP</option>
+                                <option value="https">HTTPS</option>
+                                <option value="socks4">SOCKS4</option>
+                                <option value="socks5">SOCKS5</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                                <input type="text" id="proxyUsername" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="username">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                <input type="password" id="proxyPassword" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="password">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                            <input type="text" id="proxyTags" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="residential, premium (comma separated)">
+                        </div>
+                    </form>
+                </div>
+                <div class="flex justify-end space-x-3 p-6 border-t">
+                    <button id="cancelAddProxy" class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button id="testAddProxy" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+                        Test & Add
+                    </button>
+                    <button id="saveAddProxy" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                        Add Proxy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Proxy Modal -->
+    <div id="importProxyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full">
+                <div class="flex items-center justify-between p-6 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Import Proxies</h3>
+                    <button id="closeImportProxyModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Import Format</label>
+                        <select id="importFormat" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="host:port">host:port</option>
+                            <option value="host:port:username:password">host:port:username:password</option>
+                            <option value="type://host:port">type://host:port</option>
+                            <option value="type://host:port:username:password">type://host:port:username:password</option>
+                            <option value="type://username:password@host:port">type://username:password@host:port</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Default Tags (Optional)</label>
+                        <input type="text" id="importTags" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="imported, batch1 (comma separated)">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Proxy List</label>
+                        <textarea id="importProxyText" rows="10" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Paste your proxy list here, one per line..."></textarea>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p class="mb-2"><strong>Examples:</strong></p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>192.168.1.1:8080</li>
+                            <li>192.168.1.1:8080:username:password</li>
+                            <li>http://192.168.1.1:8080</li>
+                            <li>socks5://username:password@192.168.1.1:1080</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center p-6 border-t">
+                    <div class="text-sm text-gray-600">
+                        <span id="importPreviewCount">0</span> proxies detected
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="cancelImportProxy" class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button id="previewImportProxy" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                            Preview
+                        </button>
+                        <button id="saveImportProxy" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600" disabled>
+                            Import Proxies
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Proxy Modal -->
+    <div id="editProxyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="flex items-center justify-between p-6 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Edit Proxy</h3>
+                    <button id="closeEditProxyModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <form id="editProxyForm" class="space-y-4">
+                        <input type="hidden" id="editProxyId">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Name (Optional)</label>
+                            <input type="text" id="editProxyName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="My Proxy">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Host *</label>
+                                <input type="text" id="editProxyHost" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="192.168.1.1" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Port *</label>
+                                <input type="number" id="editProxyPort" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="8080" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                            <select id="editProxyType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="http">HTTP</option>
+                                <option value="https">HTTPS</option>
+                                <option value="socks4">SOCKS4</option>
+                                <option value="socks5">SOCKS5</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                                <input type="text" id="editProxyUsername" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="username">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                <input type="password" id="editProxyPassword" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="password">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tags</label>
+                            <input type="text" id="editProxyTags" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="residential, premium (comma separated)">
+                        </div>
+                    </form>
+                </div>
+                <div class="flex justify-end space-x-3 p-6 border-t">
+                    <button id="cancelEditProxy" class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button id="testEditProxy" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+                        Test
+                    </button>
+                    <button id="saveEditProxy" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                        Update Proxy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../components/profiles_structure.js"></script>
+    <script src="../profiles/profiles_view.js"></script>
+    <script src="proxy-manager.js"></script>
+    <script>
+        // Global variables
+        let profilesStructure = null;
+        let currentTab = 'local';
+
+        // Mock profiles data
+        const mockProfilesData = [
+            {
+                id: '1',
+                name: 'Demo Profile 1',
+                platform: 'Chrome',
+                tags: ['demo', 'test'],
+                note: 'Demo profile for testing checkbox logic',
+                proxy: 'proxy1.example.com:8080:user1:pass1',
+                proxy_status: 'Ready',
+                updated_at: new Date().toISOString(),
+                last_started_at: new Date(Date.now() - 3600000).toISOString(),
+                status: 'Ready'
+            },
+            {
+                id: '2',
+                name: 'Demo Profile 2',
+                platform: 'Firefox',
+                tags: ['demo', 'active'],
+                note: 'Another demo profile',
+                proxy: 'proxy2.example.com:8080:user2:pass2',
+                proxy_status: 'Proxy Error',
+                updated_at: new Date(Date.now() - 7200000).toISOString(),
+                last_started_at: new Date(Date.now() - 86400000).toISOString(),
+                status: 'Running'
+            },
+            {
+                id: '3',
+                name: 'Demo Profile 3',
+                platform: 'Edge',
+                tags: ['demo', 'social'],
+                note: 'Profile without proxy',
+                proxy: 'No proxy',
+                proxy_status: '',
+                updated_at: new Date(Date.now() - 1800000).toISOString(),
+                last_started_at: '',
+                status: 'Stopped'
+            },
+            {
+                id: '4',
+                name: 'Demo Profile 4',
+                platform: 'Safari',
+                tags: ['demo', 'work'],
+                note: 'Work profile with authentication',
+                proxy: 'proxy4.example.com:8080:user4:pass4',
+                proxy_status: 'Ready',
+                updated_at: new Date(Date.now() - 3600000).toISOString(),
+                last_started_at: new Date(Date.now() - 86400000).toISOString(),
+                status: 'Ready'
+            },
+            {
+                id: '5',
+                name: 'Demo Profile 5',
+                platform: 'Opera',
+                tags: ['demo', 'social'],
+                note: 'Social media profile',
+                proxy: 'socks5://proxy5.example.com:1080',
+                proxy_status: 'Checking',
+                updated_at: new Date(Date.now() - 1800000).toISOString(),
+                last_started_at: '',
+                status: 'Stopped'
+            }
+        ];
+
+        // Main initialization
+        function initializeProfiles() {
+            console.log('Initializing profiles with ProfilesStructure...');
+            
+            try {
+                // Check if ProfilesStructure is available
+                if (typeof ProfilesStructure === 'undefined') {
+                    console.error('ProfilesStructure class not found!');
+                    return;
+                }
+
+                // Initialize ProfilesStructure
+                profilesStructure = new ProfilesStructure();
+                console.log('ProfilesStructure initialized');
+
+                // Get containers
+                const taskbarContainer = document.getElementById('profilesTaskbarContainer');
+                const tableContainer = document.getElementById('profilesTableContainer');
+
+                if (!taskbarContainer || !tableContainer) {
+                    console.error('Containers not found!');
+                    return;
+                }
+
+                // Clear containers
+                taskbarContainer.innerHTML = '';
+                tableContainer.innerHTML = '';
+
+                // Create taskbar
+                const taskbar = profilesStructure.createTaskbar(currentTab);
+                taskbarContainer.appendChild(taskbar);
+                console.log('Taskbar created');
+
+                // Create table
+                const table = profilesStructure.createProfilesTable(currentTab);
+                tableContainer.appendChild(table);
+                console.log('Table created');
+
+                // Populate with mock data
+                profilesStructure.populateTable(mockProfilesData, table);
+                console.log(`Table populated with ${mockProfilesData.length} profiles`);
+
+                console.log('Profiles initialization completed');
+
+            } catch (error) {
+                console.error('Error initializing profiles:', error.message);
+            }
+        }
+
+        // Tab switching for Create Profile
+        function switchCreateTab(tabName) {
+            // Remove active class from all create tab buttons
+            const createTabButtons = document.querySelectorAll('.create-tab-btn');
+            createTabButtons.forEach(btn => {
+                btn.classList.remove('active', 'text-blue-600', 'border-blue-600');
+                btn.classList.add('text-gray-500');
+            });
+            
+            // Hide all create tab contents
+            const createTabContents = document.querySelectorAll('.create-tab-content');
+            createTabContents.forEach(content => content.classList.add('hidden'));
+            
+            // Add active class to selected tab button
+            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+            if (activeButton && activeButton.classList.contains('create-tab-btn')) {
+                activeButton.classList.remove('text-gray-500');
+                activeButton.classList.add('active', 'text-blue-600', 'border-blue-600');
+            }
+            
+            // Show selected tab content
+            const activeContent = document.getElementById(`${tabName}CreateTab`);
+            if (activeContent) {
+                activeContent.classList.remove('hidden');
+            }
+        }
+
+        // Handle Create Profile proxy type change
+        function handleCreateProxyTypeChange(proxyType) {
+            const pmProxySection = document.getElementById('createPmProxySection');
+            const customProxySection = document.getElementById('createCustomProxySection');
+            
+            // Hide all sections
+            if (pmProxySection) pmProxySection.classList.add('hidden');
+            if (customProxySection) customProxySection.classList.add('hidden');
+            
+            // Show relevant section
+            switch (proxyType) {
+                case 'pm_proxy':
+                    if (pmProxySection) pmProxySection.classList.remove('hidden');
+                    break;
+                case 'custom':
+                    if (customProxySection) customProxySection.classList.remove('hidden');
+                    break;
+            }
+        }
+
+        // Handle Create Profile form submission
+        function handleCreateProfile() {
+            const profileName = document.getElementById('createProfileName')?.value;
+            
+            if (!profileName || !profileName.trim()) {
+                alert('Vui lòng nhập tên profile');
+                return;
+            }
+            
+            // Collect form data
+            const formData = {
+                name: profileName.trim(),
+                platform: document.getElementById('createPlatformSelect')?.value || 'windows',
+                browser: document.getElementById('createBrowserSelect')?.value || 'chrome',
+                tags: document.getElementById('createProfileTags')?.value || '',
+                group: document.getElementById('createGroupSelect')?.value || '',
+                note: document.getElementById('createProfileNote')?.value || '',
+                shareOnCloud: document.getElementById('createShareOnCloud')?.checked || false,
+                autoStart: document.getElementById('createAutoStart')?.checked || false,
+                // Add proxy data, browser settings, etc.
+            };
+            
+            console.log('Creating profile:', formData);
+            
+            // Show success message
+            alert('Profile đã được tạo thành công!');
+            
+            // Clear form
+            clearCreateProfileForm();
+            
+            // Go back to profiles view
+            switchView('profiles');
+        }
+
+        // Initialize Create Profile functionality
+        function initializeCreateProfile() {
+            console.log('Initializing Create Profile...');
+            
+            // Set default tab
+            switchCreateTab('general');
+            
+            // Set default proxy type
+            handleCreateProxyTypeChange('none');
+            
+            console.log('Create Profile initialized');
+        }
+        function clearCreateProfileForm() {
+            document.getElementById('createProfileName').value = '';
+            document.getElementById('createProfileTags').value = '';
+            document.getElementById('createProfileNote').value = '';
+            document.getElementById('createShareOnCloud').checked = false;
+            document.getElementById('createAutoStart').checked = false;
+            
+            // Reset to first tab
+            switchCreateTab('general');
+            
+            // Reset proxy type
+            document.getElementById('createNoProxy').checked = true;
+            handleCreateProxyTypeChange('none');
+        }
+        function switchTab(tab) {
+            debugLog(`🔄 Switching to tab: ${tab}`, 'info');
+            
+            currentTab = tab;
+            
+            // Update tab buttons
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active', 'bg-green-100', 'text-green-700');
+                btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+            });
+            
+            const activeTab = document.querySelector(`[data-tab="${tab}"]`);
+            if (activeTab) {
+                activeTab.classList.remove('text-gray-600', 'hover:bg-gray-100');
+                activeTab.classList.add('active', 'bg-green-100', 'text-green-700');
+            }
+            
+            // Reinitialize profiles for new tab
+            initializeProfiles();
+        }
+
+        // View switching
+        function switchView(viewName) {
+            console.log(`Switching to view: ${viewName}`);
+            
+            // Hide all views
+            const views = document.querySelectorAll('.view-content');
+            views.forEach(view => view.classList.add('hidden'));
+            
+            // Convert kebab-case to camelCase for view ID
+            let viewId = viewName;
+            if (viewName === 'create-profile') {
+                viewId = 'createProfile';
+            }
+            
+            // Show selected view
+            const targetView = document.getElementById(`${viewId}View`);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                
+                // Special handling for specific views
+                if (viewName === 'profiles') {
+                    setTimeout(() => {
+                        initializeProfiles();
+                    }, 100);
+                } else if (viewName === 'create-profile') {
+                    setTimeout(() => {
+                        initializeCreateProfile();
+                    }, 100);
+                } else if (viewName === 'proxies') {
+                    setTimeout(() => {
+                        initializeProxyManager();
+                    }, 100);
+                }
+            } else {
+                console.error(`View not found: ${viewId}View`);
+            }
+            
+            // Update sidebar
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.view === viewName) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize Proxy Manager
+        function initializeProxyManager() {
+            console.log('Initializing Proxy Manager...');
+            
+            try {
+                // Initialize proxy manager if not already done
+                if (!window.proxyManager) {
+                    window.proxyManager = new ProxyManager();
+                } else {
+                    // Refresh data if already initialized
+                    window.proxyManager.loadProxies();
+                }
+                
+                console.log('✅ Proxy Manager initialized');
+            } catch (error) {
+                console.error('❌ Error initializing Proxy Manager:', error);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, setting up event listeners...');
+            
+            // Sidebar navigation
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const viewName = item.dataset.view;
+                    switchView(viewName);
+                });
+            });
+
+            // Tab navigation
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const tab = e.target.dataset.tab;
+                    if (tab) {
+                        switchTab(tab);
+                    }
+                });
+            });
+
+            // Create Profile tab navigation
+            const createTabButtons = document.querySelectorAll('.create-tab-btn');
+            createTabButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const tab = e.target.dataset.tab;
+                    if (tab) {
+                        switchCreateTab(tab);
+                    }
+                });
+            });
+
+            // Create Profile proxy type handling
+            const createProxyRadios = document.querySelectorAll('input[name="createProxyType"]');
+            createProxyRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    handleCreateProxyTypeChange(e.target.value);
+                });
+            });
+
+            // Create Profile buttons
+            const createCancelBtn = document.getElementById('createCancelBtn');
+            const createSaveBtn = document.getElementById('createSaveProfileBtn');
+            
+            if (createCancelBtn) {
+                createCancelBtn.addEventListener('click', () => {
+                    switchView('profiles'); // Go back to profiles view
+                });
+            }
+            
+            if (createSaveBtn) {
+                createSaveBtn.addEventListener('click', () => {
+                    handleCreateProfile();
+                });
+            }
+
+            // Refresh button
+            const refreshBtn = document.getElementById('refreshProfilesBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    console.log('Manual refresh triggered');
+                    initializeProfiles();
+                });
+            }
+
+            // Initialize profiles view (default) - Keep original design
+            setTimeout(() => {
+                console.log('🔄 Starting profile initialization...');
+                
+                // Check if scripts loaded successfully
+                if (typeof ProfilesStructure !== 'undefined' && typeof ProfilesView !== 'undefined') {
+                    console.log('✅ Profile classes available, using original ProfilesView');
+                    initializeProfiles();
+                } else {
+                    console.warn('⚠️ Profile classes not loaded, trying direct initialization...');
+                    // Try to initialize anyway in case scripts loaded but variables not set
+                    setTimeout(() => {
+                        if (typeof ProfilesStructure !== 'undefined' && typeof ProfilesView !== 'undefined') {
+                            initializeProfiles();
+                        } else {
+                            console.error('❌ Profile classes still not available after delay');
+                            // Show error message
+                            const profilesContainer = document.getElementById('profilesView');
+                            if (profilesContainer) {
+                                profilesContainer.innerHTML = `
+                                    <div class="flex items-center justify-center h-64">
+                                        <div class="text-center">
+                                            <div class="text-red-500 text-6xl mb-4">⚠️</div>
+                                            <h3 class="text-xl font-bold text-gray-800 mb-2">Error Loading Profiles</h3>
+                                            <p class="text-gray-600 mb-4">ProfilesView classes not found. Please check console for details.</p>
+                                            <button onclick="location.reload()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                                                🔄 Reload Page
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+                    }, 1000);
+                }
+                
+                // Initialize create profile view
+                initializeCreateProfile();
+            }, 500);
+        });
+
+        // Global error handler
+        window.addEventListener('error', (e) => {
+            console.error(`Global Error: ${e.message} at ${e.filename}:${e.lineno}`);
+        });
+
+        console.log('PMLogin Dashboard loaded');
+    </script>
+
+    <script>
+        // Initialize Profiles function - Keep original ProfilesView
+        function initializeProfiles() {
+            console.log('🔄 Initializing original ProfilesView...');
+            
+            try {
+                // Debug: Check what's available in global scope
+                console.log('🔍 Available classes:');
+                console.log('  - ProfilesStructure:', typeof ProfilesStructure);
+                console.log('  - ProfilesView:', typeof ProfilesView);
+                
+                // Check if required classes are available
+                if (typeof ProfilesStructure === 'undefined') {
+                    console.error('❌ ProfilesStructure class not found');
+                    throw new Error('ProfilesStructure class not found');
+                }
+                
+                if (typeof ProfilesView === 'undefined') {
+                    console.error('❌ ProfilesView class not found');
+                    throw new Error('ProfilesView class not found');
+                }
+                
+                const profilesContainer = document.getElementById('profilesView');
+                if (!profilesContainer) {
+                    console.error('❌ Profiles container not found');
+                    return;
+                }
+                
+                // Destroy existing instance if any
+                if (window.profilesViewInstance && window.profilesViewInstance.destroy) {
+                    console.log('🗑️ Destroying existing ProfilesView instance...');
+                    window.profilesViewInstance.destroy();
+                }
+                
+                // Create new ProfilesView instance (original design)
+                console.log('🔄 Creating original ProfilesView instance...');
+                window.profilesViewInstance = new ProfilesView(profilesContainer);
+                
+                console.log('✅ Original ProfilesView initialized successfully');
+                
+            } catch (error) {
+                console.error('❌ Error initializing ProfilesView:', error);
+                
+                // Show error in profiles container
+                const profilesContainer = document.getElementById('profilesView');
+                if (profilesContainer) {
+                    profilesContainer.innerHTML = `
+                        <div class="flex items-center justify-center h-64">
+                            <div class="text-center">
+                                <div class="text-red-500 text-6xl mb-4">⚠️</div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Error Loading Profiles</h3>
+                                <p class="text-gray-600 mb-4">Failed to initialize profiles view: ${error.message}</p>
+                                <button onclick="location.reload()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                                    🔄 Reload Page
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // Initialize Create Profile function
+        function initializeCreateProfile() {
+            console.log('🔄 Initializing Create Profile...');
+            // This function can be implemented later if needed
+        }
+    </script>
+</body>
+</html>
+                await this.createLayout();
+                await this.loadProfilesData();
+                console.log('✅ SimpleProfilesView initialized');
+            }
+            
+            async createLayout() {
+                this.container.innerHTML = `
+                    <div class="profiles-view p-6">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Quản lý Profiles</h2>
+                            <p class="text-gray-600">Giao diện quản lý profiles (chế độ đơn giản)</p>
+                        </div>
+                        
+                        <!-- Tabs -->
+                        <div class="mb-6">
+                            <div class="border-b border-gray-200">
+                                <nav class="-mb-px flex space-x-8">
+                                    <button class="tab-btn active py-2 px-1 border-b-2 border-green-500 font-medium text-sm text-green-600" data-tab="local">
+                                        Local Profiles
+                                    </button>
+                                    <button class="tab-btn py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700" data-tab="cloud">
+                                        Cloud Profiles
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                            <div class="p-4 border-b border-gray-200">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-lg font-semibold text-gray-800">Danh sách Profiles</h3>
+                                    <div class="flex gap-2">
+                                        <button onclick="window.simpleProfilesView.refresh()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                                            <i class="fas fa-sync-alt mr-2"></i>Tải lại
+                                        </button>
+                                        <button onclick="switchView('create-profile')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                                            <i class="fas fa-plus mr-2"></i>Tạo mới
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tên</th>
+                                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Platform</th>
+                                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tags</th>
+                                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Trạng thái</th>
+                                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="profilesTableBody" class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-2"></div>
+                                                Đang tải profiles...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Attach tab events
+                const tabButtons = this.container.querySelectorAll('.tab-btn');
+                tabButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const tab = e.target.dataset.tab;
+                        this.switchTab(tab);
+                    });
+                });
+            }
+            
+            switchTab(tab) {
+                this.currentTab = tab;
+                
+                // Update tab buttons
+                const tabButtons = this.container.querySelectorAll('.tab-btn');
+                tabButtons.forEach(btn => {
+                    if (btn.dataset.tab === tab) {
+                        btn.classList.add('active', 'border-green-500', 'text-green-600');
+                        btn.classList.remove('border-transparent', 'text-gray-500');
+                    } else {
+                        btn.classList.remove('active', 'border-green-500', 'text-green-600');
+                        btn.classList.add('border-transparent', 'text-gray-500');
+                    }
+                });
+                
+                // Reload data for new tab
+                this.loadProfilesData();
+            }
+            
+            async refresh() {
+                console.log('🔄 Refreshing SimpleProfilesView...');
+                await this.loadProfilesData();
+            }
+            
+            async loadProfilesData() {
+                console.log(`🔄 Loading profiles data for tab: ${this.currentTab}...`);
+                
+                const tableBody = this.container.querySelector('#profilesTableBody');
+                if (!tableBody) {
+                    console.error('❌ Table body not found');
+                    return;
+                }
+                
+                try {
+                    // Show loading state
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-2"></div>
+                                Đang tải profiles...
+                            </td>
+                        </tr>
+                    `;
+                    
+                    // Check if electronAPI is available
+                    if (!window.electronAPI || !window.electronAPI.invoke) {
+                        throw new Error('ElectronAPI not available');
+                    }
+                    
+                    // Load profiles from database
+                    console.log('📡 Calling database API...');
+                    const response = await window.electronAPI.invoke('db:profile:get-all');
+                    console.log('📡 Database response:', response);
+                    
+                    if (response.success && response.data && response.data.length > 0) {
+                        let tableHTML = '';
+                        
+                        response.data.forEach((profile, index) => {
+                            const tags = Array.isArray(profile.tags) ? profile.tags.join(', ') : (profile.tags || '');
+                            
+                            tableHTML += `
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                                <i class="fas fa-user text-green-600 text-sm"></i>
+                                            </div>
+                                            <span class="font-medium text-gray-900">${profile.name || 'Unnamed Profile'}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-gray-700">${profile.platform || 'Chrome'}</td>
+                                    <td class="px-4 py-3 text-gray-600 text-sm">${tags}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                            Ready
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex gap-2">
+                                            <button onclick="startProfile('${profile.id}')" class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600 transition-colors">
+                                                <i class="fas fa-play mr-1"></i>Start
+                                            </button>
+                                            <button onclick="editProfile('${profile.id}')" class="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600 transition-colors">
+                                                <i class="fas fa-edit mr-1"></i>Edit
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        
+                        tableBody.innerHTML = tableHTML;
+                        console.log(`✅ Loaded ${response.data.length} profiles successfully`);
+                    } else {
+                        // No profiles found
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                    <div class="text-4xl mb-2">📦</div>
+                                    <p class="text-lg font-medium mb-2">Chưa có profiles</p>
+                                    <p class="text-sm mb-4">Tạo profile đầu tiên để bắt đầu</p>
+                                    <button onclick="switchView('create-profile')" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                                        <i class="fas fa-plus mr-2"></i>Tạo Profile
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        console.log('ℹ️ No profiles found in database');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error loading profiles:', error);
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-red-500">
+                                <div class="text-4xl mb-2">❌</div>
+                                <p class="text-lg font-medium mb-2">Lỗi tải dữ liệu</p>
+                                <p class="text-sm mb-4">${error.message}</p>
+                                <div class="flex gap-2 justify-center">
+                                    <button onclick="window.simpleProfilesView.refresh()" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600 transition-colors">
+                                        <i class="fas fa-sync-alt mr-1"></i>Thử lại
+                                    </button>
+                                    <button onclick="location.reload()" class="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600 transition-colors">
+                                        <i class="fas fa-refresh mr-1"></i>Tải lại trang
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+        
+        // Fallback UI using SimpleProfilesView
+        function createFallbackProfilesUI() {
+            console.log('🔄 Creating fallback profiles UI with SimpleProfilesView...');
+            
+            const profilesContainer = document.getElementById('profilesView');
+            if (!profilesContainer) {
+                console.error('❌ Profiles container not found');
+                return;
+            }
+            
+            // Create SimpleProfilesView instance
+            window.simpleProfilesView = new SimpleProfilesView(profilesContainer);
+            console.log('✅ SimpleProfilesView created as fallback');
+        }
+        
+        // Simple profile actions (global functions for onclick handlers)
+        function startProfile(profileId) {
+            console.log('🚀 Starting profile:', profileId);
+            alert(`Starting profile ${profileId} (feature not implemented yet)`);
+        }
+        
+        function editProfile(profileId) {
+            console.log('✏️ Editing profile:', profileId);
+            alert(`Editing profile ${profileId} (feature not implemented yet)`);
+        }
+    </script>
+</body>
+</html>

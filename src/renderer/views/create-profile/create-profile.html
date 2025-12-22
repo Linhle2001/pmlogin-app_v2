@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Profile - PMLogin</title>
+    <link rel="stylesheet" href="../../assets/components.css">
+    <link rel="stylesheet" href="../../assets/button-components.css">
+    <link rel="stylesheet" href="create-profile.css">
+</head>
+<body class="pmlogin-theme">
+    <div class="create-profile-container">
+        <!-- Header -->
+        <div class="create-profile-header">
+            <div class="header-top">
+                <button type="button" id="backBtn" class="btn btn-ghost btn-md">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Main</span>
+                </button>
+                <div class="header-actions">
+                    <button type="button" id="cancelBtn" class="btn btn-outline btn-md">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Cancel</span>
+                    </button>
+                </div>
+            </div>
+            <h1 class="page-title">
+                <img src="../../assets/logo_on.png" alt="PMLogin Logo" class="inline-block w-8 h-8 object-contain mr-3">
+                Create Profile
+            </h1>
+            <p class="page-subtitle">Create a new browser profile with custom settings</p>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="create-profile-content">
+            <!-- Taskbar will be inserted here by JavaScript -->
+            
+            <!-- Form Section -->
+            <div class="form-section">
+                <!-- Name and Group Row -->
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="field-label">Name</label>
+                        <input type="text" id="profileName" class="pmlogin-input pmlogin-input-md" placeholder="Profile name" />
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">Group</label>
+                        <div class="custom-selector" id="groupSelector">
+                            <button type="button" class="selector-button" id="groupButton">
+                                <span class="selector-text">Group</span>
+                                <span class="selector-arrow">▼</span>
+                            </button>
+                            <div class="selector-dropdown" id="groupDropdown">
+                                <div class="dropdown-item" data-value="">Group</div>
+                                <div class="dropdown-item" data-value="Work">Work</div>
+                                <div class="dropdown-item" data-value="Personal">Personal</div>
+                                <div class="dropdown-item" data-value="Testing">Testing</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Platform -->
+                <div class="form-field">
+                    <label class="field-label">Platform</label>
+                    <select id="platformSelect" class="pmlogin-input pmlogin-input-md">
+                        <option value="Default">Default</option>
+                        <option value="Windows">Windows</option>
+                        <option value="macOS">macOS</option>
+                        <option value="Linux">Linux</option>
+                    </select>
+                </div>
+
+                <!-- Share on Cloud -->
+                <div class="checkbox-field">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="shareOnCloud" checked />
+                        <span class="checkbox-text">Share on Cloud [CLOUD]</span>
+                    </label>
+                </div>
+
+                <!-- Create Button -->
+                <button type="button" id="createProfileBtn" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Create profile</span>
+                </button>
+            </div>
+
+            <!-- Profiles Table will be inserted here by JavaScript -->
+
+            <!-- Tabs Section -->
+            <div class="tabs-section">
+                <div class="tab-header">
+                    <button class="tab-button" data-tab="overview">Overview</button>
+                    <button class="tab-button active" data-tab="network">Network</button>
+                    <button class="tab-button" data-tab="location">Location</button>
+                    <button class="tab-button" data-tab="hardware">Hardware</button>
+                    <button class="tab-button" data-tab="cookies">Cookies</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Overview Tab -->
+                    <div class="tab-pane" id="overviewTab">
+                        <div class="tab-placeholder">
+                            <p>Overview settings will be here</p>
+                        </div>
+                    </div>
+
+                    <!-- Network Tab -->
+                    <div class="tab-pane active" id="networkTab">
+                        <!-- Proxy Type Section -->
+                        <div class="section">
+                            <h3 class="section-title">Proxy type</h3>
+                            <p class="section-description">Only use proxies attached directly to your account</p>
+                            
+                            <div class="proxy-type-buttons">
+                                <label class="proxy-type-option">
+                                    <input type="radio" name="proxyType" value="pm-proxy" />
+                                    <div class="proxy-type-card">
+                                        <span class="proxy-type-icon">[COPY]</span>
+                                        <span class="proxy-type-text">PM-Proxy</span>
+                                    </div>
+                                </label>
+                                <label class="proxy-type-option">
+                                    <input type="radio" name="proxyType" value="your-proxy" />
+                                    <div class="proxy-type-card">
+                                        <span class="proxy-type-icon">🌐</span>
+                                        <span class="proxy-type-text">Your proxy</span>
+                                    </div>
+                                </label>
+                                <label class="proxy-type-option">
+                                    <input type="radio" name="proxyType" value="without-proxy" checked />
+                                    <div class="proxy-type-card">
+                                        <span class="proxy-type-icon">🌐</span>
+                                        <span class="proxy-type-text">Without proxy</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- WebRTC Section -->
+                        <div class="section">
+                            <div class="section-header">
+                                <h3 class="section-title">WebRTC</h3>
+                                <span class="help-icon">ⓘ</span>
+                            </div>
+                            <select id="webrtcSelect" class="pmlogin-input pmlogin-input-md">
+                                <option value="Forward">Forward</option>
+                                <option value="Real">Real</option>
+                                <option value="Altered">Altered</option>
+                                <option value="Disabled">Disabled</option>
+                            </select>
+                        </div>
+
+                        <!-- PM-Proxy Section -->
+                        <div class="section proxy-section" id="pmProxySection" style="display: none;">
+                            <h3 class="section-title">Proxy manager</h3>
+                            <div class="proxy-manager-row">
+                                <div class="custom-selector proxy-selector" id="proxySelector">
+                                    <button type="button" class="selector-button" id="proxyButton">
+                                        <span class="selector-text">Select proxy</span>
+                                        <span class="selector-arrow">▼</span>
+                                    </button>
+                                    <div class="selector-dropdown proxy-dropdown" id="proxyDropdown">
+                                        <div class="dropdown-item" data-value="">Select proxy</div>
+                                        <!-- Proxy items will be populated here -->
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-secondary btn-md">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span>Buy proxy</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Your Proxy Section -->
+                        <div class="section proxy-section" id="yourProxySection" style="display: none;">
+                            <h3 class="section-title">Your proxy configuration</h3>
+                            <div class="proxy-config-form">
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <label class="field-label">Proxy Type</label>
+                                        <select id="proxyTypeSelect" class="pmlogin-input pmlogin-input-md">
+                                            <option value="HTTP Proxy">HTTP Proxy</option>
+                                            <option value="SOCKS4 Proxy">SOCKS4 Proxy</option>
+                                            <option value="SOCKS5 Proxy">SOCKS5 Proxy</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <label class="field-label">Host</label>
+                                        <input type="text" id="proxyHost" class="pmlogin-input pmlogin-input-md" placeholder="127.0.0.1" />
+                                    </div>
+                                    <div class="form-field">
+                                        <label class="field-label">Port</label>
+                                        <input type="number" id="proxyPort" class="pmlogin-input pmlogin-input-md" placeholder="8080" />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-field">
+                                        <label class="field-label">Username</label>
+                                        <input type="text" id="proxyUsername" class="pmlogin-input pmlogin-input-md" placeholder="Optional" />
+                                    </div>
+                                    <div class="form-field">
+                                        <label class="field-label">Password</label>
+                                        <input type="password" id="proxyPassword" class="pmlogin-input pmlogin-input-md" placeholder="Optional" />
+                                    </div>
+                                </div>
+                                <div class="proxy-actions">
+                                    <button type="button" class="btn btn-secondary btn-md" id="testProxyBtn">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Test Proxy</span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline btn-md" id="clearProxyBtn">
+                                        <i class="fas fa-eraser"></i>
+                                        <span>Clear</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Tab -->
+                    <div class="tab-pane" id="locationTab">
+                        <!-- Timezone Section -->
+                        <div class="section">
+                            <h3 class="section-title">Timezone</h3>
+                            <div class="checkbox-field">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="timezoneAuto" checked />
+                                    <span class="checkbox-text">Fill timezone based on the external IP</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Geolocation Section -->
+                        <div class="section">
+                            <h3 class="section-title">Geolocation</h3>
+                            <select id="geolocationSelect" class="pmlogin-input pmlogin-input-md">
+                                <option value="Prompt">Prompt</option>
+                                <option value="Allow">Allow</option>
+                                <option value="Block">Block</option>
+                            </select>
+                            <div class="checkbox-field">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="geolocationAuto" checked />
+                                    <span class="checkbox-text">Fill geolocation based on the external IP</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hardware Tab -->
+                    <div class="tab-pane" id="hardwareTab">
+                        <div class="tab-placeholder">
+                            <p>Hardware settings will be here</p>
+                        </div>
+                    </div>
+
+                    <!-- Cookies Tab -->
+                    <div class="tab-pane" id="cookiesTab">
+                        <div class="section">
+                            <h3 class="section-title">Cookies input</h3>
+                            <textarea id="cookiesTextarea" class="cookies-textarea" placeholder="Drag or paste cookies"></textarea>
+                            <button type="button" class="btn btn-secondary btn-md" id="importCookiesBtn">
+                                <i class="fas fa-file-import"></i>
+                                <span>Import</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../../utils/theme-manager.js"></script>
+    <script src="create-profile.js"></script>
+</body>
+</html>

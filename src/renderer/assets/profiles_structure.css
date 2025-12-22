@@ -1,0 +1,885 @@
+/* ==================== CSS VARIABLES FALLBACKS ==================== */
+:root {
+    --pmlogin-bg-card: #ffffff;
+    --pmlogin-shadow-default: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --pmlogin-input-border: #d1d5db;
+    --pmlogin-input-border-focus: #3b82f6;
+    --pmlogin-input-text: #374151;
+    --pmlogin-input-bg: #ffffff;
+    --pmlogin-button-primary-bg: #22c55e;
+    --pmlogin-button-primary-text: #ffffff;
+    --pmlogin-button-primary-hover: #16a34a;
+    --pmlogin-button-secondary-bg: #6b7280;
+    --pmlogin-button-secondary-text: #ffffff;
+    --pmlogin-button-secondary-hover: #4b5563;
+    --pmlogin-button-danger-bg: #ef4444;
+    --pmlogin-button-danger-text: #ffffff;
+    --pmlogin-button-danger-hover: #dc2626;
+    --pmlogin-primary: #22c55e;
+    --pmlogin-text-on-primary: #ffffff;
+    --pmlogin-gray-100: #f3f4f6;
+    --pmlogin-gray-200: #e5e7eb;
+    --pmlogin-text-secondary: #6b7280;
+    --pmlogin-text-primary: #111827;
+    --pmlogin-table-header-bg: #f9fafb;
+    --pmlogin-table-border: #e5e7eb;
+    --pmlogin-table-row-hover: #f9fafb;
+    --pmlogin-success: #22c55e;
+    --pmlogin-error: #ef4444;
+    --pmlogin-warning: #f59e0b;
+    --pmlogin-border-light: #e5e7eb;
+    --pmlogin-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --pmlogin-error-bg: #fef2f2;
+    --pmlogin-bg-overlay: rgba(0, 0, 0, 0.5);
+    --pmlogin-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --pmlogin-primary-dark: #16a34a;
+    --pmlogin-bg-secondary: #f9fafb;
+    --pmlogin-text-white: #ffffff;
+    --pmlogin-info: #3b82f6;
+    --pmlogin-gray-300: #d1d5db;
+    --pmlogin-gray-400: #9ca3af;
+}
+
+/* Profiles Structure CSS - Using PMLogin Theme Variables */
+
+/* ==================== TASKBAR STYLES ==================== */
+.profiles-taskbar {
+    background-color: var(--pmlogin-bg-card);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--pmlogin-shadow-default);
+}
+
+.taskbar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.taskbar-row:last-child {
+    margin-bottom: 0;
+}
+
+.search-container {
+    flex-shrink: 0;
+}
+
+.search-input {
+    width: 200px;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--pmlogin-input-border);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--pmlogin-input-text);
+    background-color: var(--pmlogin-input-bg);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--pmlogin-input-border-focus);
+}
+
+.primary-buttons,
+.secondary-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ==================== BUTTON STYLES ==================== */
+.btn {
+    height: 36px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background-color: var(--pmlogin-button-primary-bg);
+    color: var(--pmlogin-button-primary-text);
+}
+
+.btn-primary:hover {
+    background-color: var(--pmlogin-button-primary-hover);
+}
+
+.btn-secondary {
+    background-color: var(--pmlogin-button-secondary-bg);
+    color: var(--pmlogin-button-secondary-text);
+}
+
+.btn-secondary:hover {
+    background-color: var(--pmlogin-button-secondary-hover);
+}
+
+.btn-danger {
+    background-color: var(--pmlogin-button-danger-bg);
+    color: var(--pmlogin-button-danger-text);
+}
+
+.btn-danger:hover {
+    background-color: var(--pmlogin-button-danger-hover);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--pmlogin-primary);
+    border: 1px solid var(--pmlogin-primary);
+}
+
+.btn-outline:hover {
+    background-color: var(--pmlogin-primary);
+    color: var(--pmlogin-text-on-primary);
+}
+
+.btn-more {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-secondary);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.btn-more:hover {
+    background-color: var(--pmlogin-gray-200);
+    color: var(--pmlogin-text-primary);
+}
+
+.btn-small {
+    height: 28px;
+    padding: 0 12px;
+    font-size: 12px;
+}
+
+.btn-more-actions {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background-color: transparent;
+    color: var(--pmlogin-text-secondary);
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+.btn-more-actions:hover {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+}
+
+/* ==================== TABLE STYLES ==================== */
+.profiles-table-container {
+    background-color: var(--pmlogin-bg-card);
+    border-radius: 8px;
+    overflow: auto;
+    box-shadow: var(--pmlogin-shadow-default);
+    max-width: 100%;
+}
+
+.profiles-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.profiles-table thead {
+    background-color: var(--pmlogin-table-header-bg);
+}
+
+.profiles-table th {
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--pmlogin-text-secondary);
+    border-bottom: 1px solid var(--pmlogin-table-border);
+    font-size: 12px;
+}
+
+.profiles-table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--pmlogin-gray-100);
+    vertical-align: middle;
+}
+
+.profiles-table tbody tr:hover {
+    background-color: var(--pmlogin-table-row-hover);
+}
+
+.checkbox-column {
+    width: 47px;
+    text-align: center;
+}
+
+.actions-column {
+    width: 140px;
+    min-width: 140px;
+    text-align: center;
+}
+
+/* ==================== TABLE CELL STYLES ==================== */
+.name-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-icon {
+    width: 24px;
+    height: 24px;
+    background-color: var(--pmlogin-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.profile-name {
+    color: var(--pmlogin-text-primary);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.profile-name:hover {
+    color: var(--pmlogin-primary);
+}
+
+.note-input {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    color: var(--pmlogin-text-secondary);
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+.note-input:focus {
+    outline: none;
+    background-color: var(--pmlogin-gray-100);
+    border-radius: 4px;
+}
+
+.proxy-status {
+    font-size: 12px;
+}
+
+.proxy-status.no-proxy {
+    color: var(--pmlogin-text-secondary);
+}
+
+.proxy-status.ready {
+    color: var(--pmlogin-success);
+    font-weight: bold;
+}
+
+.proxy-status.error {
+    color: var(--pmlogin-error);
+    font-weight: bold;
+}
+
+.proxy-status.checking {
+    color: var(--pmlogin-warning);
+    font-weight: bold;
+}
+
+.proxy-status.proxy-text {
+    color: var(--pmlogin-text-primary);
+}
+
+.status {
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-dead {
+    color: var(--pmlogin-error);
+}
+
+.status-live {
+    color: var(--pmlogin-success);
+}
+
+.actions-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 120px;
+}
+
+/* ==================== NO DATA STATE ==================== */
+.no-data-row {
+    height: 200px;
+}
+
+.no-data-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 60px 20px;
+}
+
+.no-data-icon {
+    font-size: 48px;
+}
+
+.no-data-text {
+    font-size: 16px;
+    color: var(--pmlogin-text-secondary);
+    font-weight: 500;
+}
+/* ==================== CONTEXT MENU STYLES ==================== */
+.context-menu {
+    position: fixed;
+    background-color: var(--pmlogin-bg-card);
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 8px;
+    box-shadow: var(--pmlogin-shadow-lg);
+    padding: 8px;
+    min-width: 220px;
+    z-index: 10000;
+    max-width: 300px;
+    /* Ensure menu is visible */
+    opacity: 1;
+    visibility: visible;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+    background-color: var(--pmlogin-gray-100);
+}
+
+.menu-item.danger:hover {
+    background-color: var(--pmlogin-error-bg);
+}
+
+.menu-icon {
+    width: 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.menu-text {
+    font-size: 14px;
+    color: var(--pmlogin-text-primary);
+}
+
+.menu-item.danger .menu-text {
+    color: var(--pmlogin-error);
+}
+
+.menu-separator {
+    height: 1px;
+    background-color: var(--pmlogin-border-light);
+    margin: 4px 0;
+}
+
+/* ==================== DIALOG STYLES ==================== */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--pmlogin-bg-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.clone-dialog,
+.update-proxy-dialog {
+    background-color: var(--pmlogin-bg-card);
+    border-radius: 12px;
+    box-shadow: var(--pmlogin-shadow-xl);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.clone-dialog {
+    width: 500px;
+}
+
+.update-proxy-dialog {
+    width: 700px;
+    max-height: 800px;
+}
+
+.dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 30px 0 30px;
+    margin-bottom: 20px;
+}
+
+.dialog-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+}
+
+.dialog-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background-color: transparent;
+    color: var(--pmlogin-text-secondary);
+    font-size: 16px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dialog-close:hover {
+    background-color: var(--pmlogin-gray-100);
+    color: var(--pmlogin-text-primary);
+}
+
+.dialog-body {
+    padding: 0 30px;
+}
+
+.dialog-section {
+    margin-bottom: 20px;
+}
+
+.dialog-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--pmlogin-text-primary);
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 20px 30px 30px 30px;
+}
+
+/* ==================== CLONE DIALOG SPECIFIC ==================== */
+.clone-count-container {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--pmlogin-primary);
+    border-radius: 8px;
+    padding: 0 16px 0 16px;
+    height: 44px;
+    background-color: var(--pmlogin-bg-card);
+}
+
+.clone-count-input {
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--pmlogin-text-primary);
+    width: 60px;
+    text-align: left;
+}
+
+.clone-count-input:focus {
+    outline: none;
+}
+
+.count-controls {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.count-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.count-minus {
+    color: var(--pmlogin-text-secondary);
+}
+
+.count-minus:hover {
+    color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-gray-100);
+}
+
+.count-plus {
+    color: var(--pmlogin-primary);
+}
+
+.count-plus:hover {
+    color: var(--pmlogin-primary-dark);
+    background-color: var(--pmlogin-gray-100);
+}
+
+.dialog-info {
+    margin-top: 16px;
+}
+
+.dialog-info p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--pmlogin-text-secondary);
+}
+
+/* ==================== UPDATE PROXY DIALOG SPECIFIC ==================== */
+.selected-profiles-container {
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: var(--pmlogin-bg-secondary);
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.profile-item {
+    color: var(--pmlogin-text-primary);
+    font-size: 13px;
+    padding: 4px 0;
+}
+
+.total-count {
+    color: var(--pmlogin-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 0;
+    margin: 0;
+}
+
+.config-row {
+    display: flex;
+    gap: 16px;
+}
+
+.config-item {
+    flex: 1;
+}
+
+.config-item select {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--pmlogin-input-border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--pmlogin-input-text);
+    background-color: var(--pmlogin-input-bg);
+}
+
+.config-item select:focus {
+    outline: none;
+    border-color: var(--pmlogin-input-border-focus);
+}
+
+.proxy-list {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid var(--pmlogin-input-border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--pmlogin-input-text);
+    font-family: 'Consolas', 'Monaco', monospace;
+    resize: vertical;
+}
+
+.proxy-list:focus {
+    outline: none;
+    border-color: var(--pmlogin-input-border-focus);
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-bottom: 0 !important;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin: 0;
+}
+
+.example-text {
+    background-color: var(--pmlogin-bg-secondary);
+    padding: 8px;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 12px;
+    color: var(--pmlogin-text-secondary);
+    white-space: pre-line;
+    line-height: 1.4;
+}
+
+/* ==================== TOAST NOTIFICATION ==================== */
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--pmlogin-text-white);
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--pmlogin-shadow-lg);
+    animation: slideInRight 0.3s ease-out;
+}
+
+.toast-success {
+    background-color: var(--pmlogin-success);
+}
+
+.toast-error {
+    background-color: var(--pmlogin-error);
+}
+
+.toast-warning {
+    background-color: var(--pmlogin-warning);
+}
+
+.toast-info {
+    background-color: var(--pmlogin-info);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+    .taskbar-row {
+        flex-wrap: wrap;
+    }
+    
+    .search-input {
+        width: 150px;
+    }
+    
+    .primary-buttons,
+    .secondary-buttons {
+        flex-wrap: wrap;
+    }
+    
+    .config-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .clone-dialog,
+    .update-proxy-dialog {
+        width: 95vw;
+        margin: 20px;
+    }
+}
+
+/* ==================== SCROLLBAR STYLES ==================== */
+.profiles-table-container::-webkit-scrollbar,
+.selected-profiles-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.profiles-table-container::-webkit-scrollbar-track,
+.selected-profiles-container::-webkit-scrollbar-track {
+    background: var(--pmlogin-gray-100);
+    border-radius: 3px;
+}
+
+.profiles-table-container::-webkit-scrollbar-thumb,
+.selected-profiles-container::-webkit-scrollbar-thumb {
+    background: var(--pmlogin-gray-300);
+    border-radius: 3px;
+}
+
+.profiles-table-container::-webkit-scrollbar-thumb:hover,
+.selected-profiles-container::-webkit-scrollbar-thumb:hover {
+    background: var(--pmlogin-gray-400);
+}
+
+/* ==================== ENHANCED DIALOG STYLES ==================== */
+
+/* Assign group dialog specific styles */
+.assign-group-dialog .group-select,
+.assign-group-dialog .new-group-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--pmlogin-border-light, #e5e7eb);
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    color: var(--pmlogin-text-primary, #374151);
+}
+
+.assign-group-dialog .group-select:focus,
+.assign-group-dialog .new-group-input:focus {
+    outline: none;
+    border-color: var(--pmlogin-primary, #22c55e);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+/* Dialog animations */
+.dialog-overlay {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.clone-dialog,
+.update-proxy-dialog,
+.assign-group-dialog {
+    animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced button states */
+.dialog-footer .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Responsive design for dialogs */
+@media (max-width: 768px) {
+    .clone-dialog,
+    .update-proxy-dialog,
+    .assign-group-dialog {
+        width: 95%;
+        max-width: none;
+        margin: 10px;
+    }
+    
+    .config-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .dialog-header,
+    .dialog-body,
+    .dialog-footer {
+        padding: 16px;
+    }
+}
+
+/* Enhanced taskbar functionality styles */
+.taskbar-row .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.taskbar-row .btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.taskbar-row .btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Enhanced selection feedback */
+.profile-row.selected {
+    background-color: rgba(34, 197, 94, 0.1);
+    border-left: 3px solid var(--pmlogin-primary, #22c55e);
+}
+
+/* Enhanced proxy status colors */
+.proxy-status.checking {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.proxy-status.ready {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.proxy-status.error {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.proxy-status.no-proxy {
+    color: #6b7280;
+    font-style: italic;
+}
