@@ -135,7 +135,41 @@ class AppController {
 
     async checkAutoLogin() {
         try {
-            // Check both session.json and login_result.json for compatibility
+            // Load session from API client first
+            const apiClient = require('./services/api_client');
+            const sessionLoaded = apiClient.loadSessionFromFile();
+            
+            if (sessionLoaded) {
+                const session = apiClient.getSession();
+                console.log('📄 Found saved session for:', session.user?.email);
+                
+                // Handle demo mode
+                if (session.user?.isDemo || session.user?.email === 'demo@pmlogin.com') {
+                    console.log('🎭 Demo mode auto-login');
+                    this.userData = session.user;
+                    this.token = session.token;
+                    this.loadMainPage();
+                    return true;
+                }
+                
+                // Verify token is still valid for real users
+                const userResult = await apiClient.getUserFromToken(session.token);
+                
+                if (userResult.success) {
+                    this.userData = userResult.data;
+                    this.token = session.token;
+                    
+                    console.log('✅ Auto-login successful');
+                    this.loadMainPage();
+                    return true;
+                } else {
+                    console.log('❌ Auto-login failed: Invalid token');
+                    apiClient.clearSession();
+                    apiClient.clearSessionFile();
+                }
+            }
+            
+            // Fallback: Check legacy session files
             const sessionPath = path.join(app.getPath('userData'), 'session.json');
             const loginResultPath = path.join(__dirname, '../../storage/login_result.json');
             
@@ -151,24 +185,29 @@ class AppController {
                         token: loginResult.data.access_token || loginResult.data.token
                     };
                     isDemo = loginResult.isDemo || false;
-                    console.log('📄 Found login_result.json session', isDemo ? '(Demo Mode)' : '');
+                    console.log('📄 Found legacy login_result.json session', isDemo ? '(Demo Mode)' : '');
                 }
             }
             
             // Fallback to session.json (old format)
             if (!sessionData && fs.existsSync(sessionPath)) {
                 sessionData = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
-                console.log('📄 Found session.json session');
+                console.log('📄 Found legacy session.json session');
             }
             
             if (sessionData && sessionData.user && sessionData.token) {
-                console.log('🔄 Auto-login attempt for:', sessionData.user.email);
+                console.log('🔄 Legacy auto-login attempt for:', sessionData.user.email);
                 
                 // Handle demo mode
                 if (isDemo || sessionData.user.email === 'demo@pmlogin.com') {
-                    console.log('🎭 Demo mode auto-login');
+                    console.log('🎭 Legacy demo mode auto-login');
                     this.userData = sessionData.user;
                     this.token = sessionData.token;
+                    
+                    // Migrate to new API client session
+                    apiClient.setSession(sessionData.user, sessionData.token);
+                    apiClient.saveSessionToFile();
+                    
                     this.loadMainPage();
                     return true;
                 }
@@ -180,11 +219,15 @@ class AppController {
                     this.userData = userResult.data;
                     this.token = sessionData.token;
                     
-                    console.log('✅ Auto-login successful');
+                    // Migrate to new API client session
+                    apiClient.setSession(userResult.data, sessionData.token);
+                    apiClient.saveSessionToFile();
+                    
+                    console.log('✅ Legacy auto-login successful');
                     this.loadMainPage();
                     return true;
                 } else {
-                    console.log('❌ Auto-login failed: Invalid token');
+                    console.log('❌ Legacy auto-login failed: Invalid token');
                     await this.clearSession();
                 }
             }
@@ -214,7 +257,12 @@ class AppController {
 
     async clearSession() {
         try {
-            // Clear both session files
+            // Clear API client session
+            const apiClient = require('./services/api_client');
+            apiClient.clearSession();
+            apiClient.clearSessionFile();
+            
+            // Clear legacy session files
             const sessionPath = path.join(app.getPath('userData'), 'session.json');
             const loginResultPath = path.join(__dirname, '../../storage/login_result.json');
             
@@ -238,10 +286,13 @@ class AppController {
             if (!updateUrl) return;
 
             console.log('🔍 Checking for updates...');
-            const result = await apiClient.checkSystemVersion();
             
-            if (result.success && result.data.app_update) {
-                const appUpdate = result.data.app_update;
+            // Use axios directly since apiClient might not have this method
+            const axios = require('axios');
+            const response = await axios.get(updateUrl, { timeout: 10000 });
+            
+            if (response.data && response.data.app_update) {
+                const appUpdate = response.data.app_update;
                 const latestVersion = appUpdate.latest_version;
                 
                 if (this.compareVersions(this.version, latestVersion) < 0) {
@@ -252,7 +303,7 @@ class AppController {
                 }
             }
         } catch (error) {
-            console.error('💥 Update check error:', error);
+            console.error('💥 Update check error:', error.message);
         }
     }
 

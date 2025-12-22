@@ -170,7 +170,7 @@ class LoginRenderer {
         this.setLoading(true);
 
         try {
-            console.log('🔐 Attempting login...');
+            console.log('🔐 Attempting real server login...');
             
             const credentials = {
                 email: email,
@@ -184,22 +184,33 @@ class LoginRenderer {
                 console.log('[SUCCESS] Login successful');
                 this.showNotification('Đăng nhập thành công! Đang chuyển hướng...', 'success');
                 
-                // Small delay for user feedback
-                setTimeout(() => {
-                    // Navigation will be handled by main process
-                }, 1000);
+                // Navigation will be handled by main process automatically
             } else {
                 console.log('[ERROR] Login failed:', result.message);
                 
                 // Handle specific error messages
                 let errorMessage = result.message || 'Đăng nhập thất bại!';
                 
-                if (errorMessage.includes('404')) {
-                    errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.';
-                } else if (errorMessage.includes('HWID')) {
+                // Check if server is offline
+                if (result.offline) {
+                    errorMessage = 'Server không khả dụng. Vui lòng sử dụng demo@pmlogin.com để test giao diện hoặc thử lại sau.';
+                    this.showNotification(errorMessage, 'warning');
+                    return;
+                }
+                
+                // Customize error messages based on status or content
+                if (errorMessage.includes('404') || errorMessage.includes('không tìm thấy')) {
+                    errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.';
+                } else if (errorMessage.includes('HWID') || errorMessage.includes('hardware')) {
                     errorMessage = 'Thiết bị chưa được đăng ký. Vui lòng liên hệ admin để kích hoạt tài khoản.';
-                } else if (errorMessage.includes('401')) {
+                } else if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
                     errorMessage = 'Email hoặc mật khẩu không đúng. Vui lòng kiểm tra lại.';
+                } else if (errorMessage.includes('422') || errorMessage.includes('validation')) {
+                    errorMessage = 'Thông tin đăng nhập không hợp lệ. Vui lòng kiểm tra lại.';
+                } else if (errorMessage.includes('500') || errorMessage.includes('server')) {
+                    errorMessage = 'Lỗi server. Vui lòng thử lại sau ít phút.';
+                } else if (errorMessage.includes('timeout') || errorMessage.includes('network')) {
+                    errorMessage = 'Kết nối bị gián đoạn. Vui lòng kiểm tra internet và thử lại.';
                 }
                 
                 this.showNotification(errorMessage, 'error');

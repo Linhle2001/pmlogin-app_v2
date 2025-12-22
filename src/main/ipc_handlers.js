@@ -110,7 +110,7 @@ function setupIpcHandlers(appController) {
             // Generate HWID
             const hwidUtils = require('./services/hwid_utils');
             const hwid = await hwidUtils.getHardwareId();
-            console.log('🔧 Hardware ID:', hwid);
+            console.log('🔧 Hardware ID:', hwid.substring(0, 16) + '...');
             
             // Call real API
             const apiClient = require('./services/api_client');
@@ -120,25 +120,26 @@ function setupIpcHandlers(appController) {
                 // Save user data to app controller
                 appController.setUserData(result.data.user, result.data.access_token || result.data.token);
                 
-                // Save session to file
-                const sessionData = {
-                    success: true,
-                    data: result.data,
-                    timestamp: new Date().toISOString()
-                };
-                
-                const storageDir = path.join(__dirname, '../../storage');
-                if (!fs.existsSync(storageDir)) {
-                    fs.mkdirSync(storageDir, { recursive: true });
-                }
-                
-                const sessionFile = path.join(storageDir, 'login_result.json');
-                fs.writeFileSync(sessionFile, JSON.stringify(sessionData, null, 2), 'utf8');
+                // Save session to API client and file
+                apiClient.saveSessionToFile();
                 
                 console.log('[SUCCESS] Login successful for:', result.data.user.email);
-                console.log('💾 Session saved to:', sessionFile);
+                
+                // Navigate to main page after successful login
+                setTimeout(() => {
+                    appController.loadMainPage();
+                }, 1000);
             } else {
                 console.log('[ERROR] Login failed:', result.message);
+                
+                // If server is offline, suggest demo mode
+                if (result.offline) {
+                    return {
+                        success: false,
+                        message: 'Server không khả dụng. Vui lòng sử dụng demo@pmlogin.com để test giao diện.',
+                        offline: true
+                    };
+                }
             }
             
             return result;
@@ -146,7 +147,8 @@ function setupIpcHandlers(appController) {
             console.error('[ERROR] Login error:', error);
             return {
                 success: false,
-                message: `Lỗi kết nối: ${error.message}`
+                message: `Lỗi kết nối: ${error.message}`,
+                offline: true
             };
         }
     });
@@ -200,12 +202,10 @@ function setupIpcHandlers(appController) {
         try {
             console.log('🚪 Logging out user');
             
-            // Clear session file
-            const sessionFile = path.join(__dirname, '../../storage/login_result.json');
-            if (fs.existsSync(sessionFile)) {
-                fs.unlinkSync(sessionFile);
-                console.log('[DELETE] Session file deleted');
-            }
+            // Clear API client session
+            const apiClient = require('./services/api_client');
+            apiClient.clearSession();
+            apiClient.clearSessionFile();
             
             // Clear app controller data
             appController.clearUserData();
@@ -223,21 +223,21 @@ function setupIpcHandlers(appController) {
     ipcMain.handle('auth:change-password', async (event, passwordData) => {
         try {
             const apiClient = require('./services/api_client');
-            const token = appController.getToken();
             
-            if (!token) {
+            if (!apiClient.isAuthenticated()) {
                 return { success: false, message: 'Không tìm thấy phiên đăng nhập' };
             }
 
             const result = await apiClient.changePassword(
-                token,
                 passwordData.currentPassword,
                 passwordData.newPassword
             );
 
             if (result.success) {
                 // Logout after password change
-                await appController.handleLogout();
+                setTimeout(() => {
+                    appController.loadLoginPage();
+                }, 2000);
             }
 
             return result;
@@ -275,7 +275,8 @@ function setupIpcHandlers(appController) {
             version: appController.version,
             hwid: hwid,
             platform: process.platform,
-            arch: process.arch
+            arch: process.arch,
+            systemInfo: hwidUtils.getSystemInfo()
         };
     });
 
