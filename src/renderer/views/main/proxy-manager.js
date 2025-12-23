@@ -22,8 +22,10 @@ class ProxyManager {
             this.proxyPagination.onPageChange = () => {
                 this.renderProxies();
             };
+            console.log('✅ ProxyPagination initialized in ProxyManager constructor');
         } else {
-            console.error('❌ ProxyPagination class not found');
+            console.error('❌ ProxyPagination class not found in constructor');
+            // Will retry in loadProxies() if needed
         }
         
         this.init();
@@ -105,11 +107,27 @@ class ProxyManager {
             
             if (result && result.success) {
                 this.proxies = result.data || [];
+                console.log(`✅ Loaded ${this.proxies.length} proxies from database`);
+                
+                // Đảm bảo proxyPagination đã được khởi tạo
+                if (!this.proxyPagination) {
+                    console.error('❌ proxyPagination is not initialized, retrying...');
+                    if (typeof ProxyPagination !== 'undefined') {
+                        this.proxyPagination = new ProxyPagination();
+                        this.proxyPagination.onPageChange = () => {
+                            this.renderProxies();
+                        };
+                    } else {
+                        console.error('❌ ProxyPagination class still not available');
+                        this.hideLoadingState();
+                        return;
+                    }
+                }
+                
                 this.applyFilters();
-                this.renderProxies();
                 this.updateStats();
                 
-                console.log(`✅ Loaded ${this.proxies.length} proxies`);
+                console.log(`✅ Proxies processed and rendered`);
             } else {
                 const errorMsg = result?.message || 'Unknown error';
                 console.error('❌ Failed to load proxies:', errorMsg);
@@ -166,9 +184,16 @@ class ProxyManager {
     
         tbody.innerHTML = '';
     
-        // KHÔNG gọi setData() ở đây nữa!
-        // Chỉ lấy dữ liệu đã được Pagination chia trang sẵn
+        // Kiểm tra proxyPagination đã được khởi tạo chưa
+        if (!this.proxyPagination) {
+            console.error('❌ proxyPagination is not initialized');
+            if (emptyState) emptyState.classList.remove('hidden');
+            return;
+        }
+    
+        // Lấy dữ liệu đã được Pagination chia trang sẵn
         const pageProxies = this.proxyPagination.getCurrentPageData();
+        console.log(`🎨 renderProxies: Rendering ${pageProxies.length} proxies for page ${this.proxyPagination.currentPage}`);
     
         if (pageProxies.length === 0) {
             if (emptyState) emptyState.classList.remove('hidden');
@@ -199,6 +224,8 @@ class ProxyManager {
     
     // Hàm xử lý logic lọc chính
     applyFilters() {
+        console.log(`🔍 applyFilters: Starting with ${this.proxies.length} proxies`);
+        
         // 1. Tính toán mảng filteredProxies dựa trên các điều kiện lọc
         this.filteredProxies = this.proxies.filter(proxy => {
             // Lọc theo Status
@@ -230,23 +257,20 @@ class ProxyManager {
             return true;
         });
     
-        // 2. Cập nhật dữ liệu vào Pagination (Sử dụng file proxy_pagination.js trong Canvas)
-        if (this.proxyPagination) {
-            // Tham số thứ 3 là 'true' để reset về trang 1 mỗi khi thay đổi bộ lọc
-            this.proxyPagination.setData(this.proxies, this.filteredProxies, true);
+        console.log(`🔍 applyFilters: Filtered to ${this.filteredProxies.length} proxies`);
+        
+        // 2. Cập nhật dữ liệu vào Pagination
+        if (!this.proxyPagination) {
+            console.error('❌ proxyPagination is not initialized in applyFilters');
+            return;
         }
+        
+        // Tham số thứ 3 là 'true' để reset về trang 1 mỗi khi thay đổi bộ lọc
+        console.log(`🔍 applyFilters: Setting data to pagination (all: ${this.proxies.length}, filtered: ${this.filteredProxies.length})`);
+        this.proxyPagination.setData(this.proxies, this.filteredProxies, true);
     
         // 3. Gọi hàm render để vẽ lại bảng proxy
         this.renderProxies();
-    }
-    async loadProxies() {
-        // ... logic load data từ database ...
-        if (result && result.success) {
-            this.proxies = result.data || [];
-            // Gọi applyFilters để vừa filter vừa đẩy data vào Pagination
-            this.applyFilters(); 
-            this.updateStats();
-        }
     }
 
     createProxyRow(proxy) {
@@ -810,9 +834,21 @@ let proxyManager = null;
 document.addEventListener('DOMContentLoaded', () => {
     // Only initialize if we're on the proxy view
     if (document.getElementById('proxiesView')) {
-        proxyManager = new ProxyManager();
+        // Đảm bảo ProxyPagination đã được load
+        if (typeof ProxyPagination === 'undefined') {
+            console.error('❌ ProxyPagination class not found. Waiting...');
+            // Retry after a short delay
+            setTimeout(() => {
+                if (typeof ProxyPagination !== 'undefined') {
+                    proxyManager = new ProxyManager();
+                    window.proxyManager = proxyManager;
+                } else {
+                    console.error('❌ ProxyPagination class still not found after delay');
+                }
+            }, 100);
+        } else {
+            proxyManager = new ProxyManager();
+            window.proxyManager = proxyManager;
+        }
     }
 });
-
-// Export for global access
-window.proxyManager = proxyManager;

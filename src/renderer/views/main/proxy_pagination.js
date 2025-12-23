@@ -123,10 +123,15 @@ class ProxyPagination {
      * Trả về mảng dữ liệu của trang hiện tại
      */
     getCurrentPageData() {
-        if (!Array.isArray(this.filteredProxies)) return [];
+        if (!Array.isArray(this.filteredProxies)) {
+            console.warn('⚠️ getCurrentPageData: filteredProxies is not an array');
+            return [];
+        }
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
-        return this.filteredProxies.slice(startIndex, endIndex);
+        const pageData = this.filteredProxies.slice(startIndex, endIndex);
+        console.log(`📄 getCurrentPageData: page=${this.currentPage}, itemsPerPage=${this.itemsPerPage}, startIndex=${startIndex}, endIndex=${endIndex}, filteredProxies.length=${this.filteredProxies.length}, returning ${pageData.length} items`);
+        return pageData;
     }
 
     /**
@@ -145,6 +150,8 @@ class ProxyPagination {
         }
         
         this.totalItems = this.filteredProxies.length;
+        
+        console.log(`📄 setData: allProxies=${this.allProxies.length}, filteredProxies=${this.filteredProxies.length}, totalItems=${this.totalItems}, resetPage=${resetPage}`);
         
         if (resetPage) {
             this.currentPage = 1; 
