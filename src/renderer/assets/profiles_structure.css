@@ -223,9 +223,13 @@
 }
 
 .checkbox-column {
-    width: 47px;
+    width: 50px;
     text-align: center;
+    padding: 12px 8px;
 }
+
+/* Profile checkbox styles - now using global checkbox styles from theme.css */
+/* These classes are kept for reference but styles are inherited from global checkbox styles */
 
 .actions-column {
     width: 140px;
@@ -648,6 +652,20 @@
 
 .checkbox-label input[type="checkbox"] {
     margin: 0;
+    /* Inherit modern checkbox styles from theme.css */
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-bottom: 0 !important;
+    user-select: none;
+}
+
+.checkbox-label:hover input[type="checkbox"] {
+    border-color: var(--pmlogin-primary, #22c55e);
 }
 
 .example-text {

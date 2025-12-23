@@ -422,6 +422,7 @@
 .group-list-container {
     flex: 1;
     overflow: auto;
+    padding-top: 4px; /* Add top padding to prevent border clipping on hover */
 }
 
 /* Groups Grid */
@@ -429,6 +430,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
+    padding-top: 4px; /* Add top padding to prevent border clipping on hover */
 }
 
 .group-card {

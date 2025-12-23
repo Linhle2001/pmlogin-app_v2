@@ -209,29 +209,157 @@
     background-color: var(--pmlogin-info);
 }
 
-.pmlogin-checkbox {
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--pmlogin-primary);
-    border-radius: 3px;
-    background: var(--pmlogin-white);
-    cursor: pointer;
-    position: relative;
+/* ==================== GLOBAL CHECKBOX STYLES ==================== */
+/* 
+ * This style applies to ALL checkboxes in the application automatically.
+ * No need to add any class - just use <input type="checkbox"> and it will work!
+ * 
+ * To override for specific cases, use more specific selectors or add !important.
+ */
+
+/* Base checkbox style - applies to ALL checkboxes */
+input[type="checkbox"],
+.pmlogin-checkbox,
+.profile-checkbox,
+.select-all-checkbox,
+.proxy-checkbox,
+.checkbox-label input[type="checkbox"],
+.enable-change-ip,
+input[type="checkbox"].w-4,
+input[type="checkbox"].h-4 {
+    /* Reset browser defaults */
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    
+    /* Size */
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    
+    /* Visual style */
+    border: 2px solid var(--pmlogin-border-light, #d1d5db) !important;
+    border-radius: 6px !important;
+    background: var(--pmlogin-white, #ffffff) !important;
+    
+    /* Interaction */
+    cursor: pointer !important;
+    position: relative !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    outline: none !important;
+    vertical-align: middle !important;
+    
+    /* Prevent text selection */
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
 }
 
-.pmlogin-checkbox:checked {
-    background: var(--pmlogin-primary);
+/* Hover state */
+input[type="checkbox"]:hover:not(:disabled),
+.pmlogin-checkbox:hover:not(:disabled),
+.profile-checkbox:hover:not(:disabled),
+.select-all-checkbox:hover:not(:disabled),
+.proxy-checkbox:hover:not(:disabled),
+.checkbox-label input[type="checkbox"]:hover:not(:disabled) {
+    border-color: var(--pmlogin-primary, #22c55e) !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1) !important;
+    transform: scale(1.05) !important;
 }
 
-.pmlogin-checkbox:checked::after {
-    content: '✓';
-    position: absolute;
-    top: -2px;
-    left: 1px;
-    color: var(--pmlogin-white);
-    font-size: 12px;
-    font-weight: bold;
+/* Checked state */
+input[type="checkbox"]:checked,
+.pmlogin-checkbox:checked,
+.profile-checkbox:checked,
+.select-all-checkbox:checked,
+.proxy-checkbox:checked,
+.checkbox-label input[type="checkbox"]:checked {
+    background: var(--pmlogin-primary, #22c55e) !important;
+    border-color: var(--pmlogin-primary, #22c55e) !important;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3) !important;
+}
+
+/* Checked + Hover state */
+input[type="checkbox"]:checked:hover:not(:disabled),
+.pmlogin-checkbox:checked:hover:not(:disabled),
+.profile-checkbox:checked:hover:not(:disabled),
+.select-all-checkbox:checked:hover:not(:disabled),
+.proxy-checkbox:checked:hover:not(:disabled) {
+    background: var(--pmlogin-primary-dark, #16a34a) !important;
+    border-color: var(--pmlogin-primary-dark, #16a34a) !important;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4) !important;
+    transform: scale(1.05) !important;
+}
+
+/* Checkmark icon */
+input[type="checkbox"]:checked::after,
+.pmlogin-checkbox:checked::after,
+.profile-checkbox:checked::after,
+.select-all-checkbox:checked::after,
+.proxy-checkbox:checked::after,
+.checkbox-label input[type="checkbox"]:checked::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 6px !important;
+    height: 10px !important;
+    border: solid white !important;
+    border-width: 0 2px 2px 0 !important;
+    transform: translate(-50%, -60%) rotate(45deg) !important;
+    opacity: 1 !important;
+    animation: pmlogin-checkmark 0.2s ease-out !important;
+}
+
+/* Focus state */
+input[type="checkbox"]:focus,
+.pmlogin-checkbox:focus,
+.profile-checkbox:focus,
+.select-all-checkbox:focus,
+.proxy-checkbox:focus,
+.checkbox-label input[type="checkbox"]:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2) !important;
+}
+
+/* Disabled state */
+input[type="checkbox"]:disabled,
+.pmlogin-checkbox:disabled,
+.profile-checkbox:disabled,
+.select-all-checkbox:disabled,
+.proxy-checkbox:disabled,
+.checkbox-label input[type="checkbox"]:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background: var(--pmlogin-gray-100, #f3f4f6) !important;
+    border-color: var(--pmlogin-gray-300, #d1d5db) !important;
+}
+
+input[type="checkbox"]:disabled:hover,
+.pmlogin-checkbox:disabled:hover,
+.profile-checkbox:disabled:hover,
+.select-all-checkbox:disabled:hover,
+.proxy-checkbox:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Checkmark animation */
+@keyframes pmlogin-checkmark {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -60%) rotate(45deg) scale(0);
+    }
+    50% {
+        transform: translate(-50%, -60%) rotate(45deg) scale(1.2);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -60%) rotate(45deg) scale(1);
+    }
 }
 
 /* Login page specific styles */

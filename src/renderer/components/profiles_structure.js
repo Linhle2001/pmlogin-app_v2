@@ -387,10 +387,18 @@ class ProfilesStructure {
         const actionButtons = row.querySelectorAll('button[data-action]');
         actionButtons.forEach(button => {
             button.addEventListener('click', (e) => {
-                const action = e.target.dataset.action;
-                const profileId = e.target.dataset.profileId;
+                e.preventDefault();
+                e.stopPropagation();
+                const action = e.currentTarget.dataset.action;
+                const profileId = e.currentTarget.dataset.profileId;
                 console.log(`🔄 Action button clicked: ${action} for profile ${profileId}`);
-                this.handleRowAction(action, profileId, profile);
+                
+                // For 'more' action, pass the button element for accurate positioning
+                if (action === 'more') {
+                    this.showRowContextMenu(profileId, profile, e.currentTarget);
+                } else {
+                    this.handleRowAction(action, profileId, profile);
+                }
             });
         });
         
@@ -555,6 +563,8 @@ class ProfilesStructure {
                 this.startSingleProfile(profileId);
                 break;
             case 'more':
+                // This case is now handled directly in attachRowEvents
+                // to pass the button element for accurate positioning
                 this.showRowContextMenu(profileId, profile);
                 break;
             default:
@@ -565,7 +575,15 @@ class ProfilesStructure {
     /**
      * Hiển thị context menu cho row
      */
-    showRowContextMenu(profileId, profile) {
+    showRowContextMenu(profileId, profile, buttonElement = null) {
+        console.log('🔄 Showing row context menu for profile:', profileId);
+        
+        // Remove any existing context menu first
+        const existingMenu = document.querySelector('.context-menu');
+        if (existingMenu) {
+            existingMenu.remove();
+        }
+        
         const contextMenu = this.createContextMenu('row', profile);
         
         // Set initial position to prevent jumping - hide until positioned
@@ -579,37 +597,63 @@ class ProfilesStructure {
         document.body.appendChild(contextMenu);
         
         // Position menu near the button
-        const button = document.querySelector(`button[data-action="more"][data-profile-id="${profileId}"]`);
+        // Try to use provided button element first, then search
+        let button = buttonElement;
+        
+        if (!button) {
+            // Try to find button in the row
+            const row = document.querySelector(`tr[data-profile-id="${profileId}"]`);
+            if (row) {
+                button = row.querySelector(`button[data-action="more"][data-profile-id="${profileId}"]`);
+            }
+        }
+        
+        // Final fallback: search in entire document
+        if (!button) {
+            button = document.querySelector(`button[data-action="more"][data-profile-id="${profileId}"]`);
+        }
+        
+        console.log('🔄 Row button found:', !!button);
+        
         if (button) {
-            const rect = button.getBoundingClientRect();
-            const menuRect = contextMenu.getBoundingClientRect();
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            
-            // Calculate horizontal position
-            let left = rect.right - menuRect.width;
-            
-            // Ensure menu doesn't go off-screen horizontally
-            if (left < 10) {
-                left = rect.left; // Show to the right of button if not enough space on left
-            }
-            if (left + menuRect.width > viewportWidth - 10) {
-                left = viewportWidth - menuRect.width - 10; // Keep within viewport
-            }
-            
-            // Calculate vertical position
-            let top = rect.bottom + 5;
-            
-            // Ensure menu doesn't go off-screen vertically
-            if (top + menuRect.height > viewportHeight - 10) {
-                top = rect.top - menuRect.height - 5; // Show above button if not enough space below
-            }
-            
-            // Set position and show menu in one operation to prevent jumping
-            contextMenu.style.left = `${left}px`;
-            contextMenu.style.top = `${top}px`;
-            contextMenu.style.visibility = 'visible';
+            // Use requestAnimationFrame to ensure DOM is ready
+            requestAnimationFrame(() => {
+                const rect = button.getBoundingClientRect();
+                const menuRect = contextMenu.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                console.log('🔄 Button rect:', rect);
+                console.log('🔄 Menu rect:', menuRect);
+                
+                // Calculate horizontal position
+                let left = rect.right - menuRect.width;
+                
+                // Ensure menu doesn't go off-screen horizontally
+                if (left < 10) {
+                    left = rect.left; // Show to the right of button if not enough space on left
+                }
+                if (left + menuRect.width > viewportWidth - 10) {
+                    left = viewportWidth - menuRect.width - 10; // Keep within viewport
+                }
+                
+                // Calculate vertical position
+                let top = rect.bottom + 5;
+                
+                // Ensure menu doesn't go off-screen vertically
+                if (top + menuRect.height > viewportHeight - 10) {
+                    top = rect.top - menuRect.height - 5; // Show above button if not enough space below
+                }
+                
+                // Set position and show menu in one operation to prevent jumping
+                contextMenu.style.left = `${left}px`;
+                contextMenu.style.top = `${top}px`;
+                contextMenu.style.visibility = 'visible';
+                
+                console.log('🔄 Menu positioned at:', { left, top });
+            });
         } else {
+            console.error('❌ Row button not found!');
             // Fallback positioning if button not found
             contextMenu.style.left = '50%';
             contextMenu.style.top = '50%';
@@ -621,11 +665,14 @@ class ProfilesStructure {
         setTimeout(() => {
             document.addEventListener('click', function closeMenu(e) {
                 if (!contextMenu.contains(e.target)) {
+                    console.log('🔄 Closing row context menu');
                     contextMenu.remove();
                     document.removeEventListener('click', closeMenu);
                 }
             });
         }, 100);
+        
+        console.log('✅ Row context menu shown');
     }
 
     /**
