@@ -24,7 +24,6 @@ class ProxyPagination {
             if (prevBtn || nextBtn || itemsPerPageSelect) {
                 this.attachEvents();
                 this.eventsAttached = true;
-                console.log('✅ ProxyPagination initialized');
             } else {
                 setTimeout(() => this.init(), 100);
             }
@@ -64,7 +63,13 @@ class ProxyPagination {
      * Tạo HTML cho các nút số trang
      */
     generatePageNumbers() {
-        if (this.totalPages <= 1) return '';
+        // Nếu không có trang nào, không hiển thị gì
+        if (this.totalPages <= 0) return '';
+        
+        // Nếu chỉ có 1 trang, hiển thị nút "1" active
+        if (this.totalPages === 1) {
+            return `<button class="pagination-page active" data-page="1">1</button>`;
+        }
         
         let pages = '';
         const maxVisiblePages = 5;
@@ -112,11 +117,20 @@ class ProxyPagination {
             this.attachPageEvents();
         }
         
+        // Cập nhật trạng thái disable/enable cho nút Trước và Sau
         const prevBtn = document.getElementById('proxyPrevPage');
         const nextBtn = document.getElementById('proxyNextPage');
         
-        if (prevBtn) prevBtn.disabled = this.currentPage <= 1 || this.totalPages <= 1;
-        if (nextBtn) nextBtn.disabled = this.currentPage >= this.totalPages || this.totalPages <= 1;
+        if (prevBtn) {
+            prevBtn.disabled = this.currentPage <= 1 || this.totalPages <= 1;
+        }
+        
+        if (nextBtn) {
+            nextBtn.disabled = this.currentPage >= this.totalPages || this.totalPages <= 1;
+        }
+        
+        // Đảm bảo event handlers luôn được attach
+        this.attachEvents();
     }
 
     /**
@@ -124,14 +138,11 @@ class ProxyPagination {
      */
     getCurrentPageData() {
         if (!Array.isArray(this.filteredProxies)) {
-            console.warn('⚠️ getCurrentPageData: filteredProxies is not an array');
             return [];
         }
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
-        const pageData = this.filteredProxies.slice(startIndex, endIndex);
-        console.log(`📄 getCurrentPageData: page=${this.currentPage}, itemsPerPage=${this.itemsPerPage}, startIndex=${startIndex}, endIndex=${endIndex}, filteredProxies.length=${this.filteredProxies.length}, returning ${pageData.length} items`);
-        return pageData;
+        return this.filteredProxies.slice(startIndex, endIndex);
     }
 
     /**
@@ -151,8 +162,6 @@ class ProxyPagination {
         
         this.totalItems = this.filteredProxies.length;
         
-        console.log(`📄 setData: allProxies=${this.allProxies.length}, filteredProxies=${this.filteredProxies.length}, totalItems=${this.totalItems}, resetPage=${resetPage}`);
-        
         if (resetPage) {
             this.currentPage = 1; 
         }
@@ -162,9 +171,15 @@ class ProxyPagination {
 
     goToPage(page) {
         const newPage = parseInt(page);
-        if (newPage >= 1 && newPage <= this.totalPages && newPage !== this.currentPage) {
+        if (isNaN(newPage) || newPage < 1 || newPage > this.totalPages) {
+            return;
+        }
+        
+        // Chỉ cập nhật nếu trang thay đổi
+        if (newPage !== this.currentPage) {
             this.currentPage = newPage;
             this.updatePagination();
+            // Gọi onPageChange để trigger render proxies của trang mới
             this.onPageChange();
         }
     }
@@ -212,32 +227,80 @@ class ProxyPagination {
         
         const prevBtn = document.getElementById('proxyPrevPage');
         if (prevBtn && !prevBtn.dataset.paginationAttached) {
-            prevBtn.addEventListener('click', (e) => {
+            // Handler function để xử lý click
+            const handlePrevClick = (e) => {
+                // Tìm button cha nếu click vào phần tử con
+                const button = e.target.closest('#proxyPrevPage') || e.currentTarget;
+                
+                if (button.disabled) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+                
                 e.preventDefault();
-                if (this.currentPage > 1) this.goToPage(this.currentPage - 1);
+                e.stopPropagation();
+                
+                // Chuyển tới trang trước nếu có thể
+                if (this.currentPage > 1) {
+                    const newPage = this.currentPage - 1;
+                    this.goToPage(newPage);
+                }
+            };
+            
+            // Attach event listener lên button
+            prevBtn.addEventListener('click', handlePrevClick);
+            
+            // Attach event listener trực tiếp lên các phần tử con (span, icon)
+            const prevBtnChildren = prevBtn.querySelectorAll('span, i');
+            prevBtnChildren.forEach(child => {
+                child.addEventListener('click', handlePrevClick);
+                // Đảm bảo pointer events hoạt động
+                child.style.pointerEvents = 'auto';
+                child.style.cursor = 'pointer';
             });
+            
+            // Bắt sự kiện hover cho button và các phần tử con
+            prevBtn.addEventListener('mouseenter', (e) => {
+                if (!prevBtn.disabled) {
+                    prevBtn.style.cursor = 'pointer';
+                    // Áp dụng cursor cho các phần tử con
+                    prevBtnChildren.forEach(child => {
+                        child.style.cursor = 'pointer';
+                    });
+                }
+            });
+            
+            prevBtn.addEventListener('mouseleave', (e) => {
+                prevBtn.style.cursor = '';
+            });
+            
             prevBtn.dataset.paginationAttached = 'true';
         }
         
         const nextBtn = document.getElementById('proxyNextPage');
         if (nextBtn && !nextBtn.dataset.paginationAttached) {
-            nextBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (this.currentPage < this.totalPages) this.goToPage(this.currentPage + 1);
+            nextBtn.addEventListener('click', () => {
+                if (this.currentPage < this.totalPages) {
+                    const newPage = this.currentPage + 1;
+                    this.goToPage(newPage);
+                }
             });
             nextBtn.dataset.paginationAttached = 'true';
         }
     }
 
     attachPageEvents() {
+        // Page number buttons
         const pageButtons = document.querySelectorAll('#proxyPaginationPages .pagination-page');
         pageButtons.forEach(button => {
             if (button.dataset.paginationAttached) return;
             
             button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = parseInt(button.dataset.page);
-                if (!isNaN(page)) this.goToPage(page);
+                const page = parseInt(e.target.dataset.page || button.dataset.page);
+                if (!isNaN(page) && page !== this.currentPage) {
+                    this.goToPage(page);
+                }
             });
             button.dataset.paginationAttached = 'true';
         });

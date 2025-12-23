@@ -22,7 +22,6 @@ class ProxyManager {
             this.proxyPagination.onPageChange = () => {
                 this.renderProxies();
             };
-            console.log('✅ ProxyPagination initialized in ProxyManager constructor');
         } else {
             console.error('❌ ProxyPagination class not found in constructor');
             // Will retry in loadProxies() if needed
@@ -32,15 +31,11 @@ class ProxyManager {
     }
 
     async init() {
-        console.log('🔧 Initializing ProxyManager...');
-        
         try {
             this.bindEvents();
             await this.loadProxies();
             await this.loadTags();
             this.updateStats();
-            
-            console.log('✅ ProxyManager initialized successfully');
         } catch (error) {
             console.error('❌ Error initializing ProxyManager:', error);
         }
@@ -91,7 +86,6 @@ class ProxyManager {
 
     async loadProxies() {
         try {
-            console.log('🔄 Loading proxies from database...');
             this.showLoadingState();
             
             // Check if electronAPI is available
@@ -103,11 +97,9 @@ class ProxyManager {
             }
             
             const result = await window.electronAPI.invoke('db:proxy:get-all');
-            console.log('📡 IPC result:', result);
             
             if (result && result.success) {
                 this.proxies = result.data || [];
-                console.log(`✅ Loaded ${this.proxies.length} proxies from database`);
                 
                 // Đảm bảo proxyPagination đã được khởi tạo
                 if (!this.proxyPagination) {
@@ -126,8 +118,6 @@ class ProxyManager {
                 
                 this.applyFilters();
                 this.updateStats();
-                
-                console.log(`✅ Proxies processed and rendered`);
             } else {
                 const errorMsg = result?.message || 'Unknown error';
                 console.error('❌ Failed to load proxies:', errorMsg);
@@ -145,7 +135,6 @@ class ProxyManager {
         try {
             // Check if electronAPI is available
             if (!window.electronAPI || !window.electronAPI.invoke) {
-                console.warn('⚠️ window.electronAPI is not available, skipping tag load');
                 return;
             }
             
@@ -193,7 +182,6 @@ class ProxyManager {
     
         // Lấy dữ liệu đã được Pagination chia trang sẵn
         const pageProxies = this.proxyPagination.getCurrentPageData();
-        console.log(`🎨 renderProxies: Rendering ${pageProxies.length} proxies for page ${this.proxyPagination.currentPage}`);
     
         if (pageProxies.length === 0) {
             if (emptyState) emptyState.classList.remove('hidden');
@@ -224,8 +212,6 @@ class ProxyManager {
     
     // Hàm xử lý logic lọc chính
     applyFilters() {
-        console.log(`🔍 applyFilters: Starting with ${this.proxies.length} proxies`);
-        
         // 1. Tính toán mảng filteredProxies dựa trên các điều kiện lọc
         this.filteredProxies = this.proxies.filter(proxy => {
             // Lọc theo Status
@@ -257,8 +243,6 @@ class ProxyManager {
             return true;
         });
     
-        console.log(`🔍 applyFilters: Filtered to ${this.filteredProxies.length} proxies`);
-        
         // 2. Cập nhật dữ liệu vào Pagination
         if (!this.proxyPagination) {
             console.error('❌ proxyPagination is not initialized in applyFilters');
@@ -266,7 +250,6 @@ class ProxyManager {
         }
         
         // Tham số thứ 3 là 'true' để reset về trang 1 mỗi khi thay đổi bộ lọc
-        console.log(`🔍 applyFilters: Setting data to pagination (all: ${this.proxies.length}, filtered: ${this.filteredProxies.length})`);
         this.proxyPagination.setData(this.proxies, this.filteredProxies, true);
     
         // 3. Gọi hàm render để vẽ lại bảng proxy
@@ -808,8 +791,6 @@ class ProxyManager {
     }
 
     showNotification(message, type = 'info') {
-        console.log(`[${type.toUpperCase()}] ${message}`);
-        
         // Simple notification - can be enhanced later
         const notification = document.createElement('div');
         notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
