@@ -216,6 +216,10 @@
         /* Settings Dropdown Styles */
         #settingsDropdown {
             animation: fadeIn 0.2s ease-out;
+           
+        }
+        #settingsIcon {
+            margin-left: 50px;
         }
         
         @keyframes fadeIn {
@@ -674,7 +678,7 @@
 
                 <!-- Filters -->
                 <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
-                    <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex flex-wrap items-end gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Status</label>
                             <select id="proxyStatusFilter" class="border border-gray-300 rounded-lg px-3 py-2">
@@ -704,7 +708,8 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
                             <input type="text" id="proxySearchInput" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="Search by host, port, or name...">
                         </div>
-                        <div class="flex items-end">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1 invisible">Clear</label>
                             <button id="clearFiltersBtn" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
                                 <i class="fas fa-times mr-2"></i>Clear
                             </button>
