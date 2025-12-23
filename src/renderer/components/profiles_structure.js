@@ -95,7 +95,13 @@ class ProfilesStructure {
                 
                 const clickedAction = e.currentTarget.dataset.action;
                 console.log(`🔄 Taskbar button clicked: ${clickedAction}`);
-                this.handleTaskbarAction(clickedAction);
+                
+                // For 'more' action, pass the button element for accurate positioning
+                if (clickedAction === 'more') {
+                    this.showMoreActions(e.currentTarget);
+                } else {
+                    this.handleTaskbarAction(clickedAction);
+                }
             });
         });
 
@@ -152,6 +158,8 @@ class ProfilesStructure {
                 this.stopShareOnCloud();
                 break;
             case 'more':
+                // This case is now handled directly in attachTaskbarEvents
+                // to pass the button element for accurate positioning
                 this.showMoreActions();
                 break;
             default:
@@ -560,6 +568,13 @@ class ProfilesStructure {
     showRowContextMenu(profileId, profile) {
         const contextMenu = this.createContextMenu('row', profile);
         
+        // Set initial position to prevent jumping - hide until positioned
+        contextMenu.style.position = 'fixed';
+        contextMenu.style.left = '-9999px';
+        contextMenu.style.top = '-9999px';
+        contextMenu.style.zIndex = '10000';
+        contextMenu.style.visibility = 'hidden';
+        
         // Add to DOM first to get proper dimensions
         document.body.appendChild(contextMenu);
         
@@ -590,10 +605,16 @@ class ProfilesStructure {
                 top = rect.top - menuRect.height - 5; // Show above button if not enough space below
             }
             
-            contextMenu.style.position = 'fixed';
+            // Set position and show menu in one operation to prevent jumping
             contextMenu.style.left = `${left}px`;
             contextMenu.style.top = `${top}px`;
-            contextMenu.style.zIndex = '10000';
+            contextMenu.style.visibility = 'visible';
+        } else {
+            // Fallback positioning if button not found
+            contextMenu.style.left = '50%';
+            contextMenu.style.top = '50%';
+            contextMenu.style.transform = 'translate(-50%, -50%)';
+            contextMenu.style.visibility = 'visible';
         }
         
         // Close menu when clicking outside
@@ -985,7 +1006,7 @@ class ProfilesStructure {
         }
     }
 
-    showMoreActions() {
+    showMoreActions(buttonElement = null) {
         console.log('🔄 Showing more actions...');
         
         // Remove any existing context menu first
@@ -996,54 +1017,79 @@ class ProfilesStructure {
         
         const contextMenu = this.createContextMenu('taskbar');
         
+        // Set initial position to prevent jumping - hide until positioned
+        contextMenu.style.position = 'fixed';
+        contextMenu.style.left = '-9999px';
+        contextMenu.style.top = '-9999px';
+        contextMenu.style.zIndex = '10000';
+        contextMenu.style.visibility = 'hidden';
+        
         // Add to DOM first to get proper dimensions
         document.body.appendChild(contextMenu);
         
         // Position menu near the more button
-        const moreButton = document.querySelector('button[data-action="more"]');
+        // Try to find button in taskbar first, then fallback to general search
+        let moreButton = buttonElement;
+        
+        if (!moreButton) {
+            // Try to find button in taskbar container specifically
+            const taskbar = document.querySelector('.profiles-taskbar');
+            if (taskbar) {
+                moreButton = taskbar.querySelector('button[data-action="more"]');
+            }
+        }
+        
+        // Final fallback: search in entire document
+        if (!moreButton) {
+            moreButton = document.querySelector('.profiles-taskbar button[data-action="more"]');
+        }
+        
         console.log('🔄 More button found:', !!moreButton);
         
         if (moreButton) {
-            const rect = moreButton.getBoundingClientRect();
-            const menuRect = contextMenu.getBoundingClientRect();
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            
-            console.log('🔄 Button rect:', rect);
-            console.log('🔄 Menu rect:', menuRect);
-            
-            // Calculate horizontal position
-            let left = rect.right - menuRect.width;
-            
-            // Ensure menu doesn't go off-screen horizontally
-            if (left < 10) {
-                left = rect.left; // Show to the right of button if not enough space on left
-            }
-            if (left + menuRect.width > viewportWidth - 10) {
-                left = viewportWidth - menuRect.width - 10; // Keep within viewport
-            }
-            
-            // Calculate vertical position
-            let top = rect.bottom + 5;
-            
-            // Ensure menu doesn't go off-screen vertically
-            if (top + menuRect.height > viewportHeight - 10) {
-                top = rect.top - menuRect.height - 5; // Show above button if not enough space below
-            }
-            
-            contextMenu.style.position = 'fixed';
-            contextMenu.style.left = `${left}px`;
-            contextMenu.style.top = `${top}px`;
-            contextMenu.style.zIndex = '10000';
-            
-            console.log('🔄 Menu positioned at:', { left, top });
+            // Use requestAnimationFrame to ensure DOM is ready
+            requestAnimationFrame(() => {
+                const rect = moreButton.getBoundingClientRect();
+                const menuRect = contextMenu.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                console.log('🔄 Button rect:', rect);
+                console.log('🔄 Menu rect:', menuRect);
+                
+                // Calculate horizontal position
+                let left = rect.right - menuRect.width;
+                
+                // Ensure menu doesn't go off-screen horizontally
+                if (left < 10) {
+                    left = rect.left; // Show to the right of button if not enough space on left
+                }
+                if (left + menuRect.width > viewportWidth - 10) {
+                    left = viewportWidth - menuRect.width - 10; // Keep within viewport
+                }
+                
+                // Calculate vertical position
+                let top = rect.bottom + 5;
+                
+                // Ensure menu doesn't go off-screen vertically
+                if (top + menuRect.height > viewportHeight - 10) {
+                    top = rect.top - menuRect.height - 5; // Show above button if not enough space below
+                }
+                
+                // Set position and show menu in one operation to prevent jumping
+                contextMenu.style.left = `${left}px`;
+                contextMenu.style.top = `${top}px`;
+                contextMenu.style.visibility = 'visible';
+                
+                console.log('🔄 Menu positioned at:', { left, top });
+            });
         } else {
             console.error('❌ More button not found!');
             // Fallback positioning
-            contextMenu.style.position = 'fixed';
+            contextMenu.style.left = 'auto';
             contextMenu.style.right = '20px';
             contextMenu.style.top = '100px';
-            contextMenu.style.zIndex = '10000';
+            contextMenu.style.visibility = 'visible';
         }
         
         // Close menu when clicking outside

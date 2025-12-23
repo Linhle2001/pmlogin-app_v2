@@ -363,9 +363,13 @@
     min-width: 220px;
     z-index: 10000;
     max-width: 300px;
-    /* Ensure menu is visible */
+    /* Prevent jumping by ensuring proper initial state */
     opacity: 1;
     visibility: visible;
+    /* Prevent layout shifts */
+    will-change: transform;
+    /* Smooth appearance without jumping */
+    transform: translateZ(0);
 }
 
 .menu-item {

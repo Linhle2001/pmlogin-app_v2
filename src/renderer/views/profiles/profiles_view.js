@@ -17,6 +17,9 @@ class ProfilesView {
         this.totalItems = 0;
         this.totalPages = 0;
         
+        // Group view state
+        this.viewingGroup = null; // Track which group is currently being viewed in expanded mode
+        
         // Expose to window for onclick handlers
         window.profilesView = this;
         
@@ -128,17 +131,39 @@ class ProfilesView {
 
                     <!-- Group Tab Content -->
                     <div id="group-tab-content" class="tab-content">
-                        <div class="group-management-container">
-                            <div class="group-header">
-                                <div class="group-search">
-                                    <input type="text" class="search-input" placeholder="Search groups..." id="groupSearchInput" />
+                        <!-- Group List View -->
+                        <div id="group-list-view" class="group-list-view">
+                            <div class="group-management-container">
+                                <div class="group-header">
+                                    <div class="group-search">
+                                        <input type="text" class="search-input" placeholder="Search groups..." id="groupSearchInput" />
+                                    </div>
+                                    <button class="btn btn-primary" id="newGroupBtn">
+                                        <i class="fas fa-plus"></i> New group
+                                    </button>
                                 </div>
-                                <button class="btn btn-primary" id="newGroupBtn">
-                                    <i class="fas fa-plus"></i> New group
-                                </button>
+                                <div id="group-list-container" class="group-list-container">
+                                    <!-- Group list will be inserted here -->
+                                </div>
                             </div>
-                            <div id="group-list-container" class="group-list-container">
-                                <!-- Group list will be inserted here -->
+                        </div>
+                        
+                        <!-- Group Expanded View (full-width with table) -->
+                        <div id="group-expanded-view" class="group-expanded-view" style="display: none;">
+                            <div class="group-expanded-header">
+                                <button class="btn btn-secondary" id="backToGroupsBtn">
+                                    <i class="fas fa-arrow-left"></i> Back to Groups
+                                </button>
+                                <h2 id="expanded-group-title" class="expanded-group-title"></h2>
+                            </div>
+                            <div id="group-taskbar-container" class="taskbar-container">
+                                <!-- Group taskbar will be inserted here -->
+                            </div>
+                            <div id="group-table-container" class="table-container">
+                                <!-- Group table will be inserted here -->
+                            </div>
+                            <div id="group-pagination-container" class="pagination-container">
+                                <!-- Group pagination will be inserted here -->
                             </div>
                         </div>
                     </div>
@@ -196,6 +221,14 @@ class ProfilesView {
                 this.filterGroups(e.target.value);
             });
         }
+
+        // Back to groups button
+        const backToGroupsBtn = this.container.querySelector('#backToGroupsBtn');
+        if (backToGroupsBtn) {
+            backToGroupsBtn.addEventListener('click', () => {
+                this.backToGroupList();
+            });
+        }
     }
 
     async switchTab(tab) {
@@ -203,6 +236,11 @@ class ProfilesView {
         
         // Reset pagination when switching tabs
         this.currentPage = 1;
+        
+        // Reset viewing group when switching away from group tab
+        if (tab !== 'group') {
+            this.viewingGroup = null;
+        }
         
         // Update active tab button
         const tabButtons = this.container.querySelectorAll('.tab-button');
@@ -633,16 +671,40 @@ class ProfilesView {
     async renderGroupTab() {
         console.log('🔄 Rendering Group tab...');
         
-        const groupListContainer = this.container.querySelector('#group-list-container');
-        if (!groupListContainer) {
-            console.error('❌ Group list container not found');
+        // If viewing a group, show expanded view
+        if (this.viewingGroup) {
+            await this.showGroupExpandedView(this.viewingGroup);
             return;
         }
+        
+        // Otherwise show group list
+        await this.showGroupListView();
+    }
+
+    async showGroupListView() {
+        const groupListContainer = this.container.querySelector('#group-list-container');
+        const groupListView = this.container.querySelector('#group-list-view');
+        const groupExpandedView = this.container.querySelector('#group-expanded-view');
+        
+        if (!groupListContainer || !groupListView || !groupExpandedView) {
+            console.error('❌ Group containers not found');
+            return;
+        }
+        
+        // Show list view, hide expanded view
+        groupListView.style.display = 'block';
+        groupExpandedView.style.display = 'none';
+        
+        // Clear container first to prevent duplicates
+        groupListContainer.innerHTML = '';
         
         try {
             const groups = await this.loadGroups();
             
-            if (groups.length === 0) {
+            // Remove duplicates if any (shouldn't happen, but safety check)
+            const uniqueGroups = [...new Set(groups)];
+            
+            if (uniqueGroups.length === 0) {
                 groupListContainer.innerHTML = `
                     <div class="no-groups-placeholder">
                         <div class="placeholder-icon">📁</div>
@@ -659,31 +721,37 @@ class ProfilesView {
             // Render groups list
             let groupsHTML = '<div class="groups-grid">';
             
-            for (const group of groups) {
+            for (const group of uniqueGroups) {
+                // Skip if group name is empty or invalid
+                if (!group || typeof group !== 'string' || group.trim() === '') {
+                    console.warn('⚠️ Skipping invalid group:', group);
+                    continue;
+                }
+                
                 const profileCount = await this.getProfileCountForGroup(group);
                 
+                // Escape group name for HTML to prevent XSS
+                const escapedGroupName = group.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                
                 groupsHTML += `
-                    <div class="group-card" data-group-name="${group}">
+                    <div class="group-card" data-group-name="${escapedGroupName}">
                         <div class="group-card-header">
                             <div class="group-icon">📁</div>
                             <div class="group-info">
-                                <h4 class="group-name">${group}</h4>
+                                <h4 class="group-name">${escapedGroupName}</h4>
                                 <p class="group-count">${profileCount} profiles</p>
                             </div>
                         </div>
                         <div class="group-actions">
-                            <button class="btn btn-small btn-primary" onclick="window.profilesView.expandGroup('${group}')">
+                            <button class="btn btn-small btn-primary" onclick="window.profilesView.expandGroup('${escapedGroupName}')">
                                 <i class="fas fa-eye"></i> View
                             </button>
-                            <button class="btn btn-small btn-secondary" onclick="window.profilesView.editGroup('${group}')">
+                            <button class="btn btn-small btn-secondary" onclick="window.profilesView.editGroup('${escapedGroupName}')">
                                 <i class="fas fa-edit"></i> Edit
                             </button>
-                            <button class="btn btn-small btn-danger" onclick="window.profilesView.deleteGroup('${group}')">
+                            <button class="btn btn-small btn-danger" onclick="window.profilesView.deleteGroup('${escapedGroupName}')">
                                 <i class="fas fa-trash"></i> Delete
                             </button>
-                        </div>
-                        <div class="group-expanded-content" id="group-${group}-content" style="display: none;">
-                            <!-- Group profiles will be loaded here when expanded -->
                         </div>
                     </div>
                 `;
@@ -692,7 +760,7 @@ class ProfilesView {
             groupsHTML += '</div>';
             groupListContainer.innerHTML = groupsHTML;
             
-            console.log(`✅ Rendered ${groups.length} groups`);
+            console.log(`✅ Rendered ${uniqueGroups.length} groups`);
         } catch (error) {
             console.error('❌ Error rendering group tab:', error);
             groupListContainer.innerHTML = `
@@ -706,6 +774,127 @@ class ProfilesView {
                 </div>
             `;
         }
+    }
+
+    async showGroupExpandedView(groupName) {
+        const groupListView = this.container.querySelector('#group-list-view');
+        const groupExpandedView = this.container.querySelector('#group-expanded-view');
+        const taskbarContainer = this.container.querySelector('#group-taskbar-container');
+        const tableContainer = this.container.querySelector('#group-table-container');
+        const paginationContainer = this.container.querySelector('#group-pagination-container');
+        const expandedGroupTitle = this.container.querySelector('#expanded-group-title');
+        
+        if (!groupListView || !groupExpandedView || !taskbarContainer || !tableContainer || !paginationContainer || !expandedGroupTitle) {
+            console.error('❌ Group expanded view containers not found');
+            return;
+        }
+        
+        // Hide list view, show expanded view
+        groupListView.style.display = 'none';
+        groupExpandedView.style.display = 'block';
+        
+        // Set group title
+        expandedGroupTitle.textContent = groupName;
+        
+        // Clear containers
+        taskbarContainer.innerHTML = '';
+        tableContainer.innerHTML = '';
+        paginationContainer.innerHTML = '';
+        
+        // Create taskbar for group
+        const taskbar = this.profilesStructure.createTaskbar('group', groupName);
+        taskbarContainer.appendChild(taskbar);
+        
+        // Create table
+        const table = this.profilesStructure.createProfilesTable('group');
+        tableContainer.appendChild(table);
+        
+        // Load and display profiles for this group
+        await this.loadDataForGroup(groupName, table);
+        
+        // Create pagination
+        this.createPagination(paginationContainer);
+        
+        console.log(`✅ Showing expanded view for group: ${groupName}`);
+    }
+
+    async loadDataForGroup(groupName, tableContainer) {
+        try {
+            console.log(`🔄 Loading data for group: ${groupName}`);
+            
+            // Load profiles for this group
+            const response = await this.safeElectronCall('db:group:get-profiles', groupName);
+            
+            if (!response.success) {
+                console.error(`❌ Failed to load profiles for group ${groupName}:`, response.message);
+                this.profilesStructure.populateTable([], tableContainer);
+                return;
+            }
+            
+            // Transform profile data to match expected format
+            const allDataForGroup = response.data.map(profile => {
+                // Parse proxy data if it's stored as JSON string
+                let proxyInfo = 'No proxy';
+                let proxyStatus = 'No proxy';
+                
+                if (profile.proxy) {
+                    try {
+                        const proxyData = JSON.parse(profile.proxy);
+                        if (proxyData.type === 'your_proxy' && proxyData.host && proxyData.port) {
+                            proxyInfo = `${proxyData.protocol || 'http'}://${proxyData.host}:${proxyData.port}`;
+                            proxyStatus = 'Ready';
+                        } else if (proxyData.type === 'pm_proxy' && proxyData.id) {
+                            proxyInfo = `PM Proxy ID: ${proxyData.id}`;
+                            proxyStatus = 'Ready';
+                        }
+                    } catch (e) {
+                        // If not JSON, treat as plain text
+                        proxyInfo = profile.proxy;
+                        proxyStatus = 'Ready';
+                    }
+                }
+                
+                return {
+                    id: profile.id.toString(),
+                    name: profile.name || 'Unnamed Profile',
+                    platform: profile.platform || 'Chrome',
+                    tags: profile.tags || [],
+                    note: profile.note || '',
+                    proxy: proxyInfo,
+                    proxy_status: proxyStatus,
+                    updated_at: profile.updated_at || new Date().toISOString(),
+                    last_started_at: profile.last_started_at || '',
+                    status: profile.status || 'Ready',
+                    shared_on_cloud: profile.shared_on_cloud || false
+                };
+            });
+            
+            // Update total items for pagination
+            this.totalItems = allDataForGroup.length;
+            this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+            
+            // Get paginated data
+            const paginatedData = this.getPaginatedData(allDataForGroup);
+            
+            // Update local profilesData for other operations
+            this.profilesData = paginatedData;
+            
+            // Populate table with paginated data
+            this.profilesStructure.populateTable(paginatedData, tableContainer);
+            
+            console.log(`✅ Loaded ${paginatedData.length} of ${this.totalItems} profiles for group: ${groupName} (Page ${this.currentPage}/${this.totalPages})`);
+        } catch (error) {
+            console.error(`❌ Error loading data for group ${groupName}:`, error);
+            
+            // Fallback to empty data
+            this.profilesStructure.populateTable([], tableContainer);
+        }
+    }
+
+    backToGroupList() {
+        this.viewingGroup = null;
+        this.currentPage = 1; // Reset pagination
+        this.renderGroupTab();
     }
 
     async loadGroups() {
@@ -813,187 +1002,20 @@ class ProfilesView {
     async expandGroup(groupName) {
         console.log(`🔄 Expanding group: ${groupName}`);
         
-        const groupCard = this.container.querySelector(`[data-group-name="${groupName}"]`);
-        const expandedContent = groupCard?.querySelector('.group-expanded-content');
+        // Set viewing group and show expanded view
+        this.viewingGroup = groupName;
+        this.currentPage = 1; // Reset pagination when viewing a group
         
-        if (!expandedContent) {
-            console.error(`❌ Expanded content not found for group: ${groupName}`);
-            return;
-        }
-        
-        if (expandedContent.style.display === 'none') {
-            // Show expanded content
-            expandedContent.style.display = 'block';
-            
-            // Load group profiles
-            try {
-                expandedContent.innerHTML = '<div class="loading">Loading profiles...</div>';
-                
-                const response = await this.safeElectronCall('db:group:get-profiles', groupName);
-                
-                if (response.success && response.data.length > 0) {
-                    // Create a mini profiles table for this group with pagination
-                    const profiles = response.data;
-                    const itemsPerPage = 5; // Smaller pagination for groups
-                    const totalPages = Math.ceil(profiles.length / itemsPerPage);
-                    const currentPage = 1;
-                    const startIndex = (currentPage - 1) * itemsPerPage;
-                    const endIndex = startIndex + itemsPerPage;
-                    const paginatedProfiles = profiles.slice(startIndex, endIndex);
-                    
-                    let profilesHTML = `
-                        <div class="group-profiles-header">
-                            <h5>Profiles in ${groupName} (${profiles.length})</h5>
-                        </div>
-                        <div class="group-profiles-list">
-                    `;
-                    
-                    paginatedProfiles.forEach(profile => {
-                        profilesHTML += `
-                            <div class="group-profile-item">
-                                <div class="profile-icon">🔵</div>
-                                <div class="profile-info">
-                                    <div class="profile-name">${profile.name}</div>
-                                    <div class="profile-details">${profile.platform || 'Chrome'} • ${profile.proxy || 'No proxy'}</div>
-                                </div>
-                                <div class="profile-actions">
-                                    <button class="btn btn-small btn-primary" onclick="window.profilesView.startProfile('${profile.id}')">
-                                        <i class="fas fa-play"></i> Start
-                                    </button>
-                                    <button class="btn btn-small btn-secondary" onclick="window.profilesView.removeFromGroup('${profile.id}', '${groupName}')">
-                                        <i class="fas fa-times"></i> Remove
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    
-                    profilesHTML += '</div>';
-                    
-                    // Add pagination for group if needed
-                    if (totalPages > 1) {
-                        profilesHTML += `
-                            <div class="group-pagination">
-                                <div class="group-pagination-info">
-                                    <span>Hiển thị ${startIndex + 1} - ${Math.min(endIndex, profiles.length)} của ${profiles.length} profiles</span>
-                                </div>
-                                <div class="group-pagination-controls">
-                                    <button class="btn btn-small btn-secondary" onclick="window.profilesView.changeGroupPage('${groupName}', ${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''}>
-                                        <i class="fas fa-chevron-left"></i>
-                                    </button>
-                                    <span class="group-page-info">Trang ${currentPage} / ${totalPages}</span>
-                                    <button class="btn btn-small btn-secondary" onclick="window.profilesView.changeGroupPage('${groupName}', ${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''}>
-                                        <i class="fas fa-chevron-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    expandedContent.innerHTML = profilesHTML;
-                    
-                    // Store pagination info for this group
-                    expandedContent.dataset.currentPage = currentPage;
-                    expandedContent.dataset.totalPages = totalPages;
-                    expandedContent.dataset.itemsPerPage = itemsPerPage;
-                    
-                } else {
-                    expandedContent.innerHTML = `
-                        <div class="group-profiles-placeholder">
-                            <p>No profiles in this group yet.</p>
-                            <p>Use "Assign to group" from the Local tab to add profiles to '${groupName}'.</p>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                console.error(`❌ Error loading profiles for group ${groupName}:`, error);
-                expandedContent.innerHTML = '<div class="error">Failed to load profiles</div>';
-            }
-        } else {
-            // Hide expanded content
-            expandedContent.style.display = 'none';
-        }
+        // Render the expanded view
+        await this.renderGroupTab();
     }
 
     async changeGroupPage(groupName, newPage) {
-        const groupCard = this.container.querySelector(`[data-group-name="${groupName}"]`);
-        const expandedContent = groupCard?.querySelector('.group-expanded-content');
-        
-        if (!expandedContent) return;
-        
-        const currentPage = parseInt(expandedContent.dataset.currentPage) || 1;
-        const totalPages = parseInt(expandedContent.dataset.totalPages) || 1;
-        const itemsPerPage = parseInt(expandedContent.dataset.itemsPerPage) || 5;
-        
-        if (newPage < 1 || newPage > totalPages || newPage === currentPage) return;
-        
-        try {
-            expandedContent.innerHTML = '<div class="loading">Loading profiles...</div>';
-            
-            const response = await this.safeElectronCall('db:group:get-profiles', groupName);
-            
-            if (response.success && response.data.length > 0) {
-                const profiles = response.data;
-                const startIndex = (newPage - 1) * itemsPerPage;
-                const endIndex = startIndex + itemsPerPage;
-                const paginatedProfiles = profiles.slice(startIndex, endIndex);
-                
-                let profilesHTML = `
-                    <div class="group-profiles-header">
-                        <h5>Profiles in ${groupName} (${profiles.length})</h5>
-                    </div>
-                    <div class="group-profiles-list">
-                `;
-                
-                paginatedProfiles.forEach(profile => {
-                    profilesHTML += `
-                        <div class="group-profile-item">
-                            <div class="profile-icon">🔵</div>
-                            <div class="profile-info">
-                                <div class="profile-name">${profile.name}</div>
-                                <div class="profile-details">${profile.platform || 'Chrome'} • ${profile.proxy || 'No proxy'}</div>
-                            </div>
-                            <div class="profile-actions">
-                                <button class="btn btn-small btn-primary" onclick="window.profilesView.startProfile('${profile.id}')">
-                                    <i class="fas fa-play"></i> Start
-                                </button>
-                                <button class="btn btn-small btn-secondary" onclick="window.profilesView.removeFromGroup('${profile.id}', '${groupName}')">
-                                    <i class="fas fa-times"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                profilesHTML += '</div>';
-                
-                // Add pagination controls
-                profilesHTML += `
-                    <div class="group-pagination">
-                        <div class="group-pagination-info">
-                            <span>Hiển thị ${startIndex + 1} - ${Math.min(endIndex, profiles.length)} của ${profiles.length} profiles</span>
-                        </div>
-                        <div class="group-pagination-controls">
-                            <button class="btn btn-small btn-secondary" onclick="window.profilesView.changeGroupPage('${groupName}', ${newPage - 1})" ${newPage <= 1 ? 'disabled' : ''}>
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <span class="group-page-info">Trang ${newPage} / ${totalPages}</span>
-                            <button class="btn btn-small btn-secondary" onclick="window.profilesView.changeGroupPage('${groupName}', ${newPage + 1})" ${newPage >= totalPages ? 'disabled' : ''}>
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                expandedContent.innerHTML = profilesHTML;
-                
-                // Update pagination info
-                expandedContent.dataset.currentPage = newPage;
-                
-            }
-        } catch (error) {
-            console.error(`❌ Error changing group page:`, error);
-            expandedContent.innerHTML = '<div class="error">Failed to load profiles</div>';
+        // This method is no longer needed as pagination is handled by the main pagination system
+        // But keeping it for backward compatibility if called from elsewhere
+        if (this.viewingGroup === groupName) {
+            this.currentPage = newPage;
+            await this.renderGroupTab();
         }
     }
 
@@ -1067,7 +1089,13 @@ class ProfilesView {
                 
                 // Refresh the group display
                 if (this.currentTab === 'group') {
-                    await this.renderGroupTab();
+                    if (this.viewingGroup === groupName) {
+                        // If viewing this group, refresh the expanded view
+                        await this.renderGroupTab();
+                    } else {
+                        // Otherwise refresh the list view
+                        await this.renderGroupTab();
+                    }
                 }
                 await this.updateTabCounts();
             } else {
