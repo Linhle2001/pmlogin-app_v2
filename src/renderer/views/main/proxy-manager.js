@@ -8,14 +8,23 @@ class ProxyManager {
         this.proxies = [];
         this.filteredProxies = [];
         this.selectedProxies = new Set();
-        this.currentPage = 1;
-        this.itemsPerPage = 20;
         this.filters = {
             status: '',
             type: '',
             tag: '',
             search: ''
         };
+        
+        // Initialize ProxyPagination
+        if (typeof ProxyPagination !== 'undefined') {
+            this.proxyPagination = new ProxyPagination();
+            // Override onPageChange to render proxies when page changes
+            this.proxyPagination.onPageChange = () => {
+                this.renderProxies();
+            };
+        } else {
+            console.error('❌ ProxyPagination class not found');
+        }
         
         this.init();
     }
@@ -71,9 +80,7 @@ class ProxyManager {
         document.getElementById('saveEditProxy')?.addEventListener('click', () => this.saveEditProxy());
         document.getElementById('testEditProxy')?.addEventListener('click', () => this.testEditProxy());
 
-        // Pagination
-        document.getElementById('proxyPrevPage')?.addEventListener('click', () => this.previousPage());
-        document.getElementById('proxyNextPage')?.addEventListener('click', () => this.nextPage());
+        // Pagination is handled by ProxyPagination class
     }
 
     // ======================================================================
@@ -85,10 +92,18 @@ class ProxyManager {
             console.log('🔄 Loading proxies from database...');
             this.showLoadingState();
             
+            // Check if electronAPI is available
+            if (!window.electronAPI || !window.electronAPI.invoke) {
+                console.error('❌ window.electronAPI is not available');
+                this.showError('Electron API is not available. Please check preload script.');
+                this.hideLoadingState();
+                return;
+            }
+            
             const result = await window.electronAPI.invoke('db:proxy:get-all');
             console.log('📡 IPC result:', result);
             
-            if (result.success) {
+            if (result && result.success) {
                 this.proxies = result.data || [];
                 this.applyFilters();
                 this.renderProxies();
@@ -96,8 +111,9 @@ class ProxyManager {
                 
                 console.log(`✅ Loaded ${this.proxies.length} proxies`);
             } else {
-                console.error('❌ Failed to load proxies:', result.message);
-                this.showError('Failed to load proxies: ' + result.message);
+                const errorMsg = result?.message || 'Unknown error';
+                console.error('❌ Failed to load proxies:', errorMsg);
+                this.showError('Failed to load proxies: ' + errorMsg);
             }
         } catch (error) {
             console.error('❌ Error loading proxies:', error);
@@ -109,21 +125,29 @@ class ProxyManager {
 
     async loadTags() {
         try {
+            // Check if electronAPI is available
+            if (!window.electronAPI || !window.electronAPI.invoke) {
+                console.warn('⚠️ window.electronAPI is not available, skipping tag load');
+                return;
+            }
+            
             const result = await window.electronAPI.invoke('db:tag:get-all');
             
-            if (result.success) {
+            if (result && result.success) {
                 const tagFilter = document.getElementById('proxyTagFilter');
                 if (tagFilter) {
                     // Clear existing options except "All Tags"
                     tagFilter.innerHTML = '<option value="">All Tags</option>';
                     
                     // Add tag options
-                    result.data.forEach(tag => {
-                        const option = document.createElement('option');
-                        option.value = tag.name;
-                        option.textContent = tag.name;
-                        tagFilter.appendChild(option);
-                    });
+                    if (result.data && Array.isArray(result.data)) {
+                        result.data.forEach(tag => {
+                            const option = document.createElement('option');
+                            option.value = tag.name;
+                            option.textContent = tag.name;
+                            tagFilter.appendChild(option);
+                        });
+                    }
                 }
             }
         } catch (error) {
@@ -138,34 +162,91 @@ class ProxyManager {
     renderProxies() {
         const tbody = document.getElementById('proxyTableBody');
         const emptyState = document.getElementById('proxyEmptyState');
-        
         if (!tbody) return;
-
-        // Clear existing rows
+    
         tbody.innerHTML = '';
-
-        // Show empty state if no proxies
-        if (this.filteredProxies.length === 0) {
+    
+        // KHÔNG gọi setData() ở đây nữa!
+        // Chỉ lấy dữ liệu đã được Pagination chia trang sẵn
+        const pageProxies = this.proxyPagination.getCurrentPageData();
+    
+        if (pageProxies.length === 0) {
             if (emptyState) emptyState.classList.remove('hidden');
-            this.updatePagination();
             return;
         }
-
-        // Hide empty state
+    
         if (emptyState) emptyState.classList.add('hidden');
-
-        // Calculate pagination
-        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-        const endIndex = Math.min(startIndex + this.itemsPerPage, this.filteredProxies.length);
-        const pageProxies = this.filteredProxies.slice(startIndex, endIndex);
-
-        // Render proxy rows
+    
         pageProxies.forEach(proxy => {
             const row = this.createProxyRow(proxy);
             tbody.appendChild(row);
         });
-
-        this.updatePagination();
+    }
+    
+    // applyFilter(type, value) {
+    //     this.filters[type] = value;
+    //     this.applyFilters();
+    //     // Reset to first page via ProxyPagination
+    //     if (this.proxyPagination) {
+    //         this.proxyPagination.goToPage(1);
+    //     }
+    //     this.renderProxies();
+    // }
+    applyFilter(type, value) {
+        this.filters[type] = value;
+        this.applyFilters();
+    }
+    
+    // Hàm xử lý logic lọc chính
+    applyFilters() {
+        // 1. Tính toán mảng filteredProxies dựa trên các điều kiện lọc
+        this.filteredProxies = this.proxies.filter(proxy => {
+            // Lọc theo Status
+            if (this.filters.status) {
+                if (this.filters.status === 'unchecked') {
+                    if (proxy.status) return false;
+                } else if (proxy.status !== this.filters.status) {
+                    return false;
+                }
+            }
+    
+            // Lọc theo Loại (HTTP/SOCKS5...)
+            if (this.filters.type && proxy.type !== this.filters.type) {
+                return false;
+            }
+    
+            // Lọc theo Tag
+            if (this.filters.tag && (!proxy.tags || !proxy.tags.includes(this.filters.tag))) {
+                return false;
+            }
+    
+            // Lọc theo từ khóa tìm kiếm (Tên, Host, Port)
+            if (this.filters.search) {
+                const search = this.filters.search.toLowerCase();
+                const searchText = `${proxy.name || ''} ${proxy.host} ${proxy.port}`.toLowerCase();
+                if (!searchText.includes(search)) return false;
+            }
+    
+            return true;
+        });
+    
+        // 2. Cập nhật dữ liệu vào Pagination (Sử dụng file proxy_pagination.js trong Canvas)
+        if (this.proxyPagination) {
+            // Tham số thứ 3 là 'true' để reset về trang 1 mỗi khi thay đổi bộ lọc
+            this.proxyPagination.setData(this.proxies, this.filteredProxies, true);
+        }
+    
+        // 3. Gọi hàm render để vẽ lại bảng proxy
+        this.renderProxies();
+    }
+    async loadProxies() {
+        // ... logic load data từ database ...
+        if (result && result.success) {
+            this.proxies = result.data || [];
+            // Gọi applyFilters để vừa filter vừa đẩy data vào Pagination
+            this.applyFilters(); 
+            this.updateStats();
+        }
     }
 
     createProxyRow(proxy) {
@@ -260,58 +341,11 @@ class ProxyManager {
         document.getElementById('uncheckedProxiesCount').textContent = unchecked;
     }
 
-    updatePagination() {
-        const totalItems = this.filteredProxies.length;
-        const totalPages = Math.ceil(totalItems / this.itemsPerPage);
-        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-        const endIndex = Math.min(startIndex + this.itemsPerPage, totalItems);
-
-        document.getElementById('proxyShowingStart').textContent = totalItems > 0 ? startIndex + 1 : 0;
-        document.getElementById('proxyShowingEnd').textContent = endIndex;
-        document.getElementById('proxyTotalCount').textContent = totalItems;
-
-        const prevBtn = document.getElementById('proxyPrevPage');
-        const nextBtn = document.getElementById('proxyNextPage');
-
-        if (prevBtn) prevBtn.disabled = this.currentPage <= 1;
-        if (nextBtn) nextBtn.disabled = this.currentPage >= totalPages;
-    }
-
     // ======================================================================
     // FILTERING
     // ======================================================================
 
-    applyFilter(type, value) {
-        this.filters[type] = value;
-        this.applyFilters();
-        this.currentPage = 1; // Reset to first page
-        this.renderProxies();
-    }
 
-    applyFilters() {
-        this.filteredProxies = this.proxies.filter(proxy => {
-            // Status filter
-            if (this.filters.status) {
-                if (this.filters.status === 'unchecked' && proxy.status) return false;
-                if (this.filters.status !== 'unchecked' && proxy.status !== this.filters.status) return false;
-            }
-
-            // Type filter
-            if (this.filters.type && proxy.type !== this.filters.type) return false;
-
-            // Tag filter
-            if (this.filters.tag && (!proxy.tags || !proxy.tags.includes(this.filters.tag))) return false;
-
-            // Search filter
-            if (this.filters.search) {
-                const search = this.filters.search.toLowerCase();
-                const searchText = `${proxy.name || ''} ${proxy.host} ${proxy.port}`.toLowerCase();
-                if (!searchText.includes(search)) return false;
-            }
-
-            return true;
-        });
-    }
 
     clearFilters() {
         this.filters = { status: '', type: '', tag: '', search: '' };
@@ -322,7 +356,10 @@ class ProxyManager {
         document.getElementById('proxySearchInput').value = '';
         
         this.applyFilters();
-        this.currentPage = 1;
+        // Reset to first page via ProxyPagination
+        if (this.proxyPagination) {
+            this.proxyPagination.goToPage(1);
+        }
         this.renderProxies();
     }
 
@@ -353,21 +390,7 @@ class ProxyManager {
     // ======================================================================
     // PAGINATION
     // ======================================================================
-
-    previousPage() {
-        if (this.currentPage > 1) {
-            this.currentPage--;
-            this.renderProxies();
-        }
-    }
-
-    nextPage() {
-        const totalPages = Math.ceil(this.filteredProxies.length / this.itemsPerPage);
-        if (this.currentPage < totalPages) {
-            this.currentPage++;
-            this.renderProxies();
-        }
-    }
+    // Pagination is now handled by ProxyPagination class
 
     // ======================================================================
     // MODAL MANAGEMENT
