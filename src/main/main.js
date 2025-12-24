@@ -22,9 +22,9 @@ class AppController {
     createWindow() {
         this.mainWindow = new BrowserWindow({
             width: 1200,
-            height: 700,
+            height: 800,
             minWidth: 1000,
-            minHeight: 600,
+            minHeight: 700,
             webPreferences: {
                 preload: path.join(__dirname, 'preload.js'),
                 contextIsolation: true,

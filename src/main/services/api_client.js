@@ -4,7 +4,7 @@ const path = require('path');
 require('dotenv').config();
 
 // Configuration from environment
-const BASE_URL = process.env.BASE_URL || 'https://pmbackend.site';
+const BASE_URL = process.env.BASE_URL || 'https://dev.pmbackend.site';
 const MAX_RETRIES = parseInt(process.env.MAX_RETRIES) || 3;
 const RETRY_DELAY = parseFloat(process.env.RETRY_DELAY) * 1000 || 1000; // Convert to milliseconds
 const DEFAULT_TIMEOUT = parseInt(process.env.REQUEST_TIMEOUT) * 1000 || 10000; // Convert to milliseconds
@@ -90,7 +90,8 @@ class ApiClient {
     buildUrl(endpoint, isAuthRoute = false) {
         const cleanEndpoint = endpoint.replace(/^\/+/, '');
         if (isAuthRoute) {
-            return `/api/auth/${cleanEndpoint}`;
+            // Auth routes are directly under root (e.g., /login, /register)
+            return `/${cleanEndpoint}`;
         }
         return `/api/${cleanEndpoint}`;
     }
