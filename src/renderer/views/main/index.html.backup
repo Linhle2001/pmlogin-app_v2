@@ -13,19 +13,17 @@
     <link rel="stylesheet" href="../../assets/button-components.css">
     <style id="componentStyles"></style>
     <style>
-        /* Main page specific styles - using theme variables */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        /* Sidebar specific styles */
         .sidebar {
             background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
             transition: all 0.3s ease;
         }
         
         .sidebar .text-center h1 {
-            background: var(--pmlogin-gradient-primary);
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -44,46 +42,42 @@
         
         .sidebar-item.active {
             background: rgba(34, 197, 94, 0.2);
-            border-right: 3px solid var(--pmlogin-primary);
+            border-right: 3px solid #22c55e;
         }
         
-        /* Main content area */
         .content-area {
-            background: var(--pmlogin-bg-secondary);
+            background: #f8fafc;
             min-height: 100vh;
         }
         
-        /* Card styles - needed for dashboard */
         .card {
-            background: var(--pmlogin-bg-card);
+            background: white;
             border-radius: 12px;
-            box-shadow: var(--pmlogin-shadow-default);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease;
         }
         
         .card:hover {
-            box-shadow: var(--pmlogin-shadow-md);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
-        /* Dashboard specific stat cards */
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
         
         .stat-card.green {
-            background: var(--pmlogin-gradient-primary);
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
         }
         
         .stat-card.blue {
-            background: var(--pmlogin-gradient-secondary);
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         }
         
         .stat-card.orange {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         }
         
-        /* Notification styles - needed for main page */
         .notification {
             transform: translateY(-100%);
             transition: all 0.3s ease;
@@ -93,13 +87,11 @@
             transform: translateY(0);
         }
         
-        /* Table container - needed for tables */
         .table-container {
             max-height: 400px;
             overflow-y: auto;
         }
         
-        /* Status badges - needed for status display */
         .status-badge {
             padding: 4px 12px;
             border-radius: 20px;
@@ -108,43 +100,43 @@
         }
         
         .status-working {
-            background: var(--pmlogin-success-bg);
-            color: var(--pmlogin-success-text);
+            background: #dcfce7;
+            color: #166534;
         }
         
         .status-failed {
-            background: var(--pmlogin-error-bg);
-            color: var(--pmlogin-error-text);
+            background: #fef2f2;
+            color: #991b1b;
         }
         
         .status-untested {
-            background: var(--pmlogin-gray-100);
-            color: var(--pmlogin-gray-700);
+            background: #f3f4f6;
+            color: #374151;
         }
 
-        /* Enhanced Profiles View Styles - needed for profiles */
+        /* Enhanced Profiles View Styles */
         .profiles-main-view {
             display: flex;
             flex-direction: column;
             height: 100%;
             padding: 20px;
-            background-color: var(--pmlogin-bg-secondary);
+            background-color: #f8fafc;
         }
 
         .profiles-header-section {
-            background: var(--pmlogin-bg-card);
+            background: white;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: var(--pmlogin-shadow-default);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .profiles-content-section {
             flex: 1;
-            background: var(--pmlogin-bg-card);
+            background: white;
             border-radius: 12px;
             padding: 20px;
-            box-shadow: var(--pmlogin-shadow-default);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             min-height: 0;
@@ -158,18 +150,17 @@
             flex: 1;
             min-height: 0;
         }
-        
-        /* Debug panel specific to main page */
+
         .debug-panel {
             position: fixed;
             top: 10px;
             right: 10px;
             width: 300px;
-            background: var(--pmlogin-bg-card);
-            border: 2px solid var(--pmlogin-primary);
+            background: white;
+            border: 2px solid #22c55e;
             border-radius: 8px;
             padding: 12px;
-            box-shadow: var(--pmlogin-shadow-lg);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             z-index: 1000;
             font-family: monospace;
             font-size: 11px;
@@ -178,8 +169,8 @@
         }
         
         .debug-header {
-            background: var(--pmlogin-primary);
-            color: var(--pmlogin-text-white);
+            background: #22c55e;
+            color: white;
             padding: 6px 10px;
             margin: -12px -12px 12px -12px;
             border-radius: 6px 6px 0 0;
@@ -189,28 +180,28 @@
         .debug-item {
             margin: 6px 0;
             padding: 4px 6px;
-            background: var(--pmlogin-gray-100);
+            background: #f3f4f6;
             border-radius: 4px;
         }
         
         .debug-success {
-            background: var(--pmlogin-success-bg);
-            color: var(--pmlogin-success-text);
+            background: #d1fae5;
+            color: #065f46;
         }
         
         .debug-error {
-            background: var(--pmlogin-error-bg);
-            color: var(--pmlogin-error-text);
+            background: #fee2e2;
+            color: #991b1b;
         }
         
         .debug-warning {
-            background: var(--pmlogin-warning-bg);
-            color: var(--pmlogin-warning-text);
+            background: #fef3c7;
+            color: #92400e;
         }
         
         .debug-button {
-            background: var(--pmlogin-secondary);
-            color: var(--pmlogin-text-white);
+            background: #3b82f6;
+            color: white;
             border: none;
             padding: 4px 8px;
             border-radius: 4px;
@@ -220,14 +211,14 @@
         }
         
         .debug-button:hover {
-            background: var(--pmlogin-secondary-dark);
+            background: #2563eb;
         }
         
-        /* Settings dropdown specific */
+        /* Settings Dropdown Styles */
         #settingsDropdown {
             animation: fadeIn 0.2s ease-out;
+           
         }
-        
         #settingsIcon {
             margin-left: 50px;
         }
@@ -245,15 +236,15 @@
         
         #settingsDropdown a:hover,
         #settingsDropdown button:hover {
-            background-color: var(--pmlogin-gray-100);
+            background-color: #f3f4f6;
             transition: background-color 0.2s ease;
         }
         
         #settingsDropdown button:hover {
-            background-color: var(--pmlogin-error-bg);
+            background-color: #fef2f2;
         }
         
-        /* Create Profile tab styles */
+        /* Create Profile Tab Styles */
         .create-tab-content {
             display: block;
         }
@@ -267,22 +258,22 @@
         }
         
         .create-tab-btn:hover {
-            color: var(--pmlogin-gray-700) !important;
+            color: #374151 !important;
         }
         
         .create-tab-btn.active {
-            border-bottom: 2px solid var(--pmlogin-secondary);
+            border-bottom: 2px solid #3b82f6;
         }
 
-        /* Pagination styles specific to main page */
+        /* Proxy Pagination Styles */
         .pagination-wrapper {
             display: flex;
             flex-direction: column;
             gap: 16px;
             padding: 20px;
-            background: var(--pmlogin-bg-card);
+            background: white;
             border-radius: 12px;
-            box-shadow: var(--pmlogin-shadow-default);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .pagination-info {
@@ -298,33 +289,33 @@
             align-items: center;
             gap: 8px;
             font-size: 14px;
-            color: var(--pmlogin-text-secondary);
+            color: #374151;
         }
 
         .items-per-page-select {
             padding: 6px 12px;
-            border: 1px solid var(--pmlogin-border-default);
+            border: 1px solid #d1d5db;
             border-radius: 6px;
-            background: var(--pmlogin-bg-card);
+            background: white;
             font-size: 14px;
-            color: var(--pmlogin-text-secondary);
+            color: #374151;
             cursor: pointer;
             transition: border-color 0.2s ease;
         }
 
         .items-per-page-select:hover {
-            border-color: var(--pmlogin-border-dark);
+            border-color: #9ca3af;
         }
 
         .items-per-page-select:focus {
             outline: none;
-            border-color: var(--pmlogin-secondary);
+            border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .pagination-stats {
             font-size: 14px;
-            color: var(--pmlogin-text-muted);
+            color: #6b7280;
         }
 
         .pagination-controls {
@@ -340,10 +331,10 @@
             align-items: center;
             gap: 6px;
             padding: 8px 16px;
-            border: 1px solid var(--pmlogin-border-default);
+            border: 1px solid #d1d5db;
             border-radius: 8px;
-            background: var(--pmlogin-bg-card);
-            color: var(--pmlogin-text-secondary);
+            background: white;
+            color: #374151;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
@@ -351,14 +342,14 @@
         }
 
         .pagination-btn:hover:not(:disabled) {
-            background: var(--pmlogin-gray-50);
-            border-color: var(--pmlogin-border-dark);
+            background: #f9fafb;
+            border-color: #9ca3af;
         }
 
         .pagination-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            background: var(--pmlogin-gray-50);
+            background: #f9fafb;
         }
 
         .pagination-pages {
@@ -375,10 +366,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid var(--pmlogin-border-default);
+            border: 1px solid #d1d5db;
             border-radius: 8px;
-            background: var(--pmlogin-bg-card);
-            color: var(--pmlogin-text-secondary);
+            background: white;
+            color: #374151;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
@@ -398,19 +389,19 @@
         }
 
         .pagination-page:hover {
-            background: var(--pmlogin-gray-50);
-            border-color: var(--pmlogin-border-dark);
+            background: #f9fafb;
+            border-color: #9ca3af;
         }
 
         .pagination-page.active {
-            background: var(--pmlogin-secondary);
-            border-color: var(--pmlogin-secondary);
-            color: var(--pmlogin-text-white);
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
         }
 
         .pagination-ellipsis {
             padding: 0 8px;
-            color: var(--pmlogin-text-muted);
+            color: #9ca3af;
             font-size: 14px;
         }
 
@@ -440,6 +431,11 @@
     <script>
         console.log('🔄 About to load ProfilesStructure...');
     </script>
+    <!-- Load TaskbarActions FIRST -->
+    <script src="../../components/taskbar_actions.js"></script>
+    <script>
+        console.log('✅ TaskbarActions script loaded. Available:', typeof TaskbarActions !== 'undefined');
+    </script>
     <script src="../../components/profiles_structure.js"></script>
     <script>
         console.log('✅ ProfilesStructure script loaded. Available:', typeof ProfilesStructure !== 'undefined');
@@ -449,6 +445,7 @@
     <script>
         console.log('✅ ProfilesView script loaded. Available:', typeof ProfilesView !== 'undefined');
         console.log('🔍 Global classes check:');
+        console.log('  - TaskbarActions:', typeof TaskbarActions);
         console.log('  - ProfilesStructure:', typeof ProfilesStructure);
         console.log('  - ProfilesView:', typeof ProfilesView);
     </script>
@@ -479,7 +476,7 @@
 
             <!-- Navigation -->
             <nav class="p-4 space-y-2">
-                <a href="#" class="sidebar-item active flex items-center space-x-3 p-3 rounded-lg" data-view="dashboard">
+                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="dashboard">
                     <i class="fas fa-chart-pie w-5"></i>
                     <span>Tổng quan</span>
                 </a>
@@ -487,7 +484,7 @@
                     <i class="fas fa-user-plus w-5"></i>
                     <span>Tạo Hồ Sơ</span>
                 </a>
-                <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg" data-view="profiles">
+                <a href="#" class="sidebar-item active flex items-center space-x-3 p-3 rounded-lg" data-view="profiles">
                     <i class="fas fa-address-book w-5"></i>
                     <span>Hồ Sơ</span>
                 </a>
@@ -562,7 +559,7 @@
         <!-- Main Content -->
         <div class="content-area flex-1 overflow-y-auto">
             <!-- Dashboard View -->
-            <div id="dashboardView" class="view-content p-6">
+            <div id="dashboardView" class="view-content p-6 hidden">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-2">Tổng quan hệ thống</h2>
                     <p class="text-gray-600">Chào mừng bạn quay trở lại với PMLogin Dashboard</p>
@@ -617,7 +614,7 @@
                     <div id="recentActivity" class="space-y-3">
                         <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                             <i class="fas fa-info-circle text-blue-500"></i>
-                            <span class="text-gray-700">Đã chuyển sang hiển thị dữ liệu từ database thay vì sample data!</span>
+                            <span class="text-gray-700">Chào mừng bạn đến với PMLogin Dashboard!</span>
                         </div>
                     </div>
                 </div>
@@ -808,7 +805,7 @@
             </div>
 
             <!-- Profiles View - Using ProfilesView -->
-            <div id="profilesView" class="view-content hidden">
+            <div id="profilesView" class="view-content">
                 <!-- ProfilesView will replace this content -->
                 <div class="flex items-center justify-center h-64">
                     <div class="text-center">
@@ -1592,40 +1589,116 @@
         let profilesStructure = null;
         let currentTab = 'local';
 
-        // Sample data removed - now using ProfilesView to load from database
+        // Mock profiles data
+        const mockProfilesData = [
+            {
+                id: '1',
+                name: 'Demo Profile 1',
+                platform: 'Chrome',
+                tags: ['demo', 'test'],
+                note: 'Demo profile for testing checkbox logic',
+                proxy: 'proxy1.example.com:8080:user1:pass1',
+                proxy_status: 'Ready',
+                updated_at: new Date().toISOString(),
+                last_started_at: new Date(Date.now() - 3600000).toISOString(),
+                status: 'Ready'
+            },
+            {
+                id: '2',
+                name: 'Demo Profile 2',
+                platform: 'Firefox',
+                tags: ['demo', 'active'],
+                note: 'Another demo profile',
+                proxy: 'proxy2.example.com:8080:user2:pass2',
+                proxy_status: 'Proxy Error',
+                updated_at: new Date(Date.now() - 7200000).toISOString(),
+                last_started_at: new Date(Date.now() - 86400000).toISOString(),
+                status: 'Running'
+            },
+            {
+                id: '3',
+                name: 'Demo Profile 3',
+                platform: 'Edge',
+                tags: ['demo', 'social'],
+                note: 'Profile without proxy',
+                proxy: 'No proxy',
+                proxy_status: '',
+                updated_at: new Date(Date.now() - 1800000).toISOString(),
+                last_started_at: '',
+                status: 'Stopped'
+            },
+            {
+                id: '4',
+                name: 'Demo Profile 4',
+                platform: 'Safari',
+                tags: ['demo', 'work'],
+                note: 'Work profile with authentication',
+                proxy: 'proxy4.example.com:8080:user4:pass4',
+                proxy_status: 'Ready',
+                updated_at: new Date(Date.now() - 3600000).toISOString(),
+                last_started_at: new Date(Date.now() - 86400000).toISOString(),
+                status: 'Ready'
+            },
+            {
+                id: '5',
+                name: 'Demo Profile 5',
+                platform: 'Opera',
+                tags: ['demo', 'social'],
+                note: 'Social media profile',
+                proxy: 'socks5://proxy5.example.com:1080',
+                proxy_status: 'Checking',
+                updated_at: new Date(Date.now() - 1800000).toISOString(),
+                last_started_at: '',
+                status: 'Stopped'
+            }
+        ];
 
-        // Main initialization - now using ProfilesView instead of ProfilesStructure
+        // Main initialization
         function initializeProfiles() {
-            console.log('Initializing profiles with ProfilesView...');
+            console.log('Initializing profiles with ProfilesStructure...');
             
             try {
-                // Check if ProfilesView is available
-                if (typeof ProfilesView === 'undefined') {
-                    console.error('ProfilesView class not found!');
+                // Check if ProfilesStructure is available
+                if (typeof ProfilesStructure === 'undefined') {
+                    console.error('ProfilesStructure class not found!');
                     return;
                 }
 
-                // Get profiles container
-                const profilesContainer = document.getElementById('profilesView');
-                if (!profilesContainer) {
-                    console.error('Profiles container not found!');
+                // Initialize ProfilesStructure
+                profilesStructure = new ProfilesStructure();
+                console.log('ProfilesStructure initialized');
+
+                // Get containers
+                const taskbarContainer = document.getElementById('profilesTaskbarContainer');
+                const tableContainer = document.getElementById('profilesTableContainer');
+
+                if (!taskbarContainer || !tableContainer) {
+                    console.error('Containers not found!');
                     return;
                 }
 
-                // Destroy existing instance if any
-                if (window.profilesViewInstance && window.profilesViewInstance.destroy) {
-                    console.log('Destroying existing ProfilesView instance...');
-                    window.profilesViewInstance.destroy();
-                }
+                // Clear containers
+                taskbarContainer.innerHTML = '';
+                tableContainer.innerHTML = '';
 
-                // Create new ProfilesView instance
-                console.log('Creating ProfilesView instance...');
-                window.profilesViewInstance = new ProfilesView(profilesContainer);
+                // Create taskbar
+                const taskbar = profilesStructure.createTaskbar(currentTab);
+                taskbarContainer.appendChild(taskbar);
+                console.log('Taskbar created');
 
-                console.log('ProfilesView initialization completed');
+                // Create table
+                const table = profilesStructure.createProfilesTable(currentTab);
+                tableContainer.appendChild(table);
+                console.log('Table created');
+
+                // Populate with mock data
+                profilesStructure.populateTable(mockProfilesData, table);
+                console.log(`Table populated with ${mockProfilesData.length} profiles`);
+
+                console.log('Profiles initialization completed');
 
             } catch (error) {
-                console.error('Error initializing ProfilesView:', error.message);
+                console.error('Error initializing profiles:', error.message);
             }
         }
 
@@ -1710,55 +1783,6 @@
             switchView('profiles');
         }
 
-        // Update dashboard statistics from database
-        async function updateDashboardStats() {
-            try {
-                console.log('🔄 Updating dashboard statistics from database...');
-                
-                // Update profiles count
-                if (window.electronAPI && window.electronAPI.invoke) {
-                    const profilesResponse = await window.electronAPI.invoke('db:profile:get-all');
-                    if (profilesResponse.success) {
-                        const totalProfilesEl = document.getElementById('totalProfiles');
-                        if (totalProfilesEl) {
-                            totalProfilesEl.textContent = profilesResponse.data.length;
-                        }
-                        console.log(`✅ Updated profiles count: ${profilesResponse.data.length}`);
-                    }
-                    
-                    // Update proxy counts if proxy service is available
-                    try {
-                        const proxiesResponse = await window.electronAPI.invoke('db:proxy:get-all');
-                        if (proxiesResponse.success) {
-                            const totalProxiesEl = document.getElementById('totalProxies');
-                            const workingProxiesEl = document.getElementById('workingProxies');
-                            
-                            if (totalProxiesEl) {
-                                totalProxiesEl.textContent = proxiesResponse.data.length;
-                            }
-                            
-                            // Count working proxies (assuming status field exists)
-                            const workingCount = proxiesResponse.data.filter(proxy => 
-                                proxy.status === 'live' || proxy.status === 'working'
-                            ).length;
-                            
-                            if (workingProxiesEl) {
-                                workingProxiesEl.textContent = workingCount;
-                            }
-                            
-                            console.log(`✅ Updated proxy counts: Total(${proxiesResponse.data.length}), Working(${workingCount})`);
-                        }
-                    } catch (proxyError) {
-                        console.log('ℹ️ Proxy service not available, keeping default values');
-                    }
-                } else {
-                    console.warn('⚠️ electronAPI not available, keeping default dashboard values');
-                }
-            } catch (error) {
-                console.error('❌ Error updating dashboard stats:', error);
-            }
-        }
-
         // Initialize Create Profile functionality
         function initializeCreateProfile() {
             console.log('Initializing Create Profile...');
@@ -1827,11 +1851,7 @@
                 targetView.classList.remove('hidden');
                 
                 // Special handling for specific views
-                if (viewName === 'dashboard') {
-                    setTimeout(() => {
-                        updateDashboardStats();
-                    }, 100);
-                } else if (viewName === 'profiles') {
+                if (viewName === 'profiles') {
                     setTimeout(() => {
                         initializeProfiles();
                     }, 100);
@@ -1970,7 +1990,7 @@
                 console.log('🔄 Starting profile initialization...');
                 
                 if (typeof ProfilesStructure !== 'undefined' && typeof ProfilesView !== 'undefined') {
-                    console.log('✅ Profile classes available, using ProfilesView to load from database');
+                    console.log('✅ Profile classes available, using original ProfilesView');
                     initializeProfiles();
                 } else {
                     console.warn('⚠️ Profile classes not loaded, trying direct initialization...');
@@ -1999,9 +2019,6 @@
                 }
                 
                 initializeCreateProfile();
-                
-                // Update dashboard stats on initial load (since dashboard is default view)
-                updateDashboardStats();
             }, 500);
         }
 
@@ -2012,9 +2029,9 @@
     <script src="./renderer.js"></script>
 
     <script>
-        // Initialize Profiles function - Using ProfilesView to load from database
+        // Initialize Profiles function - Keep original ProfilesView
         function initializeProfiles() {
-            console.log('🔄 Initializing ProfilesView to load from database...');
+            console.log('🔄 Initializing original ProfilesView...');
             
             try {
                 // Debug: Check what's available in global scope
@@ -2045,11 +2062,11 @@
                     window.profilesViewInstance.destroy();
                 }
                 
-                // Create new ProfilesView instance (loads from database)
-                console.log('🔄 Creating ProfilesView instance to load from database...');
+                // Create new ProfilesView instance (original design)
+                console.log('🔄 Creating original ProfilesView instance...');
                 window.profilesViewInstance = new ProfilesView(profilesContainer);
                 
-                console.log('✅ ProfilesView initialized successfully - data loaded from database');
+                console.log('✅ Original ProfilesView initialized successfully');
                 
             } catch (error) {
                 console.error('❌ Error initializing ProfilesView:', error);

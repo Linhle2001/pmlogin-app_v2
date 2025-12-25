@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Taskbar Actions - PMLogin App v2</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #1f2937;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .test-section h2 {
+            color: #374151;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #059669;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .profiles-demo {
+            margin-bottom: 20px;
+        }
+        
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .profile-item input[type="checkbox"] {
+            margin: 0;
+        }
+        
+        .profile-name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .profile-proxy {
+            font-size: 12px;
+            color: #6b7280;
+            font-family: monospace;
+        }
+        
+        .log-area {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Taskbar Actions - PMLogin App v2</h1>
+        
+        <!-- Demo Profiles Section -->
+        <div class="test-section">
+            <h2>📋 Demo Profiles</h2>
+            <div class="profiles-demo" id="profilesDemo">
+                <div class="profile-item">
+                    <input type="checkbox" id="profile1" data-profile='{"id":"1","name":"Demo Profile 1","proxy":"http://192.168.1.1:8080:user1:pass1"}'>
+                    <label for="profile1">
+                        <span class="profile-name">Demo Profile 1</span>
+                        <span class="profile-proxy">http://192.168.1.1:8080:user1:pass1</span>
+                    </label>
+                </div>
+                <div class="profile-item">
+                    <input type="checkbox" id="profile2" data-profile='{"id":"2","name":"Demo Profile 2","proxy":"socks5://192.168.1.2:1080:user2:pass2"}'>
+                    <label for="profile2">
+                        <span class="profile-name">Demo Profile 2</span>
+                        <span class="profile-proxy">socks5://192.168.1.2:1080:user2:pass2</span>
+                    </label>
+                </div>
+                <div class="profile-item">
+                    <input type="checkbox" id="profile3" data-profile='{"id":"3","name":"Demo Profile 3","proxy":"No proxy"}'>
+                    <label for="profile3">
+                        <span class="profile-name">Demo Profile 3</span>
+                        <span class="profile-proxy">No proxy</span>
+                    </label>
+                </div>
+            </div>
+            <button onclick="selectAllProfiles()" class="btn-secondary">Select All</button>
+            <button onclick="clearSelection()" class="btn-secondary">Clear Selection</button>
+        </div>
+        
+        <!-- Primary Actions -->
+        <div class="test-section">
+            <h2>🚀 Primary Actions</h2>
+            <div class="button-group">
+                <button onclick="testAction('start')" class="btn-primary">▶️ Start</button>
+                <button onclick="testAction('stop')" class="btn-danger">⏹️ Stop</button>
+                <button onclick="testAction('assign-group')" class="btn-primary">📁 Assign to group</button>
+                <button onclick="testAction('share-profiles')" class="btn-primary">🔗 Share profiles</button>
+                <button onclick="testAction('check-proxy')" class="btn-primary">🔍 Check proxy</button>
+                <button onclick="testAction('new-fingerprint')" class="btn-secondary">🆕 New fingerprint</button>
+            </div>
+        </div>
+        
+        <!-- Secondary Actions -->
+        <div class="test-section">
+            <h2>⚙️ Secondary Actions</h2>
+            <div class="button-group">
+                <button onclick="testAction('start-with-app')" class="btn-primary">🚀 Start with app</button>
+                <button onclick="testAction('update-proxy')" class="btn-primary">🔄 Update proxy</button>
+                <button onclick="testAction('update-profiles')" class="btn-primary">📝 Update profiles</button>
+                <button onclick="testAction('share-cloud')" class="btn-primary">☁️ Share on cloud</button>
+                <button onclick="testAction('stop-share-cloud')" class="btn-danger">🗑️ Stop share on cloud</button>
+            </div>
+        </div>
+        
+        <!-- Context Menu Actions -->
+        <div class="test-section">
+            <h2>📋 Context Menu Actions</h2>
+            <div class="button-group">
+                <button onclick="testContextAction('copy-proxy')" class="btn-secondary">📋 Copy proxy</button>
+                <button onclick="testContextAction('copy-ids')" class="btn-secondary">🔢 Copy IDs</button>
+                <button onclick="testContextAction('copy-names')" class="btn-secondary">📝 Copy names</button>
+                <button onclick="testContextAction('copy-id-names')" class="btn-secondary">📋 Copy ID and names</button>
+                <button onclick="testContextAction('export')" class="btn-secondary">📤 Export</button>
+                <button onclick="testContextAction('delete')" class="btn-danger">🗑️ Delete</button>
+            </div>
+        </div>
+        
+        <!-- Status Display -->
+        <div class="test-section">
+            <h2>📊 Status & Logs</h2>
+            <div id="statusDisplay" class="status" style="display: none;"></div>
+            <div class="log-area" id="logArea">Ready to test taskbar actions...\n</div>
+            <button onclick="clearLogs()" class="btn-secondary">Clear Logs</button>
+        </div>
+    </div>
+
+    <!-- Load TaskbarActions -->
+    <script src="src/renderer/components/taskbar_actions.js"></script>
+    
+    <script>
+        // Mock electronAPI for testing
+        window.electronAPI = {
+            invoke: async (channel, ...args) => {
+                log(`🔌 IPC Call: ${channel}`, args);
+                
+                // Simulate different responses based on channel
+                await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+                
+                if (channel.includes('error-test')) {
+                    return { success: false, message: 'Simulated error for testing' };
+                }
+                
+                // Simulate success responses
+                const mockResponses = {
+                    'profile:start-multiple': { success: true, data: { started: args[0]?.length || 0 } },
+                    'profile:stop-multiple': { success: true, data: { stopped: args[0]?.length || 0 } },
+                    'db:group:get-all': { success: true, data: [
+                        { group_name: 'Work' },
+                        { group_name: 'Personal' },
+                        { group_name: 'Testing' }
+                    ]},
+                    'db:group:assign-profiles': { success: true, data: { assigned: args[0]?.length || 0, skipped: 0 } },
+                    'profile:share-multiple': { success: true, data: { shared: args[0]?.length || 0 } },
+                    'proxy:check-multiple': { success: true, data: { 
+                        live: Math.floor((args[0]?.length || 0) * 0.7), 
+                        dead: Math.ceil((args[0]?.length || 0) * 0.3) 
+                    }},
+                    'profile:generate-fingerprint': { success: true, data: { generated: args[0]?.length || 0 } },
+                    'profile:set-start-with-app': { success: true, data: { updated: args[0]?.length || 0 } },
+                    'profile:update-proxy': { success: true, data: { updated: args[1]?.profileIds?.length || 0 } },
+                    'profile:update-multiple': { success: true, data: { updated: args[0]?.length || 0 } },
+                    'profile:share-on-cloud': { success: true, data: { shared: args[0]?.length || 0 } },
+                    'profile:stop-share-on-cloud': { success: true, data: { stopped: args[0]?.length || 0 } },
+                    'profile:export-multiple': { success: true, data: { exported: args[0]?.length || 0 } },
+                    'profile:delete-multiple': { success: true, data: { deleted: args[0]?.length || 0 } }
+                };
+                
+                return mockResponses[channel] || { success: true, data: {} };
+            }
+        };
+        
+        // Initialize TaskbarActions
+        let taskbarActions;
+        
+        function initTaskbarActions() {
+            if (window.TaskbarActions) {
+                taskbarActions = new window.TaskbarActions();
+                log('✅ TaskbarActions initialized');
+                showStatus('TaskbarActions ready for testing!', 'success');
+            } else {
+                setTimeout(initTaskbarActions, 100);
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initTaskbarActions);
+        
+        function log(message, data = null) {
+            const logArea = document.getElementById('logArea');
+            const timestamp = new Date().toLocaleTimeString();
+            let logMessage = `[${timestamp}] ${message}`;
+            
+            if (data) {
+                logMessage += '\n' + JSON.stringify(data, null, 2);
+            }
+            
+            logArea.textContent += logMessage + '\n';
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+        
+        function showStatus(message, type = 'info') {
+            const statusDisplay = document.getElementById('statusDisplay');
+            statusDisplay.textContent = message;
+            statusDisplay.className = `status ${type}`;
+            statusDisplay.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDisplay.style.display = 'none';
+            }, 5000);
+        }
+        
+        function getSelectedProfiles() {
+            const checkboxes = document.querySelectorAll('#profilesDemo input[type="checkbox"]:checked');
+            const profiles = [];
+            
+            checkboxes.forEach(checkbox => {
+                try {
+                    const profileData = JSON.parse(checkbox.dataset.profile);
+                    profiles.push(profileData);
+                } catch (error) {
+                    log('❌ Error parsing profile data:', error);
+                }
+            });
+            
+            return profiles;
+        }
+        
+        function selectAllProfiles() {
+            const checkboxes = document.querySelectorAll('#profilesDemo input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = true);
+            log('✅ Selected all profiles');
+        }
+        
+        function clearSelection() {
+            const checkboxes = document.querySelectorAll('#profilesDemo input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+            log('❌ Cleared all selections');
+        }
+        
+        function clearLogs() {
+            document.getElementById('logArea').textContent = 'Logs cleared...\n';
+        }
+        
+        async function testAction(action) {
+            if (!taskbarActions) {
+                showStatus('TaskbarActions not initialized yet!', 'error');
+                return;
+            }
+            
+            const selectedProfiles = getSelectedProfiles();
+            log(`🧪 Testing action: ${action}`, { selectedProfiles: selectedProfiles.length });
+            
+            if (selectedProfiles.length === 0) {
+                showStatus('Please select at least one profile!', 'error');
+                return;
+            }
+            
+            // Set selected profiles and context
+            taskbarActions.setSelectedProfiles(selectedProfiles);
+            taskbarActions.setContext('local');
+            
+            try {
+                switch(action) {
+                    case 'start':
+                        await taskbarActions.startProfiles();
+                        break;
+                    case 'stop':
+                        await taskbarActions.stopProfiles();
+                        break;
+                    case 'assign-group':
+                        await taskbarActions.assignToGroup();
+                        break;
+                    case 'share-profiles':
+                        await taskbarActions.shareProfiles();
+                        break;
+                    case 'check-proxy':
+                        await taskbarActions.checkProxy();
+                        break;
+                    case 'new-fingerprint':
+                        await taskbarActions.newFingerprint();
+                        break;
+                    case 'start-with-app':
+                        await taskbarActions.startWithApp();
+                        break;
+                    case 'update-proxy':
+                        await taskbarActions.updateProxy();
+                        break;
+                    case 'update-profiles':
+                        await taskbarActions.updateProfiles();
+                        break;
+                    case 'share-cloud':
+                        await taskbarActions.shareOnCloud();
+                        break;
+                    case 'stop-share-cloud':
+                        await taskbarActions.stopShareOnCloud();
+                        break;
+                    default:
+                        log(`❌ Unknown action: ${action}`);
+                }
+                
+                showStatus(`Action "${action}" completed successfully!`, 'success');
+                
+            } catch (error) {
+                log(`❌ Error testing action ${action}:`, error);
+                showStatus(`Error testing action "${action}": ${error.message}`, 'error');
+            }
+        }
+        
+        async function testContextAction(action) {
+            if (!taskbarActions) {
+                showStatus('TaskbarActions not initialized yet!', 'error');
+                return;
+            }
+            
+            const selectedProfiles = getSelectedProfiles();
+            log(`🧪 Testing context action: ${action}`, { selectedProfiles: selectedProfiles.length });
+            
+            if (selectedProfiles.length === 0) {
+                showStatus('Please select at least one profile!', 'error');
+                return;
+            }
+            
+            // Set selected profiles and context
+            taskbarActions.setSelectedProfiles(selectedProfiles);
+            taskbarActions.setContext('local');
+            
+            try {
+                switch(action) {
+                    case 'copy-proxy':
+                        await taskbarActions.copySelectedProxies();
+                        break;
+                    case 'copy-ids':
+                        await taskbarActions.copySelectedIds();
+                        break;
+                    case 'copy-names':
+                        await taskbarActions.copySelectedNames();
+                        break;
+                    case 'copy-id-names':
+                        await taskbarActions.copySelectedIdAndNames();
+                        break;
+                    case 'export':
+                        await taskbarActions.exportSelectedProfiles();
+                        break;
+                    case 'delete':
+                        await taskbarActions.deleteSelectedProfiles();
+                        break;
+                    default:
+                        log(`❌ Unknown context action: ${action}`);
+                }
+                
+                showStatus(`Context action "${action}" completed successfully!`, 'success');
+                
+            } catch (error) {
+                log(`❌ Error testing context action ${action}:`, error);
+                showStatus(`Error testing context action "${action}": ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
