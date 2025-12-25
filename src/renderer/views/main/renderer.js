@@ -315,6 +315,9 @@ class MainRenderer {
     initializeCreateProfileView() {
         console.log('🔧 Initializing create-profile view functionality...');
         
+        // Load groups from database first
+        this.loadGroupsForCreateProfile();
+        
         // Handle tab switching
         const tabButtons = document.querySelectorAll('.create-tab-btn');
         const tabContents = document.querySelectorAll('.create-tab-content');
@@ -368,7 +371,48 @@ class MainRenderer {
         console.log('✅ Create-profile view functionality initialized');
     }
     
-    handleCreateProfile() {
+    async loadGroupsForCreateProfile() {
+        try {
+            console.log('📡 Loading groups for create profile form...');
+            
+            if (!window.electronAPI || !window.electronAPI.invoke) {
+                console.warn('⚠️ electronAPI not available, using fallback groups');
+                return;
+            }
+            
+            const result = await window.electronAPI.invoke('db:group:get-all');
+            
+            if (result.success && result.data) {
+                const groups = result.data;
+                console.log('✅ Groups loaded:', groups);
+                
+                // Update the group select dropdown
+                const groupSelect = document.getElementById('createGroupSelect');
+                if (groupSelect) {
+                    // Clear existing options except the first one (no group)
+                    groupSelect.innerHTML = '<option value="">Không có nhóm</option>';
+                    
+                    // Add groups from database
+                    groups.forEach(group => {
+                        const option = document.createElement('option');
+                        option.value = group.name;
+                        option.textContent = group.name;
+                        groupSelect.appendChild(option);
+                    });
+                    
+                    console.log(`✅ Updated group dropdown with ${groups.length} groups`);
+                } else {
+                    console.error('❌ Group select element not found');
+                }
+            } else {
+                console.error('❌ Failed to load groups:', result.message);
+            }
+        } catch (error) {
+            console.error('❌ Error loading groups for create profile:', error);
+        }
+    }
+    
+    async handleCreateProfile() {
         console.log('🔄 Creating new profile...');
         
         // Get form data
@@ -391,17 +435,78 @@ class MainRenderer {
         
         console.log('Profile data:', profileData);
         
-        // Show success message
-        this.showSuccess('Profile đã được tạo thành công!');
-        
-        // Switch back to profiles view
-        setTimeout(() => {
-            this.switchView('profiles');
-            // Refresh profiles view if available
-            if (this.profilesView && this.profilesView.refresh) {
-                this.profilesView.refresh();
+        try {
+            // Save profile to database using IPC
+            if (window.electronAPI && window.electronAPI.invoke) {
+                const result = await window.electronAPI.invoke('create-profile', profileData);
+                
+                if (result.success) {
+                    console.log('✅ Profile created successfully:', result.data);
+                    this.showSuccess('Profile đã được tạo thành công!');
+                    
+                    // Clear form
+                    this.clearCreateProfileForm();
+                    
+                    // Switch back to profiles view and refresh
+                    setTimeout(() => {
+                        this.switchView('profiles');
+                        if (this.profilesView && this.profilesView.refresh) {
+                            this.profilesView.refresh();
+                        }
+                    }, 1000);
+                } else {
+                    console.error('❌ Failed to create profile:', result.message);
+                    alert('Lỗi khi tạo profile: ' + result.message);
+                }
+            } else {
+                console.warn('⚠️ electronAPI not available, showing success message only');
+                this.showSuccess('Profile đã được tạo thành công!');
+                
+                // Switch back to profiles view
+                setTimeout(() => {
+                    this.switchView('profiles');
+                    if (this.profilesView && this.profilesView.refresh) {
+                        this.profilesView.refresh();
+                    }
+                }, 1000);
             }
-        }, 1000);
+        } catch (error) {
+            console.error('❌ Error creating profile:', error);
+            alert('Lỗi khi tạo profile: ' + error.message);
+        }
+    }
+    
+    clearCreateProfileForm() {
+        // Clear all form fields
+        const fields = [
+            'createProfileName',
+            'createProfileTags', 
+            'createProfileNote'
+        ];
+        
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) field.value = '';
+        });
+        
+        // Reset selects to default values
+        const platformSelect = document.getElementById('createPlatformSelect');
+        if (platformSelect) platformSelect.value = 'windows';
+        
+        const browserSelect = document.getElementById('createBrowserSelect');
+        if (browserSelect) browserSelect.value = 'chrome';
+        
+        const groupSelect = document.getElementById('createGroupSelect');
+        if (groupSelect) groupSelect.value = '';
+        
+        // Reset checkboxes
+        const shareOnCloud = document.getElementById('createShareOnCloud');
+        if (shareOnCloud) shareOnCloud.checked = false;
+        
+        const autoStart = document.getElementById('createAutoStart');
+        if (autoStart) autoStart.checked = false;
+        
+        console.log('✅ Create profile form cleared');
     }
     
     initializeProxiesView() {

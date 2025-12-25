@@ -4,13 +4,16 @@
  */
 
 const { getDatabase } = require('./database');
-const { ProxyRepository, ProfileRepository } = require('./repositories');
+const { ProxyRepository } = require('./repositories');
+const ProfileRepository = require('./repositories/profile_repository_new');
+const GroupRepository = require('./repositories/group_repository');
 
 class DatabaseManager {
     constructor() {
         this.db = getDatabase();
         this.proxyRepo = new ProxyRepository();
         this.profileRepo = new ProfileRepository();
+        this.groupRepo = new GroupRepository();
         this.isInitialized = false;
     }
 
@@ -133,27 +136,47 @@ class DatabaseManager {
 
     async getAllGroups() {
         await this.ensureInitialized();
-        return await this.profileRepo.getAllGroups();
+        return await this.groupRepo.getAllGroups();
     }
 
     async createGroup(groupName) {
         await this.ensureInitialized();
-        return await this.profileRepo.getOrCreateGroup(groupName);
+        return await this.groupRepo.createGroup(groupName);
     }
 
     async assignProfilesToGroup(profileIds, groupName) {
         await this.ensureInitialized();
-        return await this.profileRepo.assignProfilesToGroup(profileIds, groupName);
+        return await this.groupRepo.assignProfilesToGroup(profileIds, groupName);
     }
 
     async getProfilesByGroup(groupName) {
         await this.ensureInitialized();
-        return await this.profileRepo.getProfilesByGroup(groupName);
+        return await this.groupRepo.getProfilesByGroup(groupName);
     }
 
     async removeProfileFromGroup(profileId, groupName) {
         await this.ensureInitialized();
-        return await this.profileRepo.removeProfileFromGroup(profileId, groupName);
+        return await this.groupRepo.removeProfileFromGroup(profileId, groupName);
+    }
+
+    async getGroupStats() {
+        await this.ensureInitialized();
+        return await this.groupRepo.getGroupStats();
+    }
+
+    async getProfileCountForGroup(groupName) {
+        await this.ensureInitialized();
+        return await this.groupRepo.getProfileCountForGroup(groupName);
+    }
+
+    async deleteGroup(groupName) {
+        await this.ensureInitialized();
+        return await this.groupRepo.deleteGroup(groupName);
+    }
+
+    async updateGroup(id, newGroupName) {
+        await this.ensureInitialized();
+        return await this.groupRepo.updateGroup(id, newGroupName);
     }
 
     // ======================================================================

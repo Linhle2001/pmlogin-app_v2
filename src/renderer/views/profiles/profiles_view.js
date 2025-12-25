@@ -914,9 +914,9 @@ class ProfilesView {
 
     async getProfileCountForGroup(groupName) {
         try {
-            const response = await this.safeElectronCall('db:group:get-profiles', groupName);
+            const response = await this.safeElectronCall('db:group:get-profile-count', groupName);
             if (response.success) {
-                return response.data.length;
+                return response.data.count;
             } else {
                 console.error(`❌ Failed to get profile count for group ${groupName}:`, response.message);
                 return 0;
@@ -1021,18 +1021,184 @@ class ProfilesView {
 
     async editGroup(groupName) {
         console.log(`🔄 Editing group: ${groupName}`);
-        // TODO: Implement group editing
-        this.showToast('Group editing feature coming soon...', 'info');
-    }
-
-    async deleteGroup(groupName) {
-        if (!confirm(`Are you sure you want to delete the group '${groupName}'?`)) {
+        
+        // Lấy thông tin group hiện tại
+        const response = await this.safeElectronCall('db:group:get-stats');
+        if (!response.success) {
+            this.showToast('Failed to load group information', 'error');
             return;
         }
         
-        console.log(`🔄 Deleting group: ${groupName}`);
-        // TODO: Implement group deletion
-        this.showToast('Group deletion feature coming soon...', 'info');
+        const groupInfo = response.data.find(g => g.group_name === groupName);
+        if (!groupInfo) {
+            this.showToast('Group not found', 'error');
+            return;
+        }
+        
+        const dialog = document.createElement('div');
+        dialog.className = 'modal-overlay';
+        dialog.innerHTML = `
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    <h3>Edit Group</h3>
+                    <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Group Name</label>
+                        <input type="text" id="editGroupNameInput" class="form-control" value="${groupName}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Current Profiles</label>
+                        <p class="text-muted">${groupInfo.profile_count} profiles in this group</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancel</button>
+                    <button class="btn btn-primary" onclick="window.profilesView.updateGroup('${groupName}')">Update</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(dialog);
+        
+        // Focus on input and select text
+        const input = dialog.querySelector('#editGroupNameInput');
+        input.focus();
+        input.select();
+        
+        // Handle Enter key
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.updateGroup(groupName);
+            }
+        });
+    }
+
+    async updateGroup(oldGroupName) {
+        const input = document.querySelector('#editGroupNameInput');
+        const newGroupName = input?.value?.trim();
+        
+        if (!newGroupName) {
+            alert('Please enter a group name');
+            return;
+        }
+        
+        if (newGroupName === oldGroupName) {
+            // No change
+            document.querySelector('.modal-overlay')?.remove();
+            return;
+        }
+        
+        try {
+            // Get group ID first
+            const statsResponse = await this.safeElectronCall('db:group:get-stats');
+            if (!statsResponse.success) {
+                throw new Error('Failed to get group information');
+            }
+            
+            // For now, we'll create a new group and move profiles (since we don't have direct update by name)
+            // This is a workaround - ideally we should have update by name API
+            
+            // 1. Get all profiles in the old group
+            const profilesResponse = await this.safeElectronCall('db:group:get-profiles', oldGroupName);
+            if (!profilesResponse.success) {
+                throw new Error('Failed to get profiles in group');
+            }
+            
+            const profiles = profilesResponse.data;
+            
+            // 2. Create new group
+            const createResponse = await this.safeElectronCall('db:group:create', newGroupName);
+            if (!createResponse.success) {
+                throw new Error(createResponse.message);
+            }
+            
+            // 3. Move all profiles to new group
+            if (profiles.length > 0) {
+                const profileIds = profiles.map(p => p.id);
+                const assignResponse = await this.safeElectronCall('db:group:assign-profiles', profileIds, newGroupName);
+                if (!assignResponse.success) {
+                    throw new Error('Failed to move profiles to new group');
+                }
+            }
+            
+            // 4. Delete old group
+            const deleteResponse = await this.safeElectronCall('db:group:delete', oldGroupName);
+            if (!deleteResponse.success) {
+                console.warn('Failed to delete old group:', deleteResponse.message);
+            }
+            
+            console.log(`✅ Group '${oldGroupName}' renamed to '${newGroupName}'`);
+            
+            // Close dialog
+            document.querySelector('.modal-overlay')?.remove();
+            
+            // Refresh group tab
+            if (this.currentTab === 'group') {
+                // If we were viewing the old group, switch to the new one
+                if (this.viewingGroup === oldGroupName) {
+                    this.viewingGroup = newGroupName;
+                }
+                await this.renderGroupTab();
+            }
+            await this.updateTabCounts();
+            
+            // Show success message
+            this.showToast(`Group renamed to '${newGroupName}' successfully!`, 'success');
+            
+        } catch (error) {
+            console.error('❌ Error updating group:', error);
+            alert(`Failed to update group: ${error.message}`);
+        }
+    }
+
+    async deleteGroup(groupName) {
+        // Get group info first
+        const statsResponse = await this.safeElectronCall('db:group:get-stats');
+        if (!statsResponse.success) {
+            this.showToast('Failed to load group information', 'error');
+            return;
+        }
+        
+        const groupInfo = statsResponse.data.find(g => g.group_name === groupName);
+        const profileCount = groupInfo ? groupInfo.profile_count : 0;
+        
+        const confirmMessage = profileCount > 0 
+            ? `Are you sure you want to delete the group '${groupName}'?\n\nThis will remove ${profileCount} profiles from the group, but the profiles themselves will not be deleted.`
+            : `Are you sure you want to delete the group '${groupName}'?`;
+            
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+        
+        try {
+            console.log(`🔄 Deleting group: ${groupName}`);
+            
+            const response = await this.safeElectronCall('db:group:delete', groupName);
+            if (response.success) {
+                console.log(`✅ Group '${groupName}' deleted successfully`);
+                
+                // If we were viewing this group, go back to group list
+                if (this.viewingGroup === groupName) {
+                    this.backToGroupList();
+                } else if (this.currentTab === 'group') {
+                    // Refresh group tab
+                    await this.renderGroupTab();
+                }
+                
+                await this.updateTabCounts();
+                
+                // Show success message
+                this.showToast(`Group '${groupName}' deleted successfully!`, 'success');
+            } else {
+                console.error('❌ Failed to delete group:', response.message);
+                this.showToast(`Failed to delete group: ${response.message}`, 'error');
+            }
+        } catch (error) {
+            console.error('❌ Error deleting group:', error);
+            this.showToast(`Error deleting group: ${error.message}`, 'error');
+        }
     }
 
     filterGroups(searchText) {

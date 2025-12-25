@@ -431,7 +431,7 @@ function setupIpcHandlers(appController) {
             return { success: true, data: { id: groupId } };
         } catch (error) {
             console.error('Database create group error:', error);
-            return { success: false, message: 'Lỗi khi tạo group' };
+            return { success: false, message: error.message || 'Lỗi khi tạo group' };
         }
     });
 
@@ -448,7 +448,7 @@ function setupIpcHandlers(appController) {
     ipcMain.handle('db:group:assign-profiles', async (event, profileIds, groupName) => {
         try {
             const result = await dbManager.assignProfilesToGroup(profileIds, groupName);
-            return { success: result };
+            return { success: true, data: result };
         } catch (error) {
             console.error('Database assign profiles to group error:', error);
             return { success: false, message: 'Lỗi khi assign profiles vào group' };
@@ -462,6 +462,46 @@ function setupIpcHandlers(appController) {
         } catch (error) {
             console.error('Database remove profile from group error:', error);
             return { success: false, message: 'Lỗi khi remove profile khỏi group' };
+        }
+    });
+
+    ipcMain.handle('db:group:get-stats', async (event) => {
+        try {
+            const stats = await dbManager.getGroupStats();
+            return { success: true, data: stats };
+        } catch (error) {
+            console.error('Database get group stats error:', error);
+            return { success: false, message: 'Lỗi khi lấy thống kê group' };
+        }
+    });
+
+    ipcMain.handle('db:group:get-profile-count', async (event, groupName) => {
+        try {
+            const count = await dbManager.getProfileCountForGroup(groupName);
+            return { success: true, data: { count } };
+        } catch (error) {
+            console.error('Database get profile count for group error:', error);
+            return { success: false, message: 'Lỗi khi lấy số lượng profile trong group' };
+        }
+    });
+
+    ipcMain.handle('db:group:delete', async (event, groupName) => {
+        try {
+            const result = await dbManager.deleteGroup(groupName);
+            return { success: result };
+        } catch (error) {
+            console.error('Database delete group error:', error);
+            return { success: false, message: error.message || 'Lỗi khi xóa group' };
+        }
+    });
+
+    ipcMain.handle('db:group:update', async (event, groupId, newGroupName) => {
+        try {
+            const result = await dbManager.updateGroup(groupId, newGroupName);
+            return { success: result };
+        } catch (error) {
+            console.error('Database update group error:', error);
+            return { success: false, message: error.message || 'Lỗi khi cập nhật group' };
         }
     });
 
@@ -550,6 +590,30 @@ function setupIpcHandlers(appController) {
             
             if (profileId) {
                 console.log('✅ Profile created successfully with ID:', profileId);
+                
+                // Assign to group if specified
+                if (profileData.group && profileData.group.trim()) {
+                    try {
+                        await dbManager.assignProfilesToGroup([profileId], profileData.group.trim());
+                        console.log(`✅ Profile assigned to group: ${profileData.group}`);
+                    } catch (error) {
+                        console.warn('⚠️ Failed to assign profile to group:', error.message);
+                    }
+                }
+                
+                // Add tags if specified
+                if (profileData.tags && profileData.tags.trim()) {
+                    const tagNames = profileData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+                    for (const tagName of tagNames) {
+                        try {
+                            await dbManager.addTagToProfile(profileId, tagName);
+                            console.log(`✅ Tag '${tagName}' added to profile`);
+                        } catch (error) {
+                            console.warn(`⚠️ Failed to add tag '${tagName}':`, error.message);
+                        }
+                    }
+                }
+                
                 return { 
                     success: true, 
                     data: { 
