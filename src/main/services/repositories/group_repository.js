@@ -274,7 +274,7 @@ class GroupRepository {
         try {
             const profiles = await this.db.all(`
                 SELECT DISTINCT p.id, p.name, p.platform, p.note, p.proxy, 
-                       p.status, p.shared_on_cloud, p.created_at, p.updated_at, p.last_started_at,
+                       p.status, p.shared_on_cloud, p.updated_at, p.last_started_at,
                        GROUP_CONCAT(DISTINCT t.name) as tags
                 FROM profiles p
                 JOIN profile_group pg ON p.id = pg.profile_id

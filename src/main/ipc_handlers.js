@@ -21,17 +21,7 @@ function setupIpcHandlers(appController) {
         }
     });
 
-    // Database test
-    ipcMain.handle('db:test', async (event) => {
-        try {
-            const { testDatabase } = require('./services/database_test');
-            await testDatabase();
-            return { success: true, message: 'Database test completed' };
-        } catch (error) {
-            console.error('Database test error:', error);
-            return { success: false, message: 'Database test failed' };
-        }
-    });
+
 
     // Proxy database handlers
     ipcMain.handle('db:proxy:add', async (event, proxyData) => {
