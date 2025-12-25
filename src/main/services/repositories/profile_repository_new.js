@@ -12,6 +12,19 @@ class ProfileRepository {
         this.syncService = getSyncService();
     }
 
+    // Helper function to safely parse proxy JSON
+    _parseProxyData(proxyString) {
+        if (!proxyString) return null;
+        
+        try {
+            return JSON.parse(proxyString);
+        } catch (error) {
+            console.warn(`⚠️ Invalid JSON in proxy field:`, proxyString);
+            // Nếu không parse được, coi như proxy string cũ
+            return { type: 'custom', value: proxyString };
+        }
+    }
+
     // === Basic CRUD Operations ===
 
     async createProfile(profileData) {
@@ -51,7 +64,7 @@ class ProfileRepository {
         );
 
         if (profile) {
-            profile.proxy = profile.proxy ? JSON.parse(profile.proxy) : null;
+            profile.proxy = this._parseProxyData(profile.proxy);
             profile.groups = profile.groups ? profile.groups.split(',') : [];
             profile.tags = profile.tags ? profile.tags.split(',') : [];
         }
@@ -83,7 +96,7 @@ class ProfileRepository {
         
         return profiles.map(profile => ({
             ...profile,
-            proxy: profile.proxy ? JSON.parse(profile.proxy) : null,
+            proxy: this._parseProxyData(profile.proxy),
             groups: profile.groups ? profile.groups.split(',') : [],
             tags: profile.tags ? profile.tags.split(',') : []
         }));
@@ -195,7 +208,7 @@ class ProfileRepository {
         
         return profiles.map(profile => ({
             ...profile,
-            proxy: profile.proxy ? JSON.parse(profile.proxy) : null,
+            proxy: this._parseProxyData(profile.proxy),
             groups: profile.groups ? profile.groups.split(',') : [],
             tags: profile.tags ? profile.tags.split(',') : []
         }));
@@ -426,7 +439,7 @@ class ProfileRepository {
             
             result.push({
                 ...profile,
-                proxy: profile.proxy ? JSON.parse(profile.proxy) : null,
+                proxy: this._parseProxyData(profile.proxy),
                 tags: tags,
                 groups: groups,
                 shared_on_cloud: Boolean(profile.shared_on_cloud)

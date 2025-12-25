@@ -701,10 +701,7 @@ class ProfilesView {
         try {
             const groups = await this.loadGroups();
             
-            // Remove duplicates if any (shouldn't happen, but safety check)
-            const uniqueGroups = [...new Set(groups)];
-            
-            if (uniqueGroups.length === 0) {
+            if (groups.length === 0) {
                 groupListContainer.innerHTML = `
                     <div class="no-groups-placeholder">
                         <div class="placeholder-icon">📁</div>
@@ -721,17 +718,17 @@ class ProfilesView {
             // Render groups list
             let groupsHTML = '<div class="groups-grid">';
             
-            for (const group of uniqueGroups) {
-                // Skip if group name is empty or invalid
-                if (!group || typeof group !== 'string' || group.trim() === '') {
+            for (const group of groups) {
+                // Skip if group is invalid
+                if (!group || !group.name || group.name.trim() === '') {
                     console.warn('⚠️ Skipping invalid group:', group);
                     continue;
                 }
                 
-                const profileCount = await this.getProfileCountForGroup(group);
+                const profileCount = await this.getProfileCountForGroup(group.name);
                 
                 // Escape group name for HTML to prevent XSS
-                const escapedGroupName = group.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                const escapedGroupName = group.name.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                 
                 groupsHTML += `
                     <div class="group-card" data-group-name="${escapedGroupName}">
@@ -760,7 +757,7 @@ class ProfilesView {
             groupsHTML += '</div>';
             groupListContainer.innerHTML = groupsHTML;
             
-            console.log(`✅ Rendered ${uniqueGroups.length} groups`);
+            console.log(`✅ Rendered ${groups.length} groups`);
         } catch (error) {
             console.error('❌ Error rendering group tab:', error);
             groupListContainer.innerHTML = `
@@ -899,8 +896,12 @@ class ProfilesView {
 
     async loadGroups() {
         try {
+            console.log('🔄 Loading groups from database...');
             const response = await this.safeElectronCall('db:group:get-all');
+            console.log('📊 Groups response:', response);
+            
             if (response.success) {
+                console.log('✅ Groups loaded:', response.data);
                 return response.data;
             } else {
                 console.error('❌ Failed to load groups:', response.message);
