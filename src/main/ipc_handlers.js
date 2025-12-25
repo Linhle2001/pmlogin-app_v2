@@ -3,12 +3,219 @@ const path = require('path');
 const fs = require('fs');
 
 function setupIpcHandlers(appController) {
-    // Database handlers
+    // Import services
     const { getDatabaseManager } = require('./services/database_manager');
+    const pythonLocalApiClient = require('./services/python_local_api_client');
+    
     const dbManager = getDatabaseManager();
 
     // Initialize database on startup
     dbManager.initialize().catch(console.error);
+
+    // Python Local API handlers (cho profiles, proxies, database local)
+    ipcMain.handle('python-local:check-connection', async (event) => {
+        try {
+            const result = await pythonLocalApiClient.checkConnection();
+            return result;
+        } catch (error) {
+            console.error('Python Local API connection check error:', error);
+            return { success: false, message: 'Lỗi kết nối Python Local API' };
+        }
+    });
+
+    ipcMain.handle('python-local:get-stats', async (event) => {
+        try {
+            const result = await pythonLocalApiClient.getStats();
+            return result;
+        } catch (error) {
+            console.error('Python Local API get stats error:', error);
+            return { success: false, message: 'Lỗi lấy thống kê' };
+        }
+    });
+
+    // Profile handlers (sử dụng Python Local API)
+    ipcMain.handle('python-local:get-profiles', async (event) => {
+        try {
+            const result = await pythonLocalApiClient.getProfiles();
+            return result;
+        } catch (error) {
+            console.error('Python Local API get profiles error:', error);
+            return { success: false, message: 'Lỗi lấy danh sách profiles' };
+        }
+    });
+
+    ipcMain.handle('python-local:create-profile', async (event, profileData) => {
+        try {
+            const result = await pythonLocalApiClient.createProfile(profileData);
+            return result;
+        } catch (error) {
+            console.error('Python Local API create profile error:', error);
+            return { success: false, message: 'Lỗi tạo profile' };
+        }
+    });
+
+    ipcMain.handle('python-local:update-profile', async (event, profileId, profileData) => {
+        try {
+            const result = await pythonLocalApiClient.updateProfile(profileId, profileData);
+            return result;
+        } catch (error) {
+            console.error('Python Local API update profile error:', error);
+            return { success: false, message: 'Lỗi cập nhật profile' };
+        }
+    });
+
+    ipcMain.handle('python-local:delete-profile', async (event, profileId) => {
+        try {
+            const result = await pythonLocalApiClient.deleteProfile(profileId);
+            return result;
+        } catch (error) {
+            console.error('Python Local API delete profile error:', error);
+            return { success: false, message: 'Lỗi xóa profile' };
+        }
+    });
+
+    // Proxy handlers (sử dụng Python Local API)
+    ipcMain.handle('python-local:get-proxies', async (event) => {
+        try {
+            const result = await pythonLocalApiClient.getProxies();
+            return result;
+        } catch (error) {
+            console.error('Python Local API get proxies error:', error);
+            return { success: false, message: 'Lỗi lấy danh sách proxies' };
+        }
+    });
+
+    ipcMain.handle('python-local:create-proxy', async (event, proxyData) => {
+        try {
+            const result = await pythonLocalApiClient.createProxy(proxyData);
+            return result;
+        } catch (error) {
+            console.error('Python Local API create proxy error:', error);
+            return { success: false, message: 'Lỗi tạo proxy' };
+        }
+    });
+
+    ipcMain.handle('python-local:update-proxy', async (event, proxyId, proxyData) => {
+        try {
+            const result = await pythonLocalApiClient.updateProxy(proxyId, proxyData);
+            return result;
+        } catch (error) {
+            console.error('Python Local API update proxy error:', error);
+            return { success: false, message: 'Lỗi cập nhật proxy' };
+        }
+    });
+
+    ipcMain.handle('python-local:delete-proxy', async (event, proxyId) => {
+        try {
+            const result = await pythonLocalApiClient.deleteProxy(proxyId);
+            return result;
+        } catch (error) {
+            console.error('Python Local API delete proxy error:', error);
+            return { success: false, message: 'Lỗi xóa proxy' };
+        }
+    });
+
+    // Tag handlers (sử dụng Python Local API)
+    ipcMain.handle('python-local:get-tags', async (event) => {
+        try {
+            const result = await pythonLocalApiClient.getTags();
+            return result;
+        } catch (error) {
+            console.error('Python Local API get tags error:', error);
+            return { success: false, message: 'Lỗi lấy danh sách tags' };
+        }
+    });
+
+    // Taskbar action handlers
+    ipcMain.handle('python-local:start-profiles', async (event, profileIds) => {
+        try {
+            const result = await pythonLocalApiClient.startProfiles(profileIds);
+            return result;
+        } catch (error) {
+            console.error('Python Local API start profiles error:', error);
+            return { success: false, message: 'Lỗi khởi động profiles' };
+        }
+    });
+
+    ipcMain.handle('python-local:stop-profiles', async (event, profileIds) => {
+        try {
+            const result = await pythonLocalApiClient.stopProfiles(profileIds);
+            return result;
+        } catch (error) {
+            console.error('Python Local API stop profiles error:', error);
+            return { success: false, message: 'Lỗi dừng profiles' };
+        }
+    });
+
+    ipcMain.handle('python-local:check-proxies', async (event, profileIds) => {
+        try {
+            const result = await pythonLocalApiClient.checkProxies(profileIds);
+            return result;
+        } catch (error) {
+            console.error('Python Local API check proxies error:', error);
+            return { success: false, message: 'Lỗi kiểm tra proxies' };
+        }
+    });
+
+    ipcMain.handle('python-local:update-proxies', async (event, profileIds, proxyList, options) => {
+        try {
+            const result = await pythonLocalApiClient.updateProxies(profileIds, proxyList, options);
+            return result;
+        } catch (error) {
+            console.error('Python Local API update proxies error:', error);
+            return { success: false, message: 'Lỗi cập nhật proxies' };
+        }
+    });
+
+    ipcMain.handle('python-local:clone-profiles', async (event, profileIds, cloneCount) => {
+        try {
+            const result = await pythonLocalApiClient.cloneProfiles(profileIds, cloneCount);
+            return result;
+        } catch (error) {
+            console.error('Python Local API clone profiles error:', error);
+            return { success: false, message: 'Lỗi clone profiles' };
+        }
+    });
+
+    ipcMain.handle('python-local:delete-profiles', async (event, profileIds) => {
+        try {
+            const result = await pythonLocalApiClient.deleteProfiles(profileIds);
+            return result;
+        } catch (error) {
+            console.error('Python Local API delete profiles error:', error);
+            return { success: false, message: 'Lỗi xóa profiles' };
+        }
+    });
+
+    ipcMain.handle('python-local:export-profiles', async (event, profileIds, exportFormat) => {
+        try {
+            const result = await pythonLocalApiClient.exportProfiles(profileIds, exportFormat);
+            return result;
+        } catch (error) {
+            console.error('Python Local API export profiles error:', error);
+            return { success: false, message: 'Lỗi export profiles' };
+        }
+    });
+
+    ipcMain.handle('python-local:get-running-profiles', async (event) => {
+        try {
+            const result = await pythonLocalApiClient.getRunningProfiles();
+            return result;
+        } catch (error) {
+            console.error('Python Local API get running profiles error:', error);
+            return { success: false, message: 'Lỗi lấy danh sách profiles đang chạy' };
+        }
+    });
+
+    ipcMain.handle('python-local:get-profiles-stats', async (event) => {
+        try {
+            const result = await pythonLocalApiClient.getProfilesStats();
+            return result;
+        } catch (error) {
+            console.error('Python Local API get profiles stats error:', error);
+            return { success: false, message: 'Lỗi lấy thống kê profiles' };
+        }
+    });
 
     // Database stats
     ipcMain.handle('db:stats', async (event) => {
@@ -23,11 +230,12 @@ function setupIpcHandlers(appController) {
 
 
 
-    // Proxy database handlers
+    // Proxy database handlers - sử dụng Python backend
     ipcMain.handle('db:proxy:add', async (event, proxyData) => {
         try {
-            const proxyId = await dbManager.addProxy(proxyData);
-            return { success: true, data: { id: proxyId } };
+            console.log('🔄 Adding proxy via Python backend:', proxyData);
+            const result = await pythonLocalApiClient.createProxy(proxyData);
+            return result;
         } catch (error) {
             console.error('Database add proxy error:', error);
             return { success: false, message: 'Lỗi khi thêm proxy vào database' };
@@ -36,8 +244,8 @@ function setupIpcHandlers(appController) {
 
     ipcMain.handle('db:proxy:get-all', async (event, tagId = null) => {
         try {
-            const proxies = await dbManager.getAllProxies(tagId);
-            return { success: true, data: proxies };
+            const result = await pythonLocalApiClient.getProxies();
+            return result;
         } catch (error) {
             console.error('Database get proxies error:', error);
             return { success: false, message: 'Lỗi khi lấy danh sách proxy từ database' };
@@ -46,8 +254,13 @@ function setupIpcHandlers(appController) {
 
     ipcMain.handle('db:proxy:get-live', async (event) => {
         try {
-            const proxies = await dbManager.getLiveProxies();
-            return { success: true, data: proxies };
+            // Lấy tất cả proxy rồi filter live
+            const result = await pythonLocalApiClient.getProxies();
+            if (result.success) {
+                const liveProxies = result.data.filter(proxy => proxy.status === 'live');
+                return { success: true, data: liveProxies };
+            }
+            return result;
         } catch (error) {
             console.error('Database get live proxies error:', error);
             return { success: false, message: 'Lỗi khi lấy proxy live từ database' };
@@ -56,8 +269,12 @@ function setupIpcHandlers(appController) {
 
     ipcMain.handle('db:proxy:update-status', async (event, host, port, status, failCount = 0, proxyType = null) => {
         try {
-            const result = await dbManager.updateProxyStatus(host, port, status, failCount, proxyType);
-            return { success: result };
+            // Sử dụng endpoint cập nhật status
+            const response = await fetch(`http://127.0.0.1:8000/proxies/${host}/${port}/status?status=${status}&fail_count=${failCount}&proxy_type=${proxyType || ''}`, {
+                method: 'PUT'
+            });
+            const result = await response.json();
+            return result;
         } catch (error) {
             console.error('Database update proxy status error:', error);
             return { success: false, message: 'Lỗi khi cập nhật trạng thái proxy' };
@@ -66,8 +283,11 @@ function setupIpcHandlers(appController) {
 
     ipcMain.handle('db:proxy:delete', async (event, host, port) => {
         try {
-            const result = await dbManager.deleteProxy(host, port);
-            return { success: result };
+            const response = await fetch(`http://127.0.0.1:8000/proxies/${host}/${port}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            return result;
         } catch (error) {
             console.error('Database delete proxy error:', error);
             return { success: false, message: 'Lỗi khi xóa proxy từ database' };
@@ -76,16 +296,16 @@ function setupIpcHandlers(appController) {
 
     ipcMain.handle('db:proxy:bulk-add', async (event, proxiesList) => {
         try {
-            const results = await dbManager.bulkAddProxies(proxiesList);
-            const successCount = results.filter(r => r !== null).length;
-            return { 
-                success: true, 
-                data: { 
-                    results, 
-                    successCount, 
-                    totalCount: proxiesList.length 
-                } 
-            };
+            console.log('🔄 Bulk adding proxies via Python backend:', proxiesList.length, 'proxies');
+            const response = await fetch('http://127.0.0.1:8000/proxies/bulk', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ proxies: proxiesList })
+            });
+            const result = await response.json();
+            return result;
         } catch (error) {
             console.error('Database bulk add proxies error:', error);
             return { success: false, message: 'Lỗi khi thêm nhiều proxy vào database' };
@@ -383,11 +603,12 @@ function setupIpcHandlers(appController) {
         }
     });
 
-    // Tag handlers
+    // Tag handlers - sử dụng Python backend
     ipcMain.handle('db:tag:get-all', async (event) => {
         try {
-            const tags = await dbManager.getAllTags();
-            return { success: true, data: tags };
+            const response = await fetch('http://127.0.0.1:8000/tags');
+            const result = await response.json();
+            return result;
         } catch (error) {
             console.error('Database get tags error:', error);
             return { success: false, message: 'Lỗi khi lấy danh sách tag' };
@@ -396,8 +617,8 @@ function setupIpcHandlers(appController) {
 
     ipcMain.handle('db:tag:create', async (event, tagName) => {
         try {
-            const tagId = await dbManager.createTag(tagName);
-            return { success: true, data: { id: tagId } };
+            // Tags sẽ được tự động tạo khi thêm proxy với tag mới
+            return { success: true, data: { name: tagName } };
         } catch (error) {
             console.error('Database create tag error:', error);
             return { success: false, message: 'Lỗi khi tạo tag' };
