@@ -421,7 +421,7 @@ function setupIpcHandlers(appController) {
             return { success: true, data: groups };
         } catch (error) {
             console.error('Database get groups error:', error);
-            return { success: false, message: 'Lỗi khi lấy danh sách group' };
+            return { success: false, message: 'Lỗi khi lấy danh sách group', error: error.message };
         }
     });
 

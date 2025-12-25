@@ -720,15 +720,15 @@ class ProfilesView {
             
             for (const group of groups) {
                 // Skip if group is invalid
-                if (!group || !group.name || group.name.trim() === '') {
+                if (!group || !group.group_name || group.group_name.trim() === '') {
                     console.warn('⚠️ Skipping invalid group:', group);
                     continue;
                 }
                 
-                const profileCount = await this.getProfileCountForGroup(group.name);
+                const profileCount = await this.getProfileCountForGroup(group.group_name);
                 
                 // Escape group name for HTML to prevent XSS
-                const escapedGroupName = group.name.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                const escapedGroupName = group.group_name.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                 
                 groupsHTML += `
                     <div class="group-card" data-group-name="${escapedGroupName}">

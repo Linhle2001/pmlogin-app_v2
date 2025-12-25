@@ -404,10 +404,10 @@ class MainRenderer {
                     // Add groups from database
                     groups.forEach(group => {
                         const option = document.createElement('option');
-                        option.value = group.name;
-                        option.textContent = group.name;
+                        option.value = group.group_name;
+                        option.textContent = group.group_name;
                         groupSelect.appendChild(option);
-                        console.log(`➕ Added group option: ${group.name}`);
+                        console.log(`➕ Added group option: ${group.group_name}`);
                     });
                     
                     console.log(`✅ Updated group dropdown with ${groups.length} groups`);

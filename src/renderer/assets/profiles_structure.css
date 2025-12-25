@@ -772,23 +772,202 @@
 
 /* ==================== ENHANCED DIALOG STYLES ==================== */
 
-/* Assign group dialog specific styles */
+/* ==================== ASSIGN GROUP DIALOG STYLES ==================== */
+.assign-group-dialog {
+    width: 550px;
+    background-color: var(--pmlogin-bg-card);
+    border-radius: 16px;
+    box-shadow: var(--pmlogin-shadow-xl);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.assign-group-dialog .dialog-header {
+    background: linear-gradient(135deg, var(--pmlogin-primary) 0%, #16a34a 100%);
+    color: white;
+    border-radius: 16px 16px 0 0;
+    padding: 20px 30px;
+    margin-bottom: 0;
+}
+
+.assign-group-dialog .dialog-header h3 {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.assign-group-dialog .dialog-close {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+}
+
+.assign-group-dialog .dialog-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.assign-group-dialog .dialog-body {
+    padding: 25px 30px;
+}
+
+.assign-group-dialog .dialog-section {
+    margin-bottom: 25px;
+}
+
+.assign-group-dialog .dialog-section:last-child {
+    margin-bottom: 0;
+}
+
+.assign-group-dialog .dialog-section label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--pmlogin-text-primary);
+}
+
+.assign-group-dialog .dialog-section label::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: var(--pmlogin-primary);
+    border-radius: 2px;
+}
+
+/* Selected profiles container */
+.selected-profiles-container {
+    background-color: var(--pmlogin-gray-50);
+    border: 2px dashed var(--pmlogin-border-light);
+    border-radius: 12px;
+    padding: 16px;
+    max-height: 150px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+}
+
+.selected-profiles-container .profile-item {
+    background-color: white;
+    border: 1px solid var(--pmlogin-border-light);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--pmlogin-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.selected-profiles-container .profile-item:last-child {
+    margin-bottom: 0;
+}
+
+.selected-profiles-container .profile-item::before {
+    content: '👤';
+    font-size: 12px;
+}
+
+.selected-profiles-container .profile-item:hover {
+    background-color: var(--pmlogin-gray-50);
+    border-color: var(--pmlogin-primary);
+}
+
+.total-count {
+    font-size: 13px;
+    color: var(--pmlogin-text-secondary);
+    font-weight: 500;
+    text-align: right;
+    padding: 8px 0;
+    border-top: 1px solid var(--pmlogin-border-light);
+    margin-top: 12px;
+}
+
+/* Form inputs */
 .assign-group-dialog .group-select,
 .assign-group-dialog .new-group-input {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--pmlogin-border-light, #e5e7eb);
-    border-radius: 6px;
-    font-size: 14px;
+    padding: 14px 16px;
+    border: 2px solid var(--pmlogin-border-light);
+    border-radius: 10px;
+    font-size: 15px;
     background-color: white;
-    color: var(--pmlogin-text-primary, #374151);
+    color: var(--pmlogin-text-primary);
+    transition: all 0.3s ease;
 }
 
 .assign-group-dialog .group-select:focus,
 .assign-group-dialog .new-group-input:focus {
     outline: none;
-    border-color: var(--pmlogin-primary, #22c55e);
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+    border-color: var(--pmlogin-primary);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+    transform: translateY(-1px);
+}
+
+.assign-group-dialog .group-select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.assign-group-dialog .new-group-input::placeholder {
+    color: var(--pmlogin-text-subtle);
+    font-style: italic;
+}
+
+/* Dialog footer */
+.assign-group-dialog .dialog-footer {
+    padding: 20px 30px 30px 30px;
+    background-color: var(--pmlogin-gray-25);
+    border-radius: 0 0 16px 16px;
+    border-top: 1px solid var(--pmlogin-border-light);
+}
+
+.assign-group-dialog .dialog-footer .btn {
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.assign-group-dialog .dialog-footer .btn-secondary {
+    background-color: white;
+    border: 2px solid var(--pmlogin-border-light);
+    color: #374151; /* Màu đen xám đậm để dễ đọc */
+    font-weight: 600;
+}
+
+.assign-group-dialog .dialog-footer .btn-secondary:hover {
+    background-color: var(--pmlogin-gray-50);
+    border-color: #374151;
+    color: #111827; /* Màu đen đậm hơn khi hover */
+}
+
+.assign-group-dialog .dialog-footer .btn-primary {
+    background: linear-gradient(135deg, var(--pmlogin-primary) 0%, #16a34a 100%);
+    border: 2px solid var(--pmlogin-primary);
+    color: white;
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+}
+
+.assign-group-dialog .dialog-footer .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(34, 197, 94, 0.3);
 }
 
 /* Dialog animations */
@@ -800,6 +979,10 @@
 .update-proxy-dialog,
 .assign-group-dialog {
     animation: slideInUp 0.3s ease-out;
+}
+
+.assign-group-dialog {
+    animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes fadeIn {
@@ -836,6 +1019,28 @@
         width: 95%;
         max-width: none;
         margin: 10px;
+    }
+    
+    .assign-group-dialog {
+        border-radius: 12px;
+    }
+    
+    .assign-group-dialog .dialog-header {
+        padding: 16px 20px;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .assign-group-dialog .dialog-body {
+        padding: 20px;
+    }
+    
+    .assign-group-dialog .dialog-footer {
+        padding: 16px 20px 20px 20px;
+        border-radius: 0 0 12px 12px;
+    }
+    
+    .selected-profiles-container {
+        max-height: 120px;
     }
     
     .config-row {
@@ -904,4 +1109,239 @@
 .proxy-status.no-proxy {
     color: #6b7280;
     font-style: italic;
+}
+
+/* Icon styling for assign group dialog */
+.assign-group-dialog .dialog-header i,
+.assign-group-dialog .dialog-section label i,
+.assign-group-dialog .dialog-footer .btn i {
+    margin-right: 6px;
+    opacity: 0.8;
+}
+
+.assign-group-dialog .total-count i {
+    margin-right: 4px;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* Hover effects for better UX */
+.assign-group-dialog .group-select:hover {
+    border-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-gray-25);
+}
+
+.assign-group-dialog .new-group-input:hover {
+    border-color: var(--pmlogin-primary);
+    background-color: var(--pmlogin-gray-25);
+}
+
+/* Loading state for assign button */
+.assign-group-dialog .dialog-assign.loading {
+    position: relative;
+    color: transparent;
+}
+
+.assign-group-dialog .dialog-assign.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+/* Error state for form inputs */
+.assign-group-dialog .group-select.error,
+.assign-group-dialog .new-group-input.error {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Disabled state for assign button when no selection */
+.assign-group-dialog .dialog-assign:disabled:not(.loading) {
+    background: #9ca3af;
+    border-color: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.assign-group-dialog .dialog-assign:disabled:not(.loading):hover {
+    background: #9ca3af;
+    border-color: #9ca3af;
+    transform: none;
+    box-shadow: none;
+}
+/* ==================== TOAST NOTIFICATION SYSTEM ==================== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid #22c55e;
+    min-width: 300px;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    pointer-events: auto;
+    transform: translateX(100%);
+    opacity: 0;
+    animation: slideInToast 0.3s ease-out forwards;
+}
+
+.toast.success {
+    border-left-color: #22c55e;
+}
+
+.toast.success .toast-icon {
+    color: #22c55e;
+}
+
+.toast.error {
+    border-left-color: #ef4444;
+}
+
+.toast.error .toast-icon {
+    color: #ef4444;
+}
+
+.toast.warning {
+    border-left-color: #f59e0b;
+}
+
+.toast.warning .toast-icon {
+    color: #f59e0b;
+}
+
+.toast.info {
+    border-left-color: #3b82f6;
+}
+
+.toast.info .toast-icon {
+    color: #3b82f6;
+}
+
+.toast-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.toast-content {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.toast.hiding {
+    animation: slideOutToast 0.3s ease-in forwards;
+}
+
+@keyframes slideInToast {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutToast {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Progress bar for toast auto-hide */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: currentColor;
+    opacity: 0.3;
+    border-radius: 0 0 12px 12px;
+    animation: toastProgress 4s linear forwards;
+}
+
+@keyframes toastProgress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Responsive design for toast */
+@media (max-width: 768px) {
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        max-width: none;
+    }
 }

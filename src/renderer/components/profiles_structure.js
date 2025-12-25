@@ -1407,55 +1407,174 @@ class ProfilesStructure {
         // TODO: Implement update profile note logic
     }
 
+    // ==================== TOAST NOTIFICATION METHODS ====================
+
+    showToast(message, type = 'info', duration = 4000) {
+        // Create toast container if it doesn't exist
+        let container = document.querySelector('.toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        // Get icon based on type
+        const icons = {
+            success: 'fas fa-check-circle',
+            error: 'fas fa-exclamation-circle',
+            warning: 'fas fa-exclamation-triangle',
+            info: 'fas fa-info-circle'
+        };
+
+        toast.innerHTML = `
+            <i class="toast-icon ${icons[type] || icons.info}"></i>
+            <div class="toast-content">${message}</div>
+            <button class="toast-close" type="button">×</button>
+            <div class="toast-progress"></div>
+        `;
+
+        // Add to container
+        container.appendChild(toast);
+
+        // Close button functionality
+        const closeBtn = toast.querySelector('.toast-close');
+        closeBtn.addEventListener('click', () => {
+            this.hideToast(toast);
+        });
+
+        // Auto hide after duration
+        if (duration > 0) {
+            setTimeout(() => {
+                this.hideToast(toast);
+            }, duration);
+        }
+
+        return toast;
+    }
+
+    hideToast(toast) {
+        if (toast && toast.parentNode) {
+            toast.classList.add('hiding');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+    }
+
     // ==================== DIALOG METHODS ====================
 
-    showAssignToGroupDialog(selectedProfiles) {
+    async showAssignToGroupDialog(selectedProfiles) {
         const overlay = document.createElement('div');
         overlay.className = 'dialog-overlay';
         
         const dialog = document.createElement('div');
         dialog.className = 'assign-group-dialog';
+        
+        // Create dialog structure first with loading state
         dialog.innerHTML = `
             <div class="dialog-header">
-                <h3>📋 Assign to group</h3>
+                <h3><i class="fas fa-folder-plus"></i> Assign to Group</h3>
                 <button class="dialog-close" type="button">✕</button>
             </div>
             <div class="dialog-body">
                 <div class="dialog-section">
-                    <label>Selected profiles:</label>
+                    <label><i class="fas fa-users"></i> Selected Profiles</label>
                     <div class="selected-profiles-container">
                         ${selectedProfiles.map(profile => `<div class="profile-item">${profile.name}</div>`).join('')}
+                        <div class="total-count"><i class="fas fa-info-circle"></i> Total: ${selectedProfiles.length} profile${selectedProfiles.length > 1 ? 's' : ''}</div>
                     </div>
-                    <div class="total-count">Total: ${selectedProfiles.length}</div>
                 </div>
                 
                 <div class="dialog-section">
-                    <label>Select group:</label>
-                    <select class="group-select">
-                        <option value="">-- Select a group --</option>
-                        <option value="work">Work</option>
-                        <option value="personal">Personal</option>
-                        <option value="social">Social Media</option>
-                        <option value="test">Test</option>
+                    <label><i class="fas fa-list"></i> Select Group</label>
+                    <select class="group-select" disabled>
+                        <option value="">Loading groups...</option>
                     </select>
-                </div>
-                
-                <div class="dialog-section">
-                    <label>Or create new group:</label>
-                    <input type="text" class="new-group-input" placeholder="Enter new group name" />
                 </div>
             </div>
             <div class="dialog-footer">
-                <button class="btn btn-secondary dialog-cancel" type="button">Cancel</button>
-                <button class="btn btn-primary dialog-assign" type="button">Assign</button>
+                <button class="btn btn-secondary dialog-cancel" type="button">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-primary dialog-assign" type="button" disabled>
+                    <i class="fas fa-check"></i> Assign
+                </button>
             </div>
         `;
         
         overlay.appendChild(dialog);
         document.body.appendChild(overlay);
         
+        // Get select element reference
+        const groupSelect = dialog.querySelector('.group-select');
+        const assignBtn = dialog.querySelector('.dialog-assign');
+        
+        // Load groups from database
+        try {
+            const response = await window.electronAPI.invoke('db:group:get-all');
+            
+            // Clear loading state
+            groupSelect.innerHTML = '<option value="">-- Select a group --</option>';
+            
+            if (response.success && response.data && response.data.length > 0) {
+                const groups = response.data;
+                
+                // Add group options
+                groups.forEach(group => {
+                    const option = document.createElement('option');
+                    option.value = group.group_name;
+                    option.textContent = `${this.getGroupIcon(group.group_name)} ${group.group_name}`;
+                    groupSelect.appendChild(option);
+                });
+                
+                // Enable select
+                groupSelect.disabled = false;
+            } else {
+                // Show no groups message
+                groupSelect.innerHTML = '<option value="">No groups available</option>';
+                groupSelect.disabled = false;
+            }
+        } catch (error) {
+            console.error('Failed to load groups:', error);
+            groupSelect.innerHTML = '<option value="">Error loading groups</option>';
+            groupSelect.disabled = false;
+        }
+        
         // Attach events
         this.attachAssignGroupDialogEvents(overlay, dialog, selectedProfiles);
+    }
+
+    getGroupIcon(groupName) {
+        const iconMap = {
+            'work': '🏢',
+            'personal': '👤',
+            'social': '📱',
+            'test': '🧪',
+            'demo': '🎯',
+            'gaming': '🎮',
+            'business': '💼',
+            'education': '📚',
+            'entertainment': '🎬',
+            'shopping': '🛒',
+            'finance': '💰',
+            'health': '🏥',
+            'travel': '✈️',
+            'food': '🍕',
+            'sports': '⚽',
+            'music': '🎵',
+            'news': '📰',
+            'tech': '💻',
+            'art': '🎨',
+            'photography': '📸'
+        };
+        
+        return iconMap[groupName.toLowerCase()] || '📁';
     }
 
     attachAssignGroupDialogEvents(overlay, dialog, selectedProfiles) {
@@ -1463,7 +1582,9 @@ class ProfilesStructure {
         const cancelBtn = dialog.querySelector('.dialog-cancel');
         const assignBtn = dialog.querySelector('.dialog-assign');
         const groupSelect = dialog.querySelector('.group-select');
-        const newGroupInput = dialog.querySelector('.new-group-input');
+        
+        // Initially disable assign button since no group is selected
+        assignBtn.disabled = true;
         
         // Close dialog
         const closeDialog = () => {
@@ -1480,49 +1601,74 @@ class ProfilesStructure {
             }
         });
         
-        // Clear group select when typing new group name
-        newGroupInput.addEventListener('input', () => {
-            if (newGroupInput.value.trim()) {
-                groupSelect.value = '';
-            }
-        });
-        
-        // Clear new group input when selecting existing group
+        // Enable/disable assign button based on group selection
         groupSelect.addEventListener('change', () => {
-            if (groupSelect.value) {
-                newGroupInput.value = '';
-            }
+            const hasSelection = groupSelect.value && groupSelect.value.trim() !== '';
+            assignBtn.disabled = !hasSelection;
+            
+            // Remove any previous error styling
+            groupSelect.style.borderColor = '';
         });
         
         // Assign to group
         assignBtn.addEventListener('click', async () => {
             const selectedGroup = groupSelect.value;
-            const newGroupName = newGroupInput.value.trim();
             
-            if (!selectedGroup && !newGroupName) {
-                this.showToast('Please select a group or enter a new group name!', 'warning');
+            if (!selectedGroup || selectedGroup.trim() === '') {
+                this.showToast('Please select a group from the dropdown list!', 'warning');
+                // Add visual feedback to the select element
+                groupSelect.style.borderColor = '#ef4444';
+                groupSelect.focus();
+                
+                // Remove red border after 3 seconds
+                setTimeout(() => {
+                    groupSelect.style.borderColor = '';
+                }, 3000);
+                
                 return;
             }
             
-            const targetGroup = newGroupName || selectedGroup;
-            
             try {
-                this.showToast(`Assigning ${selectedProfiles.length} profiles to group "${targetGroup}"...`, 'info');
+                // Show loading state
+                assignBtn.classList.add('loading');
+                assignBtn.disabled = true;
                 
-                // TODO: Implement actual assign to group logic via IPC
-                // const response = await window.electronAPI.invoke('profile:assign-to-group', 
-                //     selectedProfiles.map(p => p.id), targetGroup);
+                this.showToast(`Assigning ${selectedProfiles.length} profiles to group "${selectedGroup}"...`, 'info');
                 
-                // For now, simulate success
-                setTimeout(() => {
-                    this.showToast(`Successfully assigned ${selectedProfiles.length} profiles to group "${targetGroup}"!`, 'success');
-                }, 1000);
+                // Get profile IDs
+                const profileIds = selectedProfiles.map(p => p.id);
                 
-                closeDialog();
+                // Call IPC to assign profiles to group
+                const response = await window.electronAPI.invoke('db:group:assign-profiles', profileIds, selectedGroup);
+                
+                if (response.success) {
+                    const result = response.data;
+                    let message = `Successfully assigned ${result.assigned} profiles to group "${selectedGroup}"!`;
+                    
+                    if (result.skipped > 0) {
+                        message += ` (${result.skipped} profiles were already in this group)`;
+                    }
+                    
+                    this.showToast(message, 'success');
+                    
+                    // Refresh the profiles view to show updated groups
+                    if (typeof this.loadProfiles === 'function') {
+                        await this.loadProfiles();
+                    }
+                    
+                    closeDialog();
+                } else {
+                    throw new Error(response.message || 'Failed to assign profiles to group');
+                }
                 
             } catch (error) {
                 console.error('Error assigning to group:', error);
-                this.showToast('Failed to assign profiles to group!', 'error');
+                this.showToast(`Failed to assign profiles to group: ${error.message}`, 'error');
+            } finally {
+                // Remove loading state and re-enable based on selection
+                assignBtn.classList.remove('loading');
+                const hasSelection = groupSelect.value && groupSelect.value.trim() !== '';
+                assignBtn.disabled = !hasSelection;
             }
         });
     }

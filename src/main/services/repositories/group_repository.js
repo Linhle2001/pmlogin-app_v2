@@ -53,10 +53,10 @@ class GroupRepository {
             
             return groups.map(row => ({
                 id: row.id,
-                name: row.group_name
+                group_name: row.group_name
             }));
         } catch (error) {
-            console.error('❌ Error getting all groups:', error);
+            console.error('Error getting all groups:', error);
             return [];
         }
     }
