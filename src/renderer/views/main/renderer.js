@@ -375,12 +375,19 @@ class MainRenderer {
         try {
             console.log('📡 Loading groups for create profile form...');
             
-            if (!window.electronAPI || !window.electronAPI.invoke) {
-                console.warn('⚠️ electronAPI not available, using fallback groups');
+            if (!window.electronAPI) {
+                console.warn('⚠️ electronAPI not available');
                 return;
             }
             
+            if (!window.electronAPI.invoke) {
+                console.warn('⚠️ electronAPI.invoke not available');
+                return;
+            }
+            
+            console.log('🔄 Calling db:group:get-all...');
             const result = await window.electronAPI.invoke('db:group:get-all');
+            console.log('📡 Groups result:', result);
             
             if (result.success && result.data) {
                 const groups = result.data;
@@ -389,6 +396,8 @@ class MainRenderer {
                 // Update the group select dropdown
                 const groupSelect = document.getElementById('createGroupSelect');
                 if (groupSelect) {
+                    console.log('🔄 Updating group dropdown...');
+                    
                     // Clear existing options except the first one (no group)
                     groupSelect.innerHTML = '<option value="">Không có nhóm</option>';
                     
@@ -398,6 +407,7 @@ class MainRenderer {
                         option.value = group.name;
                         option.textContent = group.name;
                         groupSelect.appendChild(option);
+                        console.log(`➕ Added group option: ${group.name}`);
                     });
                     
                     console.log(`✅ Updated group dropdown with ${groups.length} groups`);
@@ -405,7 +415,7 @@ class MainRenderer {
                     console.error('❌ Group select element not found');
                 }
             } else {
-                console.error('❌ Failed to load groups:', result.message);
+                console.error('❌ Failed to load groups:', result.message || 'Unknown error');
             }
         } catch (error) {
             console.error('❌ Error loading groups for create profile:', error);
