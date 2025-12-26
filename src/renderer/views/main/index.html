@@ -1,9 +1,23 @@
 <!DOCTYPE html>
+<!--
+PMLogin Dashboard - Python Backend Integrated Version
+
+This file has been updated to use Python backend logic instead of complex JavaScript.
+
+Key Changes:
+- JavaScript logic replaced with calls to main_logic_handler.py
+- Uses main_logic_integration.js for Python backend communication
+- All data processing now handled by Python backend
+- Improved performance and maintainability
+
+For pure Python backend version, see: index_with_python_backend.html
+For documentation, see: PYTHON_BACKEND_INTEGRATION.md
+-->
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PMLogin - Dashboard</title>
+    <title>PMLogin - Dashboard (Python Backend Integrated)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../../assets/theme.css">
@@ -437,21 +451,12 @@
 </head>
 <body class="bg-gray-100">
     <!-- Load ProfilesStructure and ProfilesView FIRST -->
-    <script>
-        console.log('🔄 About to load ProfilesStructure...');
-    </script>
     <script src="../../components/profiles_structure.js"></script>
     <script>
         console.log('✅ ProfilesStructure script loaded. Available:', typeof ProfilesStructure !== 'undefined');
         console.log('🔄 About to load ProfilesView...');
     </script>
     <script src="../profiles/profiles_view.js"></script>
-    <script>
-        console.log('✅ ProfilesView script loaded. Available:', typeof ProfilesView !== 'undefined');
-        console.log('🔍 Global classes check:');
-        console.log('  - ProfilesStructure:', typeof ProfilesStructure);
-        console.log('  - ProfilesView:', typeof ProfilesView);
-    </script>
     
     <!-- Notification -->
     <div id="notification" class="notification fixed top-0 left-0 w-full z-50 p-4 text-white text-center font-medium">
@@ -467,6 +472,10 @@
                     <div class="flex items-center justify-center space-x-3">
                         <img src="../../assets/logo_on.png" alt="PMLogin Logo" class="w-12 h-12 object-contain">
                         <h1 class="text-2xl font-bold text-white">PMLogin</h1>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        <i class="fas fa-python mr-1"></i>
+                        Python Backend Integrated
                     </div>
                 </div>
             </div>
@@ -559,7 +568,10 @@
             <div id="dashboardView" class="view-content p-6">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-2">Tổng quan hệ thống</h2>
-                    <p class="text-gray-600">Chào mừng bạn quay trở lại với PMLogin Dashboard</p>
+                    <p class="text-gray-600">
+                        Chào mừng bạn quay trở lại với PMLogin Dashboard 
+                        <i class="fas fa-python text-blue-500 ml-2" title="Powered by Python Backend"></i>
+                    </p>
                 </div>
 
                 <!-- Stats Cards -->
@@ -2942,10 +2954,46 @@
         console.log('PMLogin Dashboard loaded');
     </script>
 
+    <!-- Load Main Logic Integration for Python backend integration -->
+    <script src="../../js/main_logic_integration.js"></script>
+    
     <!-- Load MainRenderer for settings dropdown and other functionality -->
     <script src="./renderer.js"></script>
 
     <script>
+        // Initialize Main Logic Integration và các functions chính
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔄 Initializing PMLogin with Python backend via Main Logic Integration...');
+            
+            // Initialize Main Logic Integration
+            initializeMainLogicIntegration();
+            
+            // Initialize profiles view
+            setTimeout(() => {
+                console.log('🔄 Starting profile initialization...');
+                
+                if (typeof ProfilesStructure !== 'undefined' && typeof ProfilesView !== 'undefined') {
+                    console.log('✅ Profile classes available, using ProfilesView to load from database');
+                    initializeProfiles();
+                } else {
+                    console.warn('⚠️ Profile classes not loaded, trying direct initialization...');
+                    setTimeout(() => {
+                        if (typeof ProfilesStructure !== 'undefined' && typeof ProfilesView !== 'undefined') {
+                            initializeProfiles();
+                        } else {
+                            console.error('❌ Profile classes still not available after delay');
+                            showProfilesError();
+                        }
+                    }, 1000);
+                }
+                
+                initializeCreateProfile();
+                
+                // Update dashboard stats on initial load (since dashboard is default view)
+                updateDashboardStats();
+            }, 500);
+        });
+
         // Initialize Profiles function - Using ProfilesView to load from database
         function initializeProfiles() {
             console.log('🔄 Initializing ProfilesView to load from database...');
@@ -2987,56 +3035,46 @@
                 
             } catch (error) {
                 console.error('❌ Error initializing ProfilesView:', error);
-                
-                // Show error in profiles container
-                const profilesContainer = document.getElementById('profilesView');
-                if (profilesContainer) {
-                    profilesContainer.innerHTML = `
-                        <div class="flex items-center justify-center h-64">
-                            <div class="text-center">
-                                <div class="text-red-500 text-6xl mb-4">⚠️</div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-2">Error Loading Profiles</h3>
-                                <p class="text-gray-600 mb-4">Failed to initialize profiles view: ${error.message}</p>
-                                <button onclick="location.reload()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
-                                    🔄 Reload Page
-                                </button>
-                            </div>
+                showProfilesError(error.message);
+            }
+        }
+        
+        // Show profiles error
+        function showProfilesError(message = 'Unknown error') {
+            const profilesContainer = document.getElementById('profilesView');
+            if (profilesContainer) {
+                profilesContainer.innerHTML = `
+                    <div class="flex items-center justify-center h-64">
+                        <div class="text-center">
+                            <div class="text-red-500 text-6xl mb-4">⚠️</div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Error Loading Profiles</h3>
+                            <p class="text-gray-600 mb-4">Failed to initialize profiles view: ${message}</p>
+                            <button onclick="location.reload()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                                🔄 Reload Page
+                            </button>
                         </div>
-                    `;
-                }
+                    </div>
+                `;
             }
         }
         
         // Initialize Create Profile function
         function initializeCreateProfile() {
             console.log('🔄 Initializing Create Profile...');
-            // This function can be implemented later if needed
-        }
-    
-        // Load proxies từ Python backend
-        async function loadProxiesFromBackend() {
-            try {
-                showProxyLoadingState();
-                
-                console.log('🔄 Loading proxies from Python backend...');
-                const result = await window.electronAPI.invoke('python-local:get-proxies');
-                
-                if (result && result.success) {
-                    const proxies = result.data || [];
-                    renderProxies(proxies);
-                    updateProxyStats(proxies);
-                    console.log(`✅ Loaded ${proxies.length} proxies from Python backend`);
-                } else {
-                    console.error('❌ Failed to load proxies:', result?.message);
-                    showNotification('Lỗi khi tải danh sách proxy: ' + (result?.message || 'Unknown error'), 'error');
-                    showProxyEmptyState();
-                }
-            } catch (error) {
-                console.error('❌ Error loading proxies from backend:', error);
-                showNotification('Không thể kết nối đến Python backend. Vui lòng kiểm tra server đang chạy.', 'error');
-                showProxyEmptyState();
-            } finally {
-                hideProxyLoadingState();
+            
+            // Bind create profile button
+            const createBtn = document.getElementById('createSaveProfileBtn');
+            if (createBtn) {
+                createBtn.addEventListener('click', handleCreateProfile);
+            }
+            
+            // Bind cancel button
+            const cancelBtn = document.getElementById('createCancelBtn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', () => {
+                    clearCreateProfileForm();
+                    switchView('dashboard');
+                });
             }
         }
 
@@ -3151,37 +3189,51 @@
             if (emptyState) emptyState.classList.remove('hidden');
         }
 
-        // Delete proxy
-        async function deleteProxy(host, port) {
-            if (!confirm('Bạn có chắc chắn muốn xóa proxy này?')) {
-                return;
-            }
+        // Update proxy stats (helper function)
+        function updateProxyStats(proxies) {
+            const stats = {
+                total: proxies.length,
+                live: proxies.filter(p => p.status === 'live').length,
+                dead: proxies.filter(p => p.status === 'dead').length,
+                unchecked: proxies.filter(p => !p.status || p.status === 'unchecked').length
+            };
+            
+            updateProxyStatsUI(stats);
+        }
 
+        // Notification function
+        function showNotification(message, type = 'info') {
+            // Simple notification - có thể enhance sau
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Initialize proxy manager when switching to proxies view
+        function initializeProxyManager() {
+            console.log('Initializing Proxy Manager with Python backend...');
+            
             try {
-                console.log(`🔄 Deleting proxy: ${host}:${port}`);
-                const result = await window.electronAPI.invoke('python-local:delete-proxy', { host, port });
+                // Load proxies từ Python backend
+                loadProxiesFromBackend();
                 
-                if (result && result.success) {
-                    showNotification('Proxy đã được xóa thành công', 'success');
-                    await loadProxiesFromBackend();
-                } else {
-                    showNotification('Lỗi khi xóa proxy: ' + (result?.message || 'Unknown error'), 'error');
-                }
+                console.log('✅ Proxy Manager initialized with Python backend');
             } catch (error) {
-                console.error('❌ Error deleting proxy:', error);
-                showNotification('Lỗi khi xóa proxy: ' + error.message, 'error');
+                console.error('❌ Error initializing Proxy Manager:', error);
             }
         }
 
-        // Test proxy (placeholder)
-        function testProxy(proxyId) {
-            showNotification('Chức năng test proxy sẽ được implement sau', 'info');
-        }
-
-        // Edit proxy (placeholder)
-        function editProxy(proxyId) {
-            showNotification('Chức năng edit proxy sẽ được implement sau', 'info');
-        }
+        console.log('PMLogin Dashboard loaded with Python backend integration');
     </script>
 </body>
 </html>
